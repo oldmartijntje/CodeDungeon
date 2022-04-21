@@ -1,5 +1,5 @@
 
-version = '2.7.1'
+version = '2.7.3'
 #code made by OldMartijntje
 
 #functions u don't need, bacause it's just to make the system work
@@ -106,6 +106,10 @@ def configFileConsole(pathLocation = False):
         path = config['User']['SaveFileFolder']
         autoLogin = config['User']['AutoLogin']
         autoLoginName = config['User']['AccountName']
+        try:
+            os.mkdir(path)
+        except:
+            pass
     except:
         delete = input('The configfile is not readable, either fix it or delete it.\nWe will close this program after you press enter. \nDo you want us to delete systemConfig.ini for you? (Y/N)\n>>')
         if delete.lower() == 'y':
@@ -170,6 +174,10 @@ def configFileTkinter(pathLocation = False):
         path = config['User']['SaveFileFolder']
         autoLogin = config['User']['AutoLogin']
         autoLoginName = config['User']['AccountName']
+        try:
+            os.mkdir(path)
+        except:
+            pass
     except:
         import tkinter.messagebox
         if tkinter.messagebox.askyesno('Config Error!', 'There is a problem when we try to open your settings\nWe will close the program after you click this message away\n\nDo you want us to delete the configfile (systemConfig.ini) for you,\notherwise you will have to fix it yourself', icon ='error'):
@@ -202,7 +210,7 @@ def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'Fal
     
     return data
 
-def createAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac']):
+def createAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], tkinterOrConsole = 'Console'):
     '''create the account (will wipe existing data!!!)'''
     import json
     import datetime
@@ -215,9 +223,21 @@ def createAccount(accountName = 'testaccount', configSettings = ['accounts/', 'F
 
     #creating the json
     json_string = json.dumps(data)
-    with open(f'{path}{accountName.lower()}{fileExtention}.json', 'w') as outfile:
-        json.dump(json_string, outfile)
-        data['loadTime'] = datetime.datetime.now()
+    try:
+        with open(f'{path}{accountName.lower()}{fileExtention}.json', 'w') as outfile:
+            json.dump(json_string, outfile)
+            data['loadTime'] = datetime.datetime.now()
+    except:
+        import os
+        if tkinterOrConsole == 'Console':
+            delete = input('The configfile is not readable, either fix it or delete it.\nWe will close this program after you press enter. \nDo you want us to delete systemConfig.ini for you? (Y/N)\n>>')
+            if delete.lower() == 'y':
+                os.remove("systemConfig.ini")
+        elif tkinterOrConsole == 'Tkinter':
+            import tkinter.messagebox
+            if tkinter.messagebox.askyesno('Config Error!', 'There is a problem when we try to open your settings\nWe will close the program after you click this message away\n\nDo you want us to delete the configfile (systemConfig.ini) for you,\notherwise you will have to fix it yourself', icon ='error'):
+                os.remove("systemConfig.ini")
+        exit()
     return data
 
 def saveAccount(data, configSettings = ['accounts/', 'False', 'testaccount', '_omac']):
@@ -343,7 +363,7 @@ class defaultConfigurations:
             return loadAccount(account, configSettings, 'Console')
         else:
             if questionConsole():
-                return createAccount(account, configSettings)
+                return createAccount(account, configSettings, 'Console')
             else:
                 return False
 
@@ -354,7 +374,7 @@ class defaultConfigurations:
             return loadAccount(account, configSettings, 'Tkinter')
         else:
             if questionTkinter():
-                return createAccount(account, configSettings)
+                return createAccount(account, configSettings, 'Tkinter')
             else:
                 return False
 

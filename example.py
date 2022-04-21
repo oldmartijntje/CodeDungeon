@@ -1,6 +1,6 @@
 import rpg
 player = rpg.System()
-player.startGame()
+player.startGame('Create')
 # Jouw python instructies zet je vanaf hier:
 
 
