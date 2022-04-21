@@ -1,6 +1,11 @@
 # Mini-RPG
 It's an rpg / rogue-like game where you have to code your movement through a dungeon
 
+## How to play
+stay away from rpg.py, That is the core system. You need to edit example.py to play.
+
+
+
 ### Notes
 This uses Oldmartijntje's account system: https://github.com/oldmartijntje/accounts-system
 

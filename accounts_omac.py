@@ -1,5 +1,5 @@
 
-version = '2.7.0'
+version = '2.7.1'
 #code made by OldMartijntje
 
 #functions u don't need, bacause it's just to make the system work
@@ -17,12 +17,21 @@ class systemFunctions:
         if tkinter.messagebox.askyesno('Accounts_omac_lib', f"Your program will be terminated\nShould we proceed?", icon ='warning'):
             exit()
 
-    def updateRequest(message):
+    def updateRequest(message, tkinterOrConsole = 'Console'):
         '''Asks user for confirmation to update their account, the system only asks you when something new is added to the account itself and not the system'''
         import tkinter.messagebox
-        return tkinter.messagebox.askyesno('Accounts_omac_lib', f"Your account is outdated, Do you want us to update your account?\nIf you don\'t update {message} You will keep getting this message if you load newer apps", icon ='warning')
+        if tkinterOrConsole == 'Tkinter':
+            return tkinter.messagebox.askyesno('Accounts_omac_lib', f"Your account is outdated, Do you want us to update your account?\nIf you don\'t update {message} You will keep getting this message if you load newer apps", icon ='warning')
+        else:
+            yesorno = ''
+            while yesorno.lower() not in ['y', 'n']:
+                yesorno = input( f"Your account is outdated, Do you want us to update your account?\nIf you don\'t update {message} You will keep getting this message if you load newer apps (Y/N)")
+            if yesorno.lower() == 'y':
+                return True
+            else: 
+                return False
 
-    def CAFU(accountData):
+    def CAFU(accountData, tkinterOrConsole = 'Console'):
         '''Check Account For Update, and if there is an update, it will ask you to update'''
         message = ''
         updateNeeded = False
@@ -32,7 +41,7 @@ class systemFunctions:
             message += 'You won\'t be able to reconnect to online lobbies if you accidentally disconnect and'
             updateNeeded = True
         if updateNeeded:
-            if systemFunctions.updateRequest(message):
+            if systemFunctions.updateRequest(message, tkinterOrConsole):
                 if 'UserID' not in accountData:
                     UID = systemFunctions.userID(accountData['name'])
                     accountData['UserID'] = UID
@@ -173,7 +182,7 @@ def configFileTkinter(pathLocation = False):
         autoLogin = 'False'
     return path, autoLogin, autoLoginName, fileExtention
 
-def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac']):
+def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], tkinterOrConsole = 'Console'):
     '''load existing acount'''
     import json
     import datetime
@@ -189,7 +198,7 @@ def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'Fal
         data['loadTime'] = datetime.datetime.now()
     if systemFunctions.checkVersion(data['versionHistory'][len(data['versionHistory']) -1]):
         data['versionHistory'].append(version)
-    data = systemFunctions.CAFU(data)
+    data = systemFunctions.CAFU(data, tkinterOrConsole)
     
     return data
 
@@ -331,7 +340,7 @@ class defaultConfigurations:
         '''The default loading system without your configuration, in the console app'''
         account = askAccountNameConsole(configSettings)
         if checkForAccount(account, configSettings):
-            return loadAccount(account, configSettings)
+            return loadAccount(account, configSettings, 'Console')
         else:
             if questionConsole():
                 return createAccount(account, configSettings)
@@ -342,7 +351,7 @@ class defaultConfigurations:
         '''The default loading system without your configuration, using tkinter'''
         account = askAccountNameTkinter(configSettings)
         if checkForAccount(account, configSettings):
-            return loadAccount(account, configSettings)
+            return loadAccount(account, configSettings, 'Tkinter')
         else:
             if questionTkinter():
                 return createAccount(account, configSettings)
