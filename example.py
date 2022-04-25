@@ -1,7 +1,7 @@
 import rpg
 
-player = rpg.System()
-player.startGame('Play',1)
+player = rpg.System(1,3)
+player.startGame('Play')
 # Jouw python instructies zet je vanaf hier:
 
     #0 air
