@@ -47,6 +47,7 @@ class System:
         self.newState()
         self.newState()
         self.checkStates()
+        self.createdBefore = False
 
         if self.data == False:
             exit()
@@ -79,6 +80,17 @@ class System:
             self._defaultlevels[chosenLevel][x][y] = 0
         self.buttons[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
         
+    def createLevel(self, level):
+        self._currentLevel = []
+        for x in range(len(level)):
+            self._currentLevel.append([])
+            for y in range(len(level[x])):
+                if type(level[x][y]) == list:
+                    pass
+                else:
+                    pass
+
+
 
     def startGame(self, mode = 'Play', chosenLevel = 0):
 
@@ -97,7 +109,7 @@ class System:
             tkinter.Button(self.window, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1)
         if mode == 'Play':
             self.checkStates()
-            
+            self.createLevel(self._defaultlevels[random.randint(0,len(self._defaultlevels)-1)])
         self.window.mainloop()
 
     def exit(self):
