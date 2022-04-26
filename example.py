@@ -1,6 +1,6 @@
-import rpg
+import Roguelike
 
-player = rpg.System(1,3)
+player = Roguelike.System(1,3)
 player.startGame('Play')
 # Jouw python instructies zet je vanaf hier:
 
