@@ -13,17 +13,19 @@ from PIL import Image, ImageTk
     #7 npc
     #8 nothing able to spawn
     #9 bossfight
+
 maxTypes = 9
-chanceEnemyAir = 10
-chanceLootAir = 10
-chanceEnemySpawn = 50
-chanceLootSpawn = 50
+chanceEnemyAir = 5
+chanceLootAir = 3
+chanceEnemySpawn = 40
+chanceLootSpawn = 40
 
 
 colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
 class System:
 
-    
+    _sight = []
+    _viewDistance = 2
     _defaultlevels = [
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -37,7 +39,7 @@ class System:
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     window = tkinter.Tk()
-    _black=ImageTk.PhotoImage(Image.open("sprites/black.png"))
+    _blackImage=ImageTk.PhotoImage(Image.open("sprites/black.png"))
     _exitImage=ImageTk.PhotoImage(Image.open("sprites/exit.png"))
     _floorImage=ImageTk.PhotoImage(Image.open("sprites/floor.png"))
     _signImage=ImageTk.PhotoImage(Image.open("sprites/sign.png"))
@@ -200,28 +202,36 @@ class System:
                     self.readTile(level[x][y], x, y)
 
     def rendering(self):
+        self._sight = [] 
+        for ix in range(self._viewDistance * 2 + 1):
+            for iy in range(self._viewDistance * 2 + 1):
+                self._sight.append(f'{ix + self._playerX - self._viewDistance}-{iy + self._playerY - self._viewDistance}')
         for x in range(len(self._currentLevel)):
             for y in range(len(self._currentLevel[x])):
-                if x==self._playerX and y == self._playerY:
-                    if self._facingDirection == 'R':
-                        self._tileList[x][y].configure(image=self._playerRImage)
+                if f"{x}-{y}" in self._sight:
+                    if x==self._playerX and y == self._playerY:
+                        if self._facingDirection == 'R':
+                            self._tileList[x][y].configure(image=self._playerRImage)
+                        else:
+                            self._tileList[x][y].configure(image=self._playerLImage)
                     else:
-                        self._tileList[x][y].configure(image=self._playerLImage)
+                        if self._currentLevel[x][y]['entity'] != 'NONE':
+                            self._tileList[x][y].configure(image=self._enemyImage)
+                        elif self._currentLevel[x][y]['loot'] != 'NONE':
+                            self._tileList[x][y].configure(image=self._lootImage)
+                        elif self._currentLevel[x][y]['tile'] == 'sign':
+                            self._tileList[x][y].configure(image=self._signImage)
+                        elif self._currentLevel[x][y]['tile'] == 'npc':
+                            self._tileList[x][y].configure(image=self._npcImage)
+                        elif self._currentLevel[x][y]['tile'] == 'air':
+                            self._tileList[x][y].configure(image=self._floorImage)
+                        elif self._currentLevel[x][y]['tile'] == 'wall':
+                            self._tileList[x][y].configure(image=self._wallImage)
+                        elif self._currentLevel[x][y]['tile'] == 'exit':
+                            self._tileList[x][y].configure(image=self._exitImage)
                 else:
-                    if self._currentLevel[x][y]['entity'] != 'NONE':
-                        self._tileList[x][y].configure(image=self._enemyImage)
-                    elif self._currentLevel[x][y]['loot'] != 'NONE':
-                        self._tileList[x][y].configure(image=self._lootImage)
-                    elif self._currentLevel[x][y]['tile'] == 'sign':
-                        self._tileList[x][y].configure(image=self._signImage)
-                    elif self._currentLevel[x][y]['tile'] == 'npc':
-                        self._tileList[x][y].configure(image=self._npcImage)
-                    elif self._currentLevel[x][y]['tile'] == 'air':
-                        self._tileList[x][y].configure(image=self._floorImage)
-                    elif self._currentLevel[x][y]['tile'] == 'wall':
-                        self._tileList[x][y].configure(image=self._wallImage)
-                    elif self._currentLevel[x][y]['tile'] == 'exit':
-                        self._tileList[x][y].configure(image=self._exitImage)
+                    self._tileList[x][y].configure(image=self._blackImage)
+                self._tileList[x][y].configure(bg='black')
 
     def createWindow(self):
         for x in range(len(self._currentLevel)):
