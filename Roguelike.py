@@ -1,3 +1,4 @@
+import string
 import accounts_omac
 import random
 import tkinter
@@ -19,13 +20,15 @@ chanceEnemyAir = 5
 chanceLootAir = 3
 chanceEnemySpawn = 40
 chanceLootSpawn = 40
+pixelOffset = 18
+pixelSize = 32
 
 
 colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
 class System:
 
     _sight = []
-    _viewDistance = 20
+    _viewDistance = 200
     _defaultlevels = [
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -58,7 +61,7 @@ class System:
     _rarityChance= {'common': 100, 'uncommon': 55, 'rare': 30, 'epic': 15, 'legendary': 5, 'impossible': 1}
     _npcText = ['YEET']
     _signText = ['I am a sign']
-    _tileList = []
+
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
         
@@ -212,39 +215,57 @@ class System:
                 if f"{x}-{y}" in self._sight:
                     if x==self._playerX and y == self._playerY:
                         if self._facingDirection == 'R':
-                            self._tileList[x][y].configure(image=self._playerRImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage)
                         else:
-                            self._tileList[x][y].configure(image=self._playerLImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage)
                     else:
                         if self._currentLevel[x][y]['entity'] != 'NONE':
-                            self._tileList[x][y].configure(image=self._enemyImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage)
                         elif self._currentLevel[x][y]['loot'] != 'NONE':
-                            self._tileList[x][y].configure(image=self._lootImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage)
                         elif self._currentLevel[x][y]['tile'] == 'sign':
-                            self._tileList[x][y].configure(image=self._signImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage)
                         elif self._currentLevel[x][y]['tile'] == 'npc':
-                            self._tileList[x][y].configure(image=self._npcImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage)
                         elif self._currentLevel[x][y]['tile'] == 'air':
-                            self._tileList[x][y].configure(image=self._floorImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage)
                         elif self._currentLevel[x][y]['tile'] == 'wall':
-                            self._tileList[x][y].configure(image=self._wallImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage)
                         elif self._currentLevel[x][y]['tile'] == 'exit':
-                            self._tileList[x][y].configure(image=self._exitImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage)
                 else:
-                    self._tileList[x][y].configure(image=self._blackImage)
-                self._tileList[x][y].configure(bg='black')
+                    self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._blackImage)
+
 
     def createWindow(self):
-        for x in range(len(self._currentLevel)):
-            self._tileList.append([])
-            for y in range(len(self._currentLevel[x])):
-                self._tileList[x].append(tkinter.Label(self.window))
-                self._tileList[x][y].grid(column=x, row=y)
+        self._canvas = tkinter.Canvas(self.window, bg="black", height=len(self._currentLevel)*32, width=len(self._currentLevel[0])*32)
+        self._canvas.pack()
+        
 
     def startGame(self, mode = 'Play', chosenLevel = 0):
-
+        custom = False
         if type(chosenLevel) == list:
             self._defaultlevels[0] = list(chosenLevel)
+            chosenLevel = 0
+            custom = True
+        if type(chosenLevel) == str:
+            if 'x' in str(chosenLevel):
+                if chosenLevel.split('x')[0].isdigit() and chosenLevel.split('x')[1].isdigit():
+                    level = []
+                    for x in range(int(chosenLevel.split('x')[0])):
+                        level.append([])
+                        for y in range(int(chosenLevel.split('x')[1])):
+                            if len(chosenLevel.split('x')) > 2:
+                                if chosenLevel.split('x')[2].isdigit():
+                                    level[x].append(int(chosenLevel.split('x')[2]))
+                                else:
+                                    level[x].append(0)
+                            else:
+                                level[x].append(0)
+                    self._defaultlevels[0] = level
+                    chosenLevel = 0
+                    custom = True
+        if not str(chosenLevel).isdigit():
             chosenLevel = 0
         self._buttonsList = []
         if mode == 'Create':
@@ -254,11 +275,14 @@ class System:
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
                     self._buttonsList[x].append(tkinter.Button(self.window, text=self._defaultlevels[chosenLevel][x][y],bg = colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.change(cords, chosenLevel)))
-                    self._buttonsList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
-            tkinter.Button(self.window, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1)
+                    self._buttonsList[x][y].grid(column=x, row=y)
+            tkinter.Button(self.window, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
         if mode == 'Play':
             self.checkStates()
-            levelNumber = random.randint(0,len(self._defaultlevels)-1)
+            if custom == False:
+                levelNumber = random.randint(0,len(self._defaultlevels)-1)
+            else:
+                levelNumber = chosenLevel
             print(levelNumber)
             self.createLevel(self._defaultlevels[levelNumber])
             self.createWindow()
