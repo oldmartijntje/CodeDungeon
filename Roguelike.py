@@ -17,7 +17,7 @@ maxTypes = 9
 chanceEnemyAir = 10
 chanceLootAir = 10
 chanceEnemySpawn = 50
-chanceLotSpawn = 50
+chanceLootSpawn = 50
 
 
 colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
@@ -39,12 +39,12 @@ class System:
     buttonsList = []
     #melee, throwables, magic
     _enemies = {'Rat': {'resistance': [0,0,0]}, 'Ghost': {'resistance': [2,0,0]}, 'Crab': {'resistance': [0,1,0]}, 'Goblin': {'resistance': [0,0,2]}}
-    _loot = {'wooden sword': {'amount' : 1}, 'stone sword': {'amount' : 1}, 'iron sword': {'amount' : 1}, 'coin': {'amount' : [1,64]}}
-    #amount, Healing, Damage, InstantDeath, HalfHP
-    _items = {'20 Heal' : [20,True]}
-
-
-
+    _loot = {'wooden sword': {'amount' : 1}, 'stone sword': {'amount' : 1}, 'iron sword': {'amount' : 1}, 'coin': {'amount' : [1,64]}, 'instant death': {'amount':1}, 'kings sword' : {'amount':1}, 'midas sword' : {'amount':1}, 'lego brick' : {'amount':[1,64]}}
+    _itemRarety = {'common': ['wooden sword', 'coin'], 'uncommon': ['stone sword'], 'rare': ['iron sword'], 'epic': ['kings sword', 'lego brick'], 'legendary': ['midas sword'], 'impossible': ['instant death']}
+    _items = {'wooden sword': {'strength' : 0}, 'stone sword': {'strength' : 11}, 'iron sword': {'strength' : 13}, 'coin': {'strength' : 0}, 'instant death': {'strength':0}, 'kings sword' : {'strength':15}, 'midas sword' : {'strength':16}, 'lego brick' : {'strength':0}}
+    _rarityChance= {'common': 100, 'uncommon': 55, 'rare': 30, 'epic': 15, 'legendary': 5, 'impossible': 1}
+    _npcText = ['YEET']
+    _signText = ['I am a sign']
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
         self.window = tkinter.Tk()
@@ -60,6 +60,8 @@ class System:
         self.checkStates()
         self.enemyLevel = startingDifficulty
         self.createdBefore = False
+        self.playerX = 0
+        self.playerY = 0
 
         if self.data == False:
             exit()
@@ -92,14 +94,85 @@ class System:
             self._defaultlevels[chosenLevel][x][y] = 0
         self.buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
 
-    def readTile(self, tile, x, y):
+    def itemRarity(self, modifier : int = 0):
+        randomNumber = random.randint(0,100)
+        randomNumber -= modifier
+        rarity = 'NONE'
+        if randomNumber <= self._rarityChance['common']:
+            rarity = 'common'
+            if randomNumber <= self._rarityChance['uncommon']:
+                rarity = 'uncommon'
+                if randomNumber <= self._rarityChance['rare']:
+                    rarity = 'rare'
+                    if randomNumber <= self._rarityChance['epic']:
+                        rarity = 'epic'
+                        if randomNumber <= self._rarityChance['legendary']:
+                            rarity = 'legendary'
+                            if randomNumber <= self._rarityChance['impossible']:
+                                rarity = 'impossible'
+        return rarity
+
+    def getLoot(self, modifier: int = 0):
+        itemType = self.itemRarity(modifier)
+        item = self._itemRarety[itemType][random.randint(0,len(self._itemRarety[itemType])-1)]
+        amount = self._loot[item]['amount']
+        if type(amount) == list:
+            amount = random.randint(amount[0], amount[1])
+        loot = {'type':item, 'amount':amount}
+        return loot
+
+    def readTile(self, tile, x, y, extra = 'NONE'):
         if tile == 0:
             entity = 'NONE'
+            loot = 'NONE'
             if random.randint(1,100) <= chanceEnemyAir:
-                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': ''}
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': []} 
+                entityLoot = self.getLoot()
+                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+            if random.randint(1,100) <= chanceLootAir:
+                loot = self.getLoot()
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
         elif tile == 1:
-            self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': []} 
+            self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE'} 
+        elif tile == 2:
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': 'NONE'} 
+            self.playerX = x
+            self.playerY = y
+        elif tile == 3:
+            self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE'} 
+        elif tile == 4:
+            entity = 'NONE'
+            loot = 'NONE'
+            if random.randint(1,100) <= chanceLootSpawn:
+                loot = self.getLoot()
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot}  
+        elif tile == 5:
+            entity = 'NONE'
+            loot = 'NONE'
+            if random.randint(1,100) <= chanceEnemySpawn:
+                entityLoot = self.getLoot()
+                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
+        elif tile == 6:
+            if extra != 'NONE':
+                text = extra
+            else:
+                text = self._signText[random.randint(0,len(self._signText)-1)]
+            self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+        elif tile == 7:
+            if extra != 'NONE':
+                text = extra
+            else:
+                text = self._npcText[random.randint(0,len(self._npcText)-1)]
+            self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+        elif tile == 8:
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': 'NONE'}
+        elif tile == 9:
+            entity = 'NONE'
+            loot = self.getLoot()
+            entityLoot = self.getLoot(10)
+            entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot}  
+
 
     def createLevel(self, level):
         
@@ -107,8 +180,9 @@ class System:
         for x in range(len(level)):
             self._currentLevel.append([])
             for y in range(len(level[x])):
+                self._currentLevel[x].append({})
                 if type(level[x][y]) == list:
-                    self.readTile(level[x][y][0], x, y)
+                    self.readTile(level[x][y][0], x, y, level[x][y][1])
                 else:
                     self.readTile(level[x][y], x, y)
 
