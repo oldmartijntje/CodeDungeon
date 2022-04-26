@@ -3,7 +3,7 @@ import accounts_omac
 import random
 import tkinter
 from tkinter import ttk
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageEnhance
     #0 air
     #1 wall
     #2 start
@@ -22,13 +22,14 @@ chanceEnemySpawn = 40
 chanceLootSpawn = 40
 pixelOffset = 18
 pixelSize = 32
-
+darkness1 = 0.5
+darkness2 = 0.2
 
 colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
 class System:
 
-    _sight = []
-    _viewDistance = 200
+    _sightFurthest = []
+    _viewDistance = 2
     _defaultlevels = [
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -42,16 +43,16 @@ class System:
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     window = tkinter.Tk()
-    _blackImage=ImageTk.PhotoImage(Image.open("sprites/black.png"))
-    _exitImage=ImageTk.PhotoImage(Image.open("sprites/exit.png"))
-    _floorImage=ImageTk.PhotoImage(Image.open("sprites/floor.png"))
-    _signImage=ImageTk.PhotoImage(Image.open("sprites/sign.png"))
-    _wallImage=ImageTk.PhotoImage(Image.open("sprites/wall.png"))
-    _playerLImage=ImageTk.PhotoImage(Image.open("sprites/player left.png"))
-    _playerRImage=ImageTk.PhotoImage(Image.open("sprites/player right.png"))
-    _npcImage=ImageTk.PhotoImage(Image.open("sprites/npc.png"))
-    _enemyImage=ImageTk.PhotoImage(Image.open("sprites/enemy.png"))
-    _lootImage=ImageTk.PhotoImage(Image.open("sprites/loot.png"))
+    _blackImage=[ImageTk.PhotoImage(Image.open("sprites/black.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness2))]
+    _exitImage=[ImageTk.PhotoImage(Image.open("sprites/exit.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness2))]
+    _floorImage=[ImageTk.PhotoImage(Image.open("sprites/floor.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness2))]
+    _signImage=[ImageTk.PhotoImage(Image.open("sprites/sign.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/sign.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/sign.png").convert('RGB')).enhance(darkness2))]
+    _wallImage=[ImageTk.PhotoImage(Image.open("sprites/wall.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/wall.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/wall.png").convert('RGB')).enhance(darkness2))]
+    _playerLImage=[ImageTk.PhotoImage(Image.open("sprites/player left.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player left.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player left.png").convert('RGB')).enhance(darkness2))]
+    _playerRImage=[ImageTk.PhotoImage(Image.open("sprites/player right.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player right.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player right.png").convert('RGB')).enhance(darkness2))]
+    _npcImage=[ImageTk.PhotoImage(Image.open("sprites/npc.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness2))]
+    _enemyImage=[ImageTk.PhotoImage(Image.open("sprites/enemy.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness2))]
+    _lootImage=[ImageTk.PhotoImage(Image.open("sprites/loot.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness2))]
     _buttonsList = []
     #melee, throwables, magic
     _enemies = {'Rat': {'resistance': [0,0,0]}, 'Ghost': {'resistance': [2,0,0]}, 'Crab': {'resistance': [0,1,0]}, 'Goblin': {'resistance': [0,0,2]}}
@@ -206,35 +207,81 @@ class System:
                     self.readTile(level[x][y], x, y)
 
     def rendering(self):
-        self._sight = [] 
+        self._sightFurthest = [] 
         for ix in range(self._viewDistance * 2 + 1):
             for iy in range(self._viewDistance * 2 + 1):
-                self._sight.append(f'{ix + self._playerX - self._viewDistance}-{iy + self._playerY - self._viewDistance}')
+                self._sightFurthest.append(f'{ix + self._playerX - self._viewDistance}-{iy + self._playerY - self._viewDistance}')
+        self._sight = [] 
+        for ix in range(self._viewDistance * 2 -1):
+            for iy in range(self._viewDistance * 2 - 1):
+                self._sight.append(f'{ix + self._playerX - self._viewDistance+1}-{iy + self._playerY - self._viewDistance+1}')
         for x in range(len(self._currentLevel)):
             for y in range(len(self._currentLevel[x])):
-                if f"{x}-{y}" in self._sight:
-                    if x==self._playerX and y == self._playerY:
-                        if self._facingDirection == 'R':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage)
+                if f"{x}-{y}" in self._sightFurthest:
+                    if f"{x}-{y}" in self._sight:
+                        if x==self._playerX and y == self._playerY:
+                            if self._facingDirection == 'R':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[0])
+                            else:
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[0])
                         else:
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage)
+                            if self._currentLevel[x][y]['entity'] != 'NONE':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[0])
+                            elif self._currentLevel[x][y]['loot'] != 'NONE':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[0])
+                            elif self._currentLevel[x][y]['tile'] == 'sign':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[0])
+                            elif self._currentLevel[x][y]['tile'] == 'npc':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[0])
+                            elif self._currentLevel[x][y]['tile'] == 'air':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[0])
+                            elif self._currentLevel[x][y]['tile'] == 'wall':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[0])
+                            elif self._currentLevel[x][y]['tile'] == 'exit':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[0])
+                    else:
+                        if x==self._playerX and y == self._playerY:
+                            if self._facingDirection == 'R':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[1])
+                            else:
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[1])
+                        else:
+                            if self._currentLevel[x][y]['entity'] != 'NONE':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[1])
+                            elif self._currentLevel[x][y]['loot'] != 'NONE':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[1])
+                            elif self._currentLevel[x][y]['tile'] == 'sign':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[1])
+                            elif self._currentLevel[x][y]['tile'] == 'npc':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[1])
+                            elif self._currentLevel[x][y]['tile'] == 'air':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[1])
+                            elif self._currentLevel[x][y]['tile'] == 'wall':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[1])
+                            elif self._currentLevel[x][y]['tile'] == 'exit':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[1])
+
+                else:
+                    if x==self._playerX and y == self._playerY:
+                            if self._facingDirection == 'R':
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[2])
+                            else:
+                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[2])
                     else:
                         if self._currentLevel[x][y]['entity'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
                         elif self._currentLevel[x][y]['loot'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
                         elif self._currentLevel[x][y]['tile'] == 'sign':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
                         elif self._currentLevel[x][y]['tile'] == 'npc':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
                         elif self._currentLevel[x][y]['tile'] == 'air':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
                         elif self._currentLevel[x][y]['tile'] == 'wall':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[2])
                         elif self._currentLevel[x][y]['tile'] == 'exit':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage)
-                else:
-                    self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._blackImage)
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
 
 
     def createWindow(self):
