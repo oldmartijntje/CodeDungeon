@@ -45,6 +45,7 @@ class System:
     _rarityChance= {'common': 100, 'uncommon': 55, 'rare': 30, 'epic': 15, 'legendary': 5, 'impossible': 1}
     _npcText = ['YEET']
     _signText = ['I am a sign']
+    _tileList = []
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
         self.window = tkinter.Tk()
@@ -186,7 +187,12 @@ class System:
                 else:
                     self.readTile(level[x][y], x, y)
 
-
+    def createWindow(self):
+        for x in range(len(self._currentLevel)):
+            self._tileList.append([])
+            for y in range(len(self._currentLevel[x])):
+                self._tileList[x].append(tkinter.Label(self.window))
+                self._tileList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
 
     def startGame(self, mode = 'Play', chosenLevel = 0):
 
@@ -206,6 +212,7 @@ class System:
         if mode == 'Play':
             self.checkStates()
             self.createLevel(self._defaultlevels[random.randint(0,len(self._defaultlevels)-1)])
+            self.createWindow()
         self.window.mainloop()
 
     def exit(self):
