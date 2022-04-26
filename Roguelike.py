@@ -2,7 +2,7 @@ import accounts_omac
 import random
 import tkinter
 from tkinter import ttk
-
+from PIL import Image, ImageTk
     #0 air
     #1 wall
     #2 start
@@ -36,7 +36,18 @@ class System:
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
-    buttonsList = []
+    window = tkinter.Tk()
+    _black=ImageTk.PhotoImage(Image.open("sprites/black.png"))
+    _exitImage=ImageTk.PhotoImage(Image.open("sprites/exit.png"))
+    _floorImage=ImageTk.PhotoImage(Image.open("sprites/floor.png"))
+    _signImage=ImageTk.PhotoImage(Image.open("sprites/sign.png"))
+    _wallImage=ImageTk.PhotoImage(Image.open("sprites/wall.png"))
+    _playerLImage=ImageTk.PhotoImage(Image.open("sprites/player left.png"))
+    _playerRImage=ImageTk.PhotoImage(Image.open("sprites/player right.png"))
+    _npcImage=ImageTk.PhotoImage(Image.open("sprites/npc.png"))
+    _enemyImage=ImageTk.PhotoImage(Image.open("sprites/enemy.png"))
+    _lootImage=ImageTk.PhotoImage(Image.open("sprites/loot.png"))
+    _buttonsList = []
     #melee, throwables, magic
     _enemies = {'Rat': {'resistance': [0,0,0]}, 'Ghost': {'resistance': [2,0,0]}, 'Crab': {'resistance': [0,1,0]}, 'Goblin': {'resistance': [0,0,2]}}
     _loot = {'wooden sword': {'amount' : 1}, 'stone sword': {'amount' : 1}, 'iron sword': {'amount' : 1}, 'coin': {'amount' : [1,64]}, 'instant death': {'amount':1}, 'kings sword' : {'amount':1}, 'midas sword' : {'amount':1}, 'lego brick' : {'amount':[1,64]}}
@@ -48,21 +59,22 @@ class System:
     _tileList = []
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
-        self.window = tkinter.Tk()
-        self.seed = seed
-        self.dungeonLevel = 0
-        random.seed = seed
+        
+        self._dungeonLevel = 0
+        random.seed(seed)
         self.configSettings = accounts_omac.configFileTkinter()
         self.data = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.configSettings)
         random.randint(1,10)
-        self.nextStates = []
+        self._nextStates = []
         self.newState()
         self.newState()
         self.checkStates()
-        self.enemyLevel = startingDifficulty
-        self.createdBefore = False
-        self.playerX = 0
-        self.playerY = 0
+        self._enemyLevel = startingDifficulty
+        self._createdBefore = False
+        self._playerX = 0
+        self._playerY = 0
+        self._facingDirection = 'R'
+        
 
         if self.data == False:
             exit()
@@ -70,22 +82,22 @@ class System:
     def newState(self, modifier = 0):
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
-        self.nextStates.append(random.getstate())
+        self._nextStates.append(random.getstate())
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
 
     def checkStates(self):
         x = 0
-        while len(self.nextStates) > 2:
+        while len(self._nextStates) > 2:
             self.newState()
-        while self.nextStates[0] == self.nextStates[1]:
+        while self._nextStates[0] == self._nextStates[1]:
             x += 1
-            self.nextStates.pop(0)
+            self._nextStates.pop(0)
             self.newState(x)
 
     def loadState(self):
-        random.setstate(self.nextStates[0])
-        self.nextStates.pop(0)
+        random.setstate(self._nextStates[0])
+        self._nextStates.pop(0)
         self.checkStates()
 
     def change(self,location, chosenLevel):
@@ -93,7 +105,7 @@ class System:
         self._defaultlevels[chosenLevel][x][y]+= 1
         if self._defaultlevels[chosenLevel][x][y] > maxTypes:
             self._defaultlevels[chosenLevel][x][y] = 0
-        self.buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
+        self._buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
 
     def itemRarity(self, modifier : int = 0):
         randomNumber = random.randint(0,100)
@@ -128,7 +140,7 @@ class System:
             loot = 'NONE'
             if random.randint(1,100) <= chanceEnemyAir:
                 entityLoot = self.getLoot()
-                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             if random.randint(1,100) <= chanceLootAir:
                 loot = self.getLoot()
             self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
@@ -136,8 +148,8 @@ class System:
             self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE'} 
         elif tile == 2:
             self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': 'NONE'} 
-            self.playerX = x
-            self.playerY = y
+            self._playerX = x
+            self._playerY = y
         elif tile == 3:
             self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE'} 
         elif tile == 4:
@@ -151,14 +163,14 @@ class System:
             loot = 'NONE'
             if random.randint(1,100) <= chanceEnemySpawn:
                 entityLoot = self.getLoot()
-                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
         elif tile == 6:
             if extra != 'NONE':
                 text = extra
             else:
                 text = self._signText[random.randint(0,len(self._signText)-1)]
-            self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            self._currentLevel[x][y] = {'tile': 'sign', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 7:
             if extra != 'NONE':
                 text = extra
@@ -171,7 +183,7 @@ class System:
             entity = 'NONE'
             loot = self.getLoot()
             entityLoot = self.getLoot(10)
-            entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self.enemyLevel + self.dungeonLevel, 'item': entityLoot}
+            entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(1,4)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot}  
 
 
@@ -187,32 +199,57 @@ class System:
                 else:
                     self.readTile(level[x][y], x, y)
 
+    def rendering(self):
+        for x in range(len(self._currentLevel)):
+            for y in range(len(self._currentLevel[x])):
+                if x==self._playerX and y == self._playerY:
+                    if self._facingDirection == 'R':
+                        self._tileList[x][y].configure(image=self._playerRImage)
+                    else:
+                        self._tileList[x][y].configure(image=self._playerLImage)
+                else:
+                    if self._currentLevel[x][y]['entity'] != 'NONE':
+                        self._tileList[x][y].configure(image=self._enemyImage)
+                    elif self._currentLevel[x][y]['loot'] != 'NONE':
+                        self._tileList[x][y].configure(image=self._lootImage)
+                    elif self._currentLevel[x][y]['tile'] == 'sign':
+                        self._tileList[x][y].configure(image=self._signImage)
+                    elif self._currentLevel[x][y]['tile'] == 'npc':
+                        self._tileList[x][y].configure(image=self._npcImage)
+                    elif self._currentLevel[x][y]['tile'] == 'air':
+                        self._tileList[x][y].configure(image=self._floorImage)
+                    elif self._currentLevel[x][y]['tile'] == 'wall':
+                        self._tileList[x][y].configure(image=self._wallImage)
+                    elif self._currentLevel[x][y]['tile'] == 'exit':
+                        self._tileList[x][y].configure(image=self._exitImage)
+
     def createWindow(self):
         for x in range(len(self._currentLevel)):
             self._tileList.append([])
             for y in range(len(self._currentLevel[x])):
                 self._tileList[x].append(tkinter.Label(self.window))
-                self._tileList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
+                self._tileList[x][y].grid(column=x, row=y)
 
     def startGame(self, mode = 'Play', chosenLevel = 0):
 
         if type(chosenLevel) == list:
             self._defaultlevels[0] = list(chosenLevel)
             chosenLevel = 0
-        self.buttonsList = []
+        self._buttonsList = []
         if mode == 'Create':
             for x in range(len(self._defaultlevels[chosenLevel])):
-                self.buttonsList.append([])
+                self._buttonsList.append([])
             for x in range(len(self._defaultlevels[chosenLevel])):
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
-                    self.buttonsList[x].append(tkinter.Button(self.window, text=self._defaultlevels[chosenLevel][x][y],bg = colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.change(cords, chosenLevel)))
-                    self.buttonsList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
+                    self._buttonsList[x].append(tkinter.Button(self.window, text=self._defaultlevels[chosenLevel][x][y],bg = colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.change(cords, chosenLevel)))
+                    self._buttonsList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
             tkinter.Button(self.window, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1)
         if mode == 'Play':
             self.checkStates()
             self.createLevel(self._defaultlevels[random.randint(0,len(self._defaultlevels)-1)])
             self.createWindow()
+            self.rendering()
         self.window.mainloop()
 
     def exit(self):
