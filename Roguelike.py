@@ -4,6 +4,7 @@ import random
 import tkinter
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageEnhance
+import math
     #0 air
     #1 wall
     #2 start
@@ -212,9 +213,9 @@ class System:
             for iy in range(self._viewDistance * 2 + 1):
                 self._sightFurthest.append(f'{ix + self._playerX - self._viewDistance}-{iy + self._playerY - self._viewDistance}')
         self._sight = [] 
-        for ix in range(self._viewDistance * 2 -1):
-            for iy in range(self._viewDistance * 2 - 1):
-                self._sight.append(f'{ix + self._playerX - self._viewDistance+1}-{iy + self._playerY - self._viewDistance+1}')
+        for ix in range(self._viewDistance * 2 +1 - (math.ceil(self._viewDistance/2)*2)):
+            for iy in range(self._viewDistance * 2 + 1 - (math.ceil(self._viewDistance/2)*2)):
+                self._sight.append(f'{ix + self._playerX - self._viewDistance+math.ceil(self._viewDistance/2)}-{iy + self._playerY - self._viewDistance+math.ceil(self._viewDistance/2)}')
         for x in range(len(self._currentLevel)):
             for y in range(len(self._currentLevel[x])):
                 if f"{x}-{y}" in self._sightFurthest:
