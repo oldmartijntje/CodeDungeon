@@ -76,6 +76,7 @@ class System:
         self._playerX = 0
         self._playerY = 0
         self._facingDirection = 'R'
+        self._facing = 'R'
         
 
         if self.data == False:
