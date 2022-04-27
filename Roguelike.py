@@ -44,6 +44,7 @@ class System:
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     window = tkinter.Tk()
+    window.configure(bg='black')
     _blackImage=[ImageTk.PhotoImage(Image.open("sprites/black.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness2))]
     _exitImage=[ImageTk.PhotoImage(Image.open("sprites/exit.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness2))]
     _floorImage=[ImageTk.PhotoImage(Image.open("sprites/floor.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness2))]
@@ -196,7 +197,22 @@ class System:
 
 
     def createLevel(self, level):
-        
+        if not any(2 in sublist for sublist in level):
+            while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
+                tryLine = random.randint(0,len(level)-1)
+                if 0 in level[tryLine] or 8 in level[tryLine]:
+                    whereAir = [i for i, x in enumerate(level[tryLine]) if x == 0]
+                    whereNonAir = [i for i, x in enumerate(level[tryLine]) if x == 8]
+                    spawnable = whereAir + whereNonAir
+                    level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 2
+        if not any(3 in sublist for sublist in level) and not any(9 in sublist for sublist in level):
+            while not any(3 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
+                tryLine = random.randint(0,len(level)-1)
+                if 0 in level[tryLine]or 8 in level[tryLine]:
+                    whereAir = [i for i, x in enumerate(level[tryLine]) if x == 0]
+                    whereNonAir = [i for i, x in enumerate(level[tryLine]) if x == 8]
+                    spawnable = whereAir + whereNonAir
+                    level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 3
         self._currentLevel = []
         for x in range(len(level)):
             self._currentLevel.append([])
@@ -220,78 +236,62 @@ class System:
             for y in range(len(self._currentLevel[x])):
                 if f"{x}-{y}" in self._sightFurthest:
                     if f"{x}-{y}" in self._sight:
-                        if x==self._playerX and y == self._playerY:
-                            if self._facingDirection == 'R':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[0])
-                            else:
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[0])
-                        else:
-                            if self._currentLevel[x][y]['entity'] != 'NONE':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[0])
-                            elif self._currentLevel[x][y]['loot'] != 'NONE':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[0])
-                            elif self._currentLevel[x][y]['tile'] == 'sign':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[0])
-                            elif self._currentLevel[x][y]['tile'] == 'npc':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[0])
-                            elif self._currentLevel[x][y]['tile'] == 'air':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[0])
-                            elif self._currentLevel[x][y]['tile'] == 'wall':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[0])
-                            elif self._currentLevel[x][y]['tile'] == 'exit':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[0])
+                        num = 0
                     else:
-                        if x==self._playerX and y == self._playerY:
-                            if self._facingDirection == 'R':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[1])
-                            else:
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[1])
-                        else:
-                            if self._currentLevel[x][y]['entity'] != 'NONE':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[1])
-                            elif self._currentLevel[x][y]['loot'] != 'NONE':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[1])
-                            elif self._currentLevel[x][y]['tile'] == 'sign':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[1])
-                            elif self._currentLevel[x][y]['tile'] == 'npc':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[1])
-                            elif self._currentLevel[x][y]['tile'] == 'air':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[1])
-                            elif self._currentLevel[x][y]['tile'] == 'wall':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[1])
-                            elif self._currentLevel[x][y]['tile'] == 'exit':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[1])
-
+                        num = 1
                 else:
-                    if x==self._playerX and y == self._playerY:
-                            if self._facingDirection == 'R':
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[2])
-                            else:
-                                self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[2])
+                    num = 2
+                if x==self._playerX and y == self._playerY:
+                        if self._facingDirection == 'R':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[num])
+                        else:
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[num])
+                else:
+                    notfound = False
+                    if num == 2:
+                        if self._currentLevel[x][y]['entity'] != 'NONE':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        elif self._currentLevel[x][y]['loot'] != 'NONE':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        elif self._currentLevel[x][y]['tile'] == 'sign':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        elif self._currentLevel[x][y]['tile'] == 'npc':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        elif self._currentLevel[x][y]['tile'] == 'exit':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        else:
+                            notfound = True
                     else:
                         if self._currentLevel[x][y]['entity'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[num])
                         elif self._currentLevel[x][y]['loot'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'sign':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'npc':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
-                        elif self._currentLevel[x][y]['tile'] == 'air':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
-                        elif self._currentLevel[x][y]['tile'] == 'wall':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[2])
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'exit':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[2])
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[num])
+                        else:
+                            notfound = True
+                    if notfound:
+                        if self._currentLevel[x][y]['tile'] == 'air':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                        elif self._currentLevel[x][y]['tile'] == 'wall':
+                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[num])
+
 
 
     def createWindow(self):
-        self._canvas = tkinter.Canvas(self.window, bg="black", height=len(self._currentLevel)*32, width=len(self._currentLevel[0])*32)
+        self._canvas = tkinter.Canvas(self.window, bg="black", height=len(self._currentLevel[0])*32, width=len(self._currentLevel)*32)
         self._canvas.pack()
         
 
     def startGame(self, mode = 'Play', chosenLevel = 0):
         custom = False
+        if str(mode).lower() not in ['play', 'create']:
+            chosenLevel = mode
+            mode = 'Play'
         if type(chosenLevel) == list:
             self._defaultlevels[0] = list(chosenLevel)
             chosenLevel = 0
@@ -316,7 +316,7 @@ class System:
         if not str(chosenLevel).isdigit():
             chosenLevel = 0
         self._buttonsList = []
-        if mode == 'Create':
+        if mode.lower() == 'create':
             for x in range(len(self._defaultlevels[chosenLevel])):
                 self._buttonsList.append([])
             for x in range(len(self._defaultlevels[chosenLevel])):
@@ -325,7 +325,7 @@ class System:
                     self._buttonsList[x].append(tkinter.Button(self.window, text=self._defaultlevels[chosenLevel][x][y],bg = colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.change(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y)
             tkinter.Button(self.window, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
-        if mode == 'Play':
+        if mode.lower() == 'play':
             self.checkStates()
             if custom == False:
                 levelNumber = random.randint(0,len(self._defaultlevels)-1)
@@ -335,7 +335,7 @@ class System:
             self.createLevel(self._defaultlevels[levelNumber])
             self.createWindow()
             self.rendering()
-        self.window.mainloop()
+        
 
     def exit(self):
         self.data = accounts_omac.saveAccount(self.data, self.configSettings)
