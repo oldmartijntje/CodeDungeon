@@ -1,0 +1,44 @@
+{
+  "Rat": {
+    "ShowOutsideAs": "floor",
+    "Image": "enemy",
+    "isEnemy": true,
+    "isInteractable": false
+  },
+  "Exit": {
+    "ShowOutsideAs": "floor",
+    "Image": "exit",
+    "isEnemy": false,
+    "isInteractable": false
+  },
+  "floor": {
+    "ShowOutsideAs": "floor",
+    "Image": "floor",
+    "isEnemy": false,
+    "isInteractable": false
+  },
+  "sign": {
+    "ShowOutsideAs": "floor",
+    "Image": "sign",
+    "isEnemy": false,
+    "isInteractable": true
+  },
+  "wall": {
+    "ShowOutsideAs": "wall",
+    "Image": "wall",
+    "isEnemy": false,
+    "isInteractable": false
+  },
+  "npc": {
+    "ShowOutsideAs": "floor",
+    "Image": "npc",
+    "isEnemy": false,
+    "isInteractable": true
+  },
+  "loot": {
+    "ShowOutsideAs": "floor",
+    "Image": "loot",
+    "isEnemy": false,
+    "isInteractable": true
+  }
+}

@@ -1,3 +1,5 @@
+import json
+import os
 import string
 import accounts_omac
 import random
@@ -63,7 +65,20 @@ class System:
     _items = {'wooden sword': {'strength' : 0}, 'stone sword': {'strength' : 11}, 'iron sword': {'strength' : 13}, 'coin': {'strength' : 0}, 'instant death': {'strength':0}, 'kings sword' : {'strength':15}, 'midas sword' : {'strength':16}, 'lego brick' : {'strength':0}}
     _rarityChance= {'common': 100, 'uncommon': 55, 'rare': 30, 'epic': 15, 'legendary': 5, 'impossible': 1}
     _npcText = ['YEET']
+
     _signText = ['I am a sign']
+    if os.path.exists(f'gameData.json'):
+        with open(f'gameData.json') as json_file:
+            dataString = json.load(json_file)
+            if type(dataString) != dict:
+                data = json.loads(dataString)
+            else:
+                data= dataString
+    else:
+        data = {'Rat':{'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': True, 'isInteractable': False}, 'Exit':{'ShowOutsideAs': 'floor', 'Image': 'exit', 'isEnemy': False, 'isInteractable': False}, 'floor':{'ShowOutsideAs': 'floor', 'Image': 'floor', 'isEnemy': False, 'isInteractable': False}, 'sign':{'ShowOutsideAs': 'floor', 'Image': 'sign', 'isEnemy': False, 'isInteractable': True}, 'wall':{'ShowOutsideAs': 'wall', 'Image': 'wall', 'isEnemy': False, 'isInteractable': False}, 'npc':{'ShowOutsideAs': 'floor', 'Image': 'npc', 'isEnemy': False, 'isInteractable': True}, 'loot':{'ShowOutsideAs': 'floor', 'Image': 'loot', 'isEnemy': False, 'isInteractable': True}}
+        json_string = json.dumps(data)
+        with open(f'gameData.json', 'w') as outfile:
+            json.dump(json_string, outfile)
 
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
