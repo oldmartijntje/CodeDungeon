@@ -18,21 +18,13 @@ import math
     #8 nothing able to spawn
     #9 bossfight
 
-maxTypes = 9
-chanceEnemyAir = 5
-chanceLootAir = 3
-chanceEnemySpawn = 40
-chanceLootSpawn = 40
-pixelOffset = 18
-pixelSize = 32
-darkness1 = 0.5
-darkness2 = 0.2
+
 
 colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
 class System:
 
     _sightFurthest = []
-    _viewDistance = 2
+    
     _defaultlevels = [
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -47,6 +39,7 @@ class System:
     ]
     window = tkinter.Tk()
     window.configure(bg='black')
+    '''
     _blackImage=[ImageTk.PhotoImage(Image.open("sprites/black.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness2))]
     _exitImage=[ImageTk.PhotoImage(Image.open("sprites/exit.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness2))]
     _floorImage=[ImageTk.PhotoImage(Image.open("sprites/floor.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness2))]
@@ -57,16 +50,15 @@ class System:
     _npcImage=[ImageTk.PhotoImage(Image.open("sprites/npc.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness2))]
     _enemyImage=[ImageTk.PhotoImage(Image.open("sprites/enemy.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness2))]
     _lootImage=[ImageTk.PhotoImage(Image.open("sprites/loot.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness2))]
+    '''
     _buttonsList = []
     #melee, throwables, magic
     _enemies = []
-    _loot = {'wooden sword': {'amount' : 1}, 'stone sword': {'amount' : 1}, 'iron sword': {'amount' : 1}, 'coin': {'amount' : [1,64]}, 'instant death': {'amount':1}, 'kings sword' : {'amount':1}, 'midas sword' : {'amount':1}, 'lego brick' : {'amount':[1,64]}}
-    _itemRarety = {'common': ['wooden sword', 'coin'], 'uncommon': ['stone sword'], 'rare': ['iron sword'], 'epic': ['kings sword', 'lego brick'], 'legendary': ['midas sword'], 'impossible': ['instant death']}
-    _items = {'wooden sword': {'strength' : 0}, 'stone sword': {'strength' : 11}, 'iron sword': {'strength' : 13}, 'coin': {'strength' : 0}, 'instant death': {'strength':0}, 'kings sword' : {'strength':15}, 'midas sword' : {'strength':16}, 'lego brick' : {'strength':0}}
-    _rarityChance= {'common': 100, 'uncommon': 55, 'rare': 30, 'epic': 15, 'legendary': 5, 'impossible': 1}
-    _npcText = ['YEET']
-
-    _signText = ['I am a sign']
+    _loot = []
+    _itemRarety = {}
+    _items = []
+    _rarityChance= {}
+    _images = {}
     try:
         os.mkdir('gameData/')
     except:
@@ -84,27 +76,61 @@ class System:
                 dataDict= dataString
     else:
         dataDict = {}
+        dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
-        dataDict['tiles'] = {'Rat':{'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'Exit':{'ShowOutsideAs': 'floor', 'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor', 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor', 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall', 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor', 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}}
-        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}
+        dataDict['tiles'] = {'Rat':{'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'Exit':{'ShowOutsideAs': 'floor', 'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor', 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor', 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall', 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor', 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': False, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}}
+        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor', 'Image': 'enemy', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
-        dataDict['Gamma'] = 2
+        dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': ['YEET'], 'npcText': ['I am a sign']}
-        dataDict['appSettings'] = {'offset': 18,'size': 32, 'darkness' : 0.2, 'shadow' : 0.5, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
+        dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
         json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
+    
+    
+    try:
+        _viewDistance = dataDict['Gamma']['distance']
+        maxTypes = dataDict['appSettings']['maxTypes']
+        chanceEnemyAir = dataDict['chance']['enemyAir']
+        chanceLootAir = dataDict['chance']['lootAir']
+        chanceEnemySpawn = dataDict['chance']['enemySpawn']
+        chanceLootSpawn = dataDict['chance']['lootSpawn']
+        pixelOffset = dataDict['appSettings']['offset']
+        pixelSize = dataDict['appSettings']['size']
+        darknessFull = dataDict['Gamma']['darknessFull']
+        darknessFade = dataDict['Gamma']['darknessFade']
+    except Exception as e:
+        print(e)
+        print('something is wrong with the gameData/gameData.json, delete it or fix it.')
+
+
+    for player in dataDict['playerImages'].keys():
+        _images[f'darknessFull-{dataDict["playerImages"][player]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{dataDict['playerImages'][player]}.png").convert('RGB')).enhance(darknessFull))
+        _images[f'darknessFade-{dataDict["playerImages"][player]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{dataDict['playerImages'][player]}.png").convert('RGB')).enhance(darknessFade))
+        _images[f'normal-{dataDict["playerImages"][player]}'] = ImageTk.PhotoImage(Image.open(f"sprites/{dataDict['playerImages'][player]}.png"))
+    for rarety in dataDict['rarities'].keys():
+        _itemRarety[rarety] = []
+        _rarityChance[rarety] = dataDict['rarities'][rarety]['chance']
     for data in dataDict['tiles'].keys():
         if dataDict['tiles'][data]['isEnemy']:
             _enemies.append(data)
+        if dataDict['tiles'][data]['isLoot']:
+            _itemRarety[dataDict['tiles'][data]['loot']['rarity']].append(data)
+            _items.append(data)
+        _images[f'darknessFull-{data}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{data}.png").convert('RGB')).enhance(darknessFull))
+        _images[f'darknessFade-{data}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{data}.png").convert('RGB')).enhance(darknessFade))
+        _images[f'normal-{data}'] = ImageTk.PhotoImage(Image.open(f"sprites/{data}.png"))
+    
+    print(_rarityChance)
 
 
     def __init__(self, seed : int = 0, startingDifficulty : int = 3):
         
         self._dungeonLevel = 0
         random.seed(seed)
-        self.configSettings = accounts_omac.configFileTkinter()
-        self.dataDict = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.configSettings)
+        self.accountConfigSettings = accounts_omac.configFileTkinter()
+        self.accountDataDict = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.accountConfigSettings)
         random.randint(1,10)
         self._nextStates = []
         self.newState()
@@ -118,7 +144,7 @@ class System:
         self._facing = 'R'
         
 
-        if self.dataDict == False:
+        if self.accountDataDict == False:
             exit()
 
     def newState(self, modifier = 0):
@@ -145,7 +171,7 @@ class System:
     def change(self,location, chosenLevel):
         x, y = location
         self._defaultlevels[chosenLevel][x][y]+= 1
-        if self._defaultlevels[chosenLevel][x][y] > maxTypes:
+        if self._defaultlevels[chosenLevel][x][y] > self.maxTypes:
             self._defaultlevels[chosenLevel][x][y] = 0
         self._buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
 
@@ -173,7 +199,7 @@ class System:
             if len(self._itemRarety[itemType]) != 0:
                 break
         item = self._itemRarety[itemType][random.randint(0,len(self._itemRarety[itemType])-1)]
-        amount = self._loot[item]['amount']
+        amount = self.dataDict['tiles'][item]['loot']['amount']
         if type(amount) == list:
             amount = random.randint(amount[0], amount[1])
         loot = {'type':item, 'amount':amount}
@@ -183,16 +209,16 @@ class System:
         if tile == 0:
             entity = 'NONE'
             loot = 'NONE'
-            if random.randint(1,100) <= chanceEnemyAir:
+            if random.randint(1,100) <= self.chanceEnemyAir:
                 entityLoot = self.getLoot()
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            if random.randint(1,100) <= chanceLootAir:
+            if random.randint(1,100) <= self.chanceLootAir:
                 loot = self.getLoot()
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
         elif tile == 1:
             self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE'} 
         elif tile == 2:
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': 'NONE'} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'} 
             self._playerX = x
             self._playerY = y
         elif tile == 3:
@@ -200,16 +226,16 @@ class System:
         elif tile == 4:
             entity = 'NONE'
             loot = 'NONE'
-            if random.randint(1,100) <= chanceLootSpawn:
+            if random.randint(1,100) <= self.chanceLootSpawn:
                 loot = self.getLoot()
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot}  
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
         elif tile == 5:
             entity = 'NONE'
             loot = 'NONE'
-            if random.randint(1,100) <= chanceEnemySpawn:
+            if random.randint(1,100) <= self.chanceEnemySpawn:
                 entityLoot = self.getLoot()
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
         elif tile == 6:
             if extra != 'NONE':
                 text = extra
@@ -223,13 +249,20 @@ class System:
                 text = self._npcText[random.randint(0,len(self._npcText)-1)]
             self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': 'NONE', 'loot': 'NONE'}
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'}
         elif tile == 9:
             entity = 'NONE'
             loot = self.getLoot()
             entityLoot = self.getLoot(10)
             entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(1,4)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'air', 'entity': entity, 'loot': loot}  
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
+        if self._currentLevel[x][y]['entity']!= 'NONE':
+            display = self._currentLevel[x][y]['entity']['type']
+        elif self._currentLevel[x][y]['loot']!= 'NONE':
+            display = self._currentLevel[x][y]['loot']['type']
+        else:
+            display = self._currentLevel[x][y]['tile']
+        self._currentLevel[x][y]['display'] = display
 
 
     def createLevel(self, level):
@@ -279,42 +312,42 @@ class System:
                     num = 2
                 if x==self._playerX and y == self._playerY:
                         if self._facingDirection == 'R':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerRImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._playerRImage[num])
                         else:
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._playerLImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._playerLImage[num])
                 else:
                     notfound = False
                     if num == 2:
                         if self._currentLevel[x][y]['entity'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         elif self._currentLevel[x][y]['loot'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'sign':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'npc':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'exit':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         else:
                             notfound = True
                     else:
                         if self._currentLevel[x][y]['entity'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._enemyImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._enemyImage[num])
                         elif self._currentLevel[x][y]['loot'] != 'NONE':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._lootImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._lootImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'sign':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._signImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._signImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'npc':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._npcImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._npcImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'exit':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._exitImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._exitImage[num])
                         else:
                             notfound = True
                     if notfound:
                         if self._currentLevel[x][y]['tile'] == 'air':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._floorImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._floorImage[num])
                         elif self._currentLevel[x][y]['tile'] == 'wall':
-                            self._canvas.create_image(x*pixelSize+pixelOffset,y*pixelSize+pixelOffset, image=self._wallImage[num])
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._wallImage[num])
 
 
 
