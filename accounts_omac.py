@@ -1,7 +1,4 @@
 
-
-
-
 version = '2.8.0'
 #code made by OldMartijntje
 
@@ -20,7 +17,7 @@ class systemFunctions:
         if tkinter.messagebox.askyesno('Accounts_omac_lib', f"Your program will be terminated\nShould we proceed?", icon ='warning'):
             exit()
 
-    def updateRequest(message, tkinterOrConsole = 'Console'):
+    def updateRequest(message, tkinterOrConsole = 'Console', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], removeAutoLoginOnUpdate =True):
         '''Asks user for confirmation to update their account, the system only asks you when something new is added to the account itself and not the system'''
         import tkinter.messagebox
         if tkinterOrConsole == 'Tkinter':
@@ -30,21 +27,23 @@ class systemFunctions:
             while yesorno.lower() not in ['y', 'n']:
                 yesorno = input( f"Your account is outdated, Do you want us to update your account?\nIf you don\'t update {message} You will keep getting this message if you load newer apps (Y/N)")
             if yesorno.lower() == 'y':
+                if removeAutoLoginOnUpdate:
+                    changeConfigFile([configSettings[0], 'False', configSettings[2], configSettings[3]])
                 return True
             else: 
                 return False
 
-    def CAFU(accountData, tkinterOrConsole = 'Console'):
+    def CAFU(accountData, tkinterOrConsole = 'Console', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], removeAutoLoginOnUpdate = True):
         '''Check Account For Update, and if there is an update, it will ask you to update'''
         message = ''
         updateNeeded = False
-        if 'TempData' not in accountData:
+        if 'TempData' not in accountData: #force-add since it's always empty anyways
             accountData['TempData'] = []    
         if 'UserID' not in accountData:#2.6.0
             message += 'You won\'t be able to reconnect to online lobbies if you accidentally disconnect and'
             updateNeeded = True
         if updateNeeded:
-            if systemFunctions.updateRequest(message, tkinterOrConsole):
+            if systemFunctions.updateRequest(message, tkinterOrConsole, configSettings, removeAutoLoginOnUpdate):
                 if 'UserID' not in accountData:
                     UID = systemFunctions.userID(accountData['name'])
                     accountData['UserID'] = UID
@@ -75,7 +74,7 @@ class systemFunctions:
             return True
 
 def changeConfigFile(configGiven):
-    ['accounts/', 'False', 'testaccount', '_omac']
+    '''re-creates the systemConfig.ini based on the files given'''
     import configparser
     import os
     with open('systemConfig.ini', 'w') as configfile:
@@ -214,7 +213,7 @@ def configFileTkinter(pathLocation = False):
         autoLogin = 'False'
     return path, autoLogin, autoLoginName, fileExtention
 
-def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], tkinterOrConsole = 'Console'):
+def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'False', 'testaccount', '_omac'], tkinterOrConsole = 'Console', removeAutoLoginOnUpdate = True):
     '''load existing acount'''
     import json
     import datetime
@@ -230,7 +229,7 @@ def loadAccount(accountName = 'testaccount', configSettings = ['accounts/', 'Fal
         data['loadTime'] = datetime.datetime.now()
     if systemFunctions.checkVersion(data['versionHistory'][len(data['versionHistory']) -1]):
         data['versionHistory'].append(version)
-    data = systemFunctions.CAFU(data, tkinterOrConsole)
+    data = systemFunctions.CAFU(data, tkinterOrConsole, configSettings, removeAutoLoginOnUpdate)
     
     return data
 
@@ -310,12 +309,13 @@ def removeCharacters(name, removeCharacters = []):
     return name
 
 def askAccountNameConsole(configSettings = ['accounts/', 'False', 'testaccount', '_omac'], text = 'please give username\n>', text2 = 'Automatically login to this account? (Y/N)'):
-    '''simply asks input for an account name (console app), returns account name'''
+    '''simply asks input for an account name (console app), returns account name and if autologin is enabled'''
     autoLogin = configSettings[1]
     autoLoginName = configSettings[2]
     #for the autologin
     if autoLogin.lower() == 'true':
         username = autoLoginName
+        remember = True
     else:
         username = ''
         while username == '':  
@@ -327,7 +327,7 @@ def askAccountNameConsole(configSettings = ['accounts/', 'False', 'testaccount',
 
 def askAccountNameTkinter(configSettings = ['accounts/', 'False', 'testaccount', '_omac'], buttonText = 'click me when you chose your name',
                             labelText = 'input your name here', exampleName = 'exampleName', text2 = 'Automatically login to this account?'):
-    '''input the account name (tkinter), returns account name'''
+    '''input the account name (tkinter), returns account name and if autologin is enabled'''
     import tkinter
     from tkinter import ttk
     def click():
