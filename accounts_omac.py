@@ -316,7 +316,7 @@ def askAccountNameTkinter(configSettings = ['accounts/', 'False', 'testaccount',
         window = tkinter.Tk()
         nameVar=tkinter.StringVar()
         nameVar.set(exampleName)
-        tkinter.Label(text = labelText).pack()
+        tkinter.Label(window,text = labelText).pack()
         nameEntry = tkinter.Entry(window,textvariable = nameVar, font=('calibre',10,'normal'))
         nameEntry.pack()
         tkinter.Button(window, text = buttonText, command = lambda: click()).pack()

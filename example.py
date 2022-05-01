@@ -8,6 +8,6 @@ player.startGame()
 
 
 #launch program
-player.window.mainloop()
+player.gameWindow.mainloop()
 # exit the program
 player.exit()
