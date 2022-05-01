@@ -1,5 +1,8 @@
 
-version = '2.7.3'
+
+
+
+version = '2.8.0'
 #code made by OldMartijntje
 
 #functions u don't need, bacause it's just to make the system work
@@ -70,6 +73,27 @@ class systemFunctions:
             return False
         else:
             return True
+
+def changeConfigFile(configGiven):
+    ['accounts/', 'False', 'testaccount', '_omac']
+    import configparser
+    import os
+    with open('systemConfig.ini', 'w') as configfile:
+        config = configparser.ConfigParser(allow_no_value=True)
+        config['DEFAULT'] = {'#don\'t change the file-extention if you are not sure of what it is' : None,
+                'fileExtention' : f'{configGiven[3]}'}
+        folder = configGiven[0]
+        if os.path.isdir(folder):#check if the inputted folder exists
+            if folder[len(folder)-1] != '/' and folder[len(folder)-1] != '\\':
+                folder += '\\'
+            config['User'] = {'SaveFileFolder' : folder,'AutoLogin' : configGiven[1], 'AccountName' : configGiven[2]}
+        else:
+            config['User'] = {'SaveFileFolder' : 'accounts/','AutoLogin' : configGiven[1], 'AccountName' : configGiven[2]}
+            try:
+                os.mkdir('accounts/')
+            except:
+                pass
+        config.write(configfile)
 
 def configFileConsole(pathLocation = False):
     '''creates or reads config file (consoleApp) 
@@ -285,7 +309,7 @@ def removeCharacters(name, removeCharacters = []):
             name = name.replace(str(character), '')
     return name
 
-def askAccountNameConsole(configSettings = ['accounts/', 'False', 'testaccount', '_omac'], text = 'please give username\n>'):
+def askAccountNameConsole(configSettings = ['accounts/', 'False', 'testaccount', '_omac'], text = 'please give username\n>', text2 = 'Automatically login to this account? (Y/N)'):
     '''simply asks input for an account name (console app), returns account name'''
     autoLogin = configSettings[1]
     autoLoginName = configSettings[2]
@@ -297,13 +321,15 @@ def askAccountNameConsole(configSettings = ['accounts/', 'False', 'testaccount',
         while username == '':  
             username = input(text)
             username = removeCharacters(username)
+        remember = input(text2).lower()
     
-    return username
+    return username, remember
 
 def askAccountNameTkinter(configSettings = ['accounts/', 'False', 'testaccount', '_omac'], buttonText = 'click me when you chose your name',
-                            labelText = 'input your name here', exampleName = 'exampleName'):
+                            labelText = 'input your name here', exampleName = 'exampleName', text2 = 'Automatically login to this account?'):
     '''input the account name (tkinter), returns account name'''
     import tkinter
+    from tkinter import ttk
     def click():
         username = removeCharacters(nameVar.get())
         if username != '':
@@ -312,20 +338,26 @@ def askAccountNameTkinter(configSettings = ['accounts/', 'False', 'testaccount',
     autoLoginName = configSettings[2]
     if autoLogin.lower() == 'true':
         username = autoLoginName
+        return username, True
     else:
         window = tkinter.Tk()
         nameVar=tkinter.StringVar()
         nameVar.set(exampleName)
-        tkinter.Label(window,text = labelText).pack()
+        tkinter.Label(window,text = labelText).grid(column=0, row=0, ipadx=20, ipady=10, sticky="EW",columnspan=2)
         nameEntry = tkinter.Entry(window,textvariable = nameVar, font=('calibre',10,'normal'))
-        nameEntry.pack()
-        tkinter.Button(window, text = buttonText, command = lambda: click()).pack()
+        nameEntry.grid(column=0, row=1, ipadx=20, ipady=10, sticky="EW",columnspan=2)
+        tkinter.Button(window, text = buttonText, command = lambda: click()).grid(column=0, row=4, ipadx=20, ipady=10, sticky="EW",columnspan=2)
+        autoLoginVar=tkinter.BooleanVar()
+        autoLoginVar.set(False)
+        tkinter.Label(window,text = text2).grid(column=0, row=2, ipadx=20, ipady=10, sticky="EW",columnspan=2)
+        ttk.Radiobutton(window, text='Yes', value=True, variable=autoLoginVar).grid(column=0, row=3, ipadx=20, ipady=10, sticky="EW")
+        ttk.Radiobutton(window, text='No', value=False, variable=autoLoginVar).grid(column=1, row=3, ipadx=20, ipady=10, sticky="EW")
         window.protocol("WM_DELETE_WINDOW", systemFunctions.on_closing)
         window.mainloop()
         username = removeCharacters(nameVar.get())
-    return username
+        return username, autoLoginVar.get()
 
-def questionConsole(question = 'account doesn\'t exist, should i create it?'):
+def questionConsole(question = 'account doesn\'t exist, should i create it? \nIf it does exist, change the path in the systemConfig.ini'):
     '''simply asks user (console app) a question, returns True or False'''
     answer = 0
     print(f'{question} (Y/N)')
@@ -336,7 +368,7 @@ def questionConsole(question = 'account doesn\'t exist, should i create it?'):
     else:
         return False
 
-def questionTkinter(question = 'account doesn\'t exist, should i create it?', title = 'POPUP'):
+def questionTkinter(question = 'account doesn\'t exist, should i create it? \nIf it does exist, change the path in the systemConfig.ini', title = 'POPUP'):
     '''simply asks user (Tkinter) a question, returns True or False'''
     import tkinter
     import tkinter.messagebox
@@ -358,7 +390,12 @@ def createAppData(data, appID):
 class defaultConfigurations:
     def defaultLoadingConsole(configSettings = ['accounts/', 'False', 'testaccount', '_omac']):
         '''The default loading system without your configuration, in the console app'''
-        account = askAccountNameConsole(configSettings)
+        account, autologin = askAccountNameConsole(configSettings)
+        if autologin != bool(configSettings[1]):
+            configSettings = list(configSettings)
+            configSettings[1] = str(autologin)
+            configSettings[2] = account
+            changeConfigFile(configSettings)
         if checkForAccount(account, configSettings):
             return loadAccount(account, configSettings, 'Console')
         else:
@@ -367,9 +404,14 @@ class defaultConfigurations:
             else:
                 return False
 
-    def defaultLoadingTkinter(configSettings = ['accounts/', 'False', 'testaccount', '_omac']):
+    def defaultLoadingTkinter(configSettings : list= ['accounts/', 'False', 'testaccount', '_omac']):
         '''The default loading system without your configuration, using tkinter'''
-        account = askAccountNameTkinter(configSettings)
+        account, autologin = askAccountNameTkinter(configSettings)
+        if str(autologin) != configSettings[1]:
+            configSettings = list(configSettings)
+            configSettings[1] = str(autologin)
+            configSettings[2] = account
+            changeConfigFile(configSettings)
         if checkForAccount(account, configSettings):
             return loadAccount(account, configSettings, 'Tkinter')
         else:

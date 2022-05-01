@@ -62,10 +62,6 @@ class System:
         os.mkdir('gameData/')
     except:
         pass
-    try:
-        os.remove(f'gameData/gameData.json')
-    except:
-        pass
     if os.path.exists(f'gameData/gameData.json'):
         with open(f'gameData/gameData.json') as json_file:
             dataString = json.load(json_file)
