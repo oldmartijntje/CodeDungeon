@@ -318,7 +318,8 @@ class System:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
                     else:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
-               
+        self.gameWindow.update_idletasks()      
+        self.gameWindow.update()
 
 
     def createWindow(self):
@@ -405,7 +406,7 @@ class System:
                 cords = [self._playerX +1, self._playerY]
         if self.isWalkable(cords):
             self._playerX, self._playerY = cords
-
+            time.sleep(1)
             self.rendering()
             # self.gameWindow.after(100,lambda: self.rendering())
             
