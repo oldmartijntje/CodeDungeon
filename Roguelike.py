@@ -1,6 +1,7 @@
 import json
 import os
 import string
+import time
 import accounts_omac
 import random
 import tkinter
@@ -73,8 +74,8 @@ class System:
         dataDict = {}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'exit':{'ShowOutsideAs': 'floor', 'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor', 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor', 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall', 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor', 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor', 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}}
-        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor', 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}}
+        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': ['YEET'], 'npcText': ['I am a sign']}
@@ -289,6 +290,7 @@ class System:
                     self.readTile(level[x][y][0], x, y, level[x][y][1])
                 else:
                     self.readTile(level[x][y], x, y)
+        self.levelSize = [len(self._currentLevel), len(self._currentLevel[0])]
 
     def rendering(self):
         self._sightFurthest = [] 
@@ -379,4 +381,46 @@ class System:
         self.dataDict = accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         exit()
 
+    def interact(self):
+        pass
+
+    def isWalkable(self, cordinates = [0,0]):
+        x,y = cordinates
+        if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
+            return False
+        return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
+
+    def enemyTurn():
+        pass
+
+    def move(self, direction = 'Up'):
+        match direction:
+            case 'Up':
+                cords = [self._playerX, self._playerY-1]
+            case 'Down':
+                cords = [self._playerX, self._playerY+1]
+            case 'Left':
+                cords = [self._playerX -1, self._playerY]
+            case 'Right':
+                cords = [self._playerX +1, self._playerY]
+        if self.isWalkable(cords):
+            self._playerX, self._playerY = cords
+
+            self.rendering()
+            # self.gameWindow.after(100,lambda: self.rendering())
+            
+
+        
+
+    def wait(self):
+        pass
+
+    def switchInventory(self, slot1, slot2):
+        pass
+
+    def inInventory(self):
+        pass
+
+    def useItem(self,slot):
+        pass
 
