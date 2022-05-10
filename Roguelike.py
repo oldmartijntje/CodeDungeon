@@ -21,11 +21,12 @@ import math
 
 
 
-colors =['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']
+
 class System:
 
     _sightFurthest = []
-    
+
+    #some default levels
     _defaultlevels = [
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
@@ -39,18 +40,7 @@ class System:
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     
-    '''
-    _blackImage=[ImageTk.PhotoImage(Image.open("sprites/black.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/black.png").convert('RGB')).enhance(darkness2))]
-    _exitImage=[ImageTk.PhotoImage(Image.open("sprites/exit.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/exit.png").convert('RGB')).enhance(darkness2))]
-    _floorImage=[ImageTk.PhotoImage(Image.open("sprites/floor.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/floor.png").convert('RGB')).enhance(darkness2))]
-    _signImage=[ImageTk.PhotoImage(Image.open("sprites/sign.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/sign.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/sign.png").convert('RGB')).enhance(darkness2))]
-    _wallImage=[ImageTk.PhotoImage(Image.open("sprites/wall.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/wall.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/wall.png").convert('RGB')).enhance(darkness2))]
-    _playerLImage=[ImageTk.PhotoImage(Image.open("sprites/player left.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player left.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player left.png").convert('RGB')).enhance(darkness2))]
-    _playerRImage=[ImageTk.PhotoImage(Image.open("sprites/player right.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player right.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/player right.png").convert('RGB')).enhance(darkness2))]
-    _npcImage=[ImageTk.PhotoImage(Image.open("sprites/npc.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/npc.png").convert('RGB')).enhance(darkness2))]
-    _enemyImage=[ImageTk.PhotoImage(Image.open("sprites/enemy.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/enemy.png").convert('RGB')).enhance(darkness2))]
-    _lootImage=[ImageTk.PhotoImage(Image.open("sprites/loot.png")),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness1)),ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open("sprites/loot.png").convert('RGB')).enhance(darkness2))]
-    '''
+    
     _buttonsList = []
     #melee, throwables, magic
     _enemies = []
@@ -59,6 +49,8 @@ class System:
     _items = []
     _rarityChance= {}
     _images = {}
+
+    #load Json
     try:
         os.mkdir('gameData/')
     except:
@@ -84,9 +76,9 @@ class System:
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
     
-    
+    #change json into usable data part1
     try:
-        
+        colors =dataDict['appSettings']['colors']
         _viewDistance = dataDict['Gamma']['distance']
         maxTypes = dataDict['appSettings']['maxTypes']
         chanceEnemyAir = dataDict['chance']['enemyAir']
@@ -126,12 +118,16 @@ class System:
         self.gameWindow = tkinter.Tk()
         self.gameWindow.configure(bg='black')
 
+
         self.rarityList = []
         for rar in self.dataDict['rarities'].keys():
             self.rarityList.append(rar)
 
+        #if no account has been logged into
         if self.accountDataDict == False:
             exit()
+
+        #change json into usable data part2
         for player in self.dataDict['playerImages'].keys():
             self._images[f'darknessFull-{self.dataDict["playerImages"][player]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['playerImages'][player]}.png").convert('RGB')).enhance(self.darknessFull))
             self._images[f'darknessFade-{self.dataDict["playerImages"][player]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['playerImages'][player]}.png").convert('RGB')).enhance(self.darknessFade))
@@ -149,6 +145,7 @@ class System:
             self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()).convert('RGB')).enhance(self.darknessFade))
             self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()))
 
+    #generate a new state
     def newState(self, modifier = 0):
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
@@ -156,6 +153,7 @@ class System:
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
 
+    #check if states are valid
     def checkStates(self):
         x = 0
         while len(self._nextStates) > 2:
@@ -165,18 +163,21 @@ class System:
             self._nextStates.pop(0)
             self.newState(x)
 
+    #load a state for the dungeon generation
     def loadState(self):
         random.setstate(self._nextStates[0])
         self._nextStates.pop(0)
         self.checkStates()
 
-    def change(self,location, chosenLevel):
+    #change tile type in the creator app
+    def changeEditorButton(self,location, chosenLevel):
         x, y = location
         self._defaultlevels[chosenLevel][x][y]+= 1
         if self._defaultlevels[chosenLevel][x][y] > self.maxTypes:
             self._defaultlevels[chosenLevel][x][y] = 0
-        self._buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = colors[self._defaultlevels[chosenLevel][x][y]])
+        self._buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = self.colors[self._defaultlevels[chosenLevel][x][y]])
 
+    #get a random rarity
     def itemRarity(self, modifier : int = 0):
         randomNumber = random.randint(0,100)
         randomNumber -= modifier
@@ -186,7 +187,7 @@ class System:
             chanceList.append(self._rarityChance[rarety] + modifier)
         return random.choices(self.rarityList, weights = chanceList, k = 1)[0]
 
-
+    #generate loot
     def getLoot(self, modifier: int = 0):
         while True:
             itemType = self.itemRarity(modifier)
@@ -199,6 +200,7 @@ class System:
         loot = {'type':item, 'amount':amount}
         return loot
 
+    #read tile of 2D erray and convert into map
     def readTile(self, tile, x, y, extra = 'NONE'):
         if tile == 0:
             entity = 'NONE'
@@ -258,7 +260,7 @@ class System:
             display = self._currentLevel[x][y]['tile']
         self._currentLevel[x][y]['display'] = display
 
-
+    #create a level off a 2D erray
     def createLevel(self, level):
         if not any(2 in sublist for sublist in level):
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
@@ -287,6 +289,7 @@ class System:
                     self.readTile(level[x][y], x, y)
         self.levelSize = [len(self._currentLevel), len(self._currentLevel[0])]
 
+    #render how the dungeon looks like
     def rendering(self):
         self._sightFurthest = [] 
         for ix in range(self._viewDistance * 2 + 1):
@@ -316,12 +319,12 @@ class System:
         self.gameWindow.update_idletasks()      
         self.gameWindow.update()
 
-
+    #create the window
     def createWindow(self):
         self._canvas = tkinter.Canvas(self.gameWindow, bg="black", height=len(self._currentLevel[0])*32, width=len(self._currentLevel)*32)
         self._canvas.pack()
         
-
+    #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
         
         custom = False
@@ -358,7 +361,7 @@ class System:
             for x in range(len(self._defaultlevels[chosenLevel])):
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
-                    self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.change(cords, chosenLevel)))
+                    self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y)
             tkinter.Button(self.gameWindow, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
         if mode.lower() == 'play':
@@ -377,18 +380,59 @@ class System:
         self.dataDict = accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         exit()
 
+    #interact with something
     def interact(self):
         pass
 
+    #check if tile is being able to be walked
     def isWalkable(self, cordinates = [0,0]):
         x,y = cordinates
         if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
             return False
+        if x == self._playerX and y == self._playerY:
+            return False
         return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
 
-    def enemyTurn():
-        pass
+    #calculate distance between 2 cordinates
+    def distence(self, cord1, cord2):
+        x1,y1 =cord1
+        x2,y2 =cord2
+        xDis = abs(x1-x2)
+        yDis = abs(y1-y2)
+        distance = math.sqrt((xDis **2) + (yDis **2))
+        return distance
 
+    #check if enemy's want to move
+    def enemyTurn(self):
+        self.EnemyMoveRadius = [] 
+        for ix in range(self._viewDistance+1 * 2 + 1):
+            for iy in range(self._viewDistance+1 * 2 + 1):
+                self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
+        for tile in self.EnemyMoveRadius:
+            if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                moves = ['Up', 'Down', 'Left', 'Right']
+                bestMoves = {}
+                nums = []
+                for move in moves:
+                    match move:
+                        case 'Up':
+                            cords = [tile[0], tile[1]-1]
+                        case 'Down':
+                            cords = [tile[0], tile[1]+1]
+                        case 'Left':
+                            cords = [tile[0]-1, tile[1]]
+                        case 'Right':
+                            cords = [tile[0]+1, tile[1]]
+                    if not self.isWalkable(cords):
+                        moves.remove(move)
+                    else:
+                        bestMoves[self.distence(cords, [self._playerX, self._playerY])] = move
+                        nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                bestMoves[self.distence([tile[0], tile[1]], [self._playerX, self._playerY])] = 'NONE'
+                nums.append(self.distence([tile[0], tile[1]], [self._playerX, self._playerY]))
+
+        
+    #checks if move is possible, and then moves
     def move(self, direction = 'Up', wait = True):
         cords = [False]
         match direction:
