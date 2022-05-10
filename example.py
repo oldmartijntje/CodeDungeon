@@ -1,17 +1,17 @@
 import Roguelike
 import random
-player = Roguelike.System(random.randint(1,1000),3)
+player = Roguelike.System(442,3)
 player.startGame()
 # Jouw python instructies zet je vanaf hier:
 
-player.distence([1,1], [1,100])
-player.move()
-player.move('Down')    
-player.move('Left')    
-player.move('Right')    
+print(player.distence([1,1], [1,2]))
+while True: player.movePlayer(input(), False)
+player.movePlayer('Down')    
+player.movePlayer('Left')    
+player.movePlayer('Right')    
 
 
 #launch program
-#player.gameWindow.mainloop()
+player.gameWindow.mainloop()
 # exit the program
 player.exit()

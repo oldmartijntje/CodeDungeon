@@ -102,6 +102,7 @@ class System:
         
         self._dungeonLevel = 0
         random.seed(seed)
+        print(seed,'seed')
         self.accountConfigSettings = accounts_omac.configFileTkinter()
         self.accountDataDict = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.accountConfigSettings)
         random.randint(1,10)
@@ -405,35 +406,64 @@ class System:
     #check if enemy's want to move
     def enemyTurn(self):
         self.EnemyMoveRadius = [] 
-        for ix in range(self._viewDistance+1 * 2 + 1):
-            for iy in range(self._viewDistance+1 * 2 + 1):
+        for ix in range((self._viewDistance+1) * 2 + 1):
+            for iy in range((self._viewDistance+1) * 2 + 1):
                 self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
         for tile in self.EnemyMoveRadius:
-            if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
-                moves = ['Up', 'Down', 'Left', 'Right']
-                bestMoves = {}
-                nums = []
-                for move in moves:
-                    match move:
-                        case 'Up':
-                            cords = [tile[0], tile[1]-1]
-                        case 'Down':
-                            cords = [tile[0], tile[1]+1]
-                        case 'Left':
-                            cords = [tile[0]-1, tile[1]]
-                        case 'Right':
-                            cords = [tile[0]+1, tile[1]]
-                    if not self.isWalkable(cords):
-                        moves.remove(move)
-                    else:
-                        bestMoves[self.distence(cords, [self._playerX, self._playerY])] = move
-                        nums.append(self.distence(cords, [self._playerX, self._playerY]))
-                bestMoves[self.distence([tile[0], tile[1]], [self._playerX, self._playerY])] = 'NONE'
-                nums.append(self.distence([tile[0], tile[1]], [self._playerX, self._playerY]))
+            
+            if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
+                pass
+            else:
+                print(tile)
+                if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                    print(self._currentLevel[tile[0]][tile[1]]['entity'],tile[0],tile[1])
+                    moves = ['Up', 'Down', 'Left', 'Right']
+                    bestMoves = {}
+                    nums = []
+                    for move in moves:
+                        match move:
+                            case 'Up':
+                                cords = [tile[0], tile[1]-1]
+                            case 'Down':
+                                cords = [tile[0], tile[1]+1]
+                            case 'Left':
+                                cords = [tile[0]-1, tile[1]]
+                            case 'Right':
+                                cords = [tile[0]+1, tile[1]]
+                        if not self.isWalkable(cords) or self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
+                            moves.remove(move)
+                        else:
+                            if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
+                                bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                            else:
+                                bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
+                                nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                    #start picking a move
+                    if len(bestMoves) != 0:
+                        nums.sort()
+                        if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
+                            if len(bestMoves[nums[0]]) > 1:
+                                self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
+                            else:
+                                self.moveEnemy(bestMoves[nums[0]][0])
+                        print(bestMoves)
+                    print(self.distence([tile[0], tile[1]], [self._playerX, self._playerY]))
 
+
+    def moveEnemy(self, moveData):
+        move, NewXY, XY = moveData
+        newX,newY = NewXY
+        x,y = XY
+        types = ['display', 'entity']
+        for each in types:
+            switch = []
+            switch.append(self._currentLevel[x][y][each])
+            switch.append(self._currentLevel[newX][newY][each])
+            self._currentLevel[x][y][each] = switch[1]
+            self._currentLevel[newX][newY][each] = switch[0]
         
     #checks if move is possible, and then moves
-    def move(self, direction = 'Up', wait = True):
+    def movePlayer(self, direction = 'Up', wait = True):
         cords = [False]
         match direction:
             case 'Up':
@@ -455,6 +485,7 @@ class System:
                 self._playerX, self._playerY = cords
                 if wait:
                     time.sleep(1)
+                self.enemyTurn()
             self.rendering()
 
             
