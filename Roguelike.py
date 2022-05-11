@@ -8,16 +8,7 @@ import tkinter
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageEnhance
 import math
-    #0 air
-    #1 wall
-    #2 start
-    #3 next level
-    #4 high chance of loot
-    #5 high chance of enemy
-    #6 sign
-    #7 npc
-    #8 nothing able to spawn
-    #9 bossfight
+    
 
 
 
@@ -203,6 +194,17 @@ class System:
 
     #read tile of 2D erray and convert into map
     def readTile(self, tile, x, y, extra = 'NONE'):
+        #all numbers are different type of tile:
+        #0 air
+        #1 wall
+        #2 start
+        #3 next level
+        #4 high chance of loot
+        #5 high chance of enemy
+        #6 sign
+        #7 npc
+        #8 nothing able to spawn
+        #9 bossfight
         if tile == 0:
             entity = 'NONE'
             loot = 'NONE'
@@ -254,15 +256,19 @@ class System:
             entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(1,4)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
         if self._currentLevel[x][y]['entity']!= 'NONE':
+            #if there is an enemy, it should display enemy instead
             display = self._currentLevel[x][y]['entity']['type']
         elif self._currentLevel[x][y]['loot']!= 'NONE':
+            #if there is loot, it should display loot instead
             display = self._currentLevel[x][y]['loot']['type']
         else:
+            #else display the tile
             display = self._currentLevel[x][y]['tile']
         self._currentLevel[x][y]['display'] = display
 
     #create a level off a 2D erray
     def createLevel(self, level):
+        #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
@@ -271,6 +277,7 @@ class System:
                     whereNonAir = [i for i, x in enumerate(level[tryLine]) if x == 8]
                     spawnable = whereAir + whereNonAir
                     level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 2
+        #if there isn't an exit declared, and not a bossfight, generate random exit
         if not any(3 in sublist for sublist in level) and not any(9 in sublist for sublist in level):
             while not any(3 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
@@ -279,30 +286,42 @@ class System:
                     whereNonAir = [i for i, x in enumerate(level[tryLine]) if x == 8]
                     spawnable = whereAir + whereNonAir
                     level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 3
+        #make 2D erray
         self._currentLevel = []
         for x in range(len(level)):
             self._currentLevel.append([])
             for y in range(len(level[x])):
                 self._currentLevel[x].append({})
                 if type(level[x][y]) == list:
+                    #read the tile(with extra argument, for given text to signs and npc)
                     self.readTile(level[x][y][0], x, y, level[x][y][1])
                 else:
+                    #read the tile(with extra argument
                     self.readTile(level[x][y], x, y)
         self.levelSize = [len(self._currentLevel), len(self._currentLevel[0])]
 
     #render how the dungeon looks like
     def rendering(self):
+        #make the furthest visability square (the transition)
         self._sightFurthest = [] 
         for ix in range(self._viewDistance * 2 + 1):
             for iy in range(self._viewDistance * 2 + 1):
+                #add it to a list, so it remembers to shade it later
+                #the math to calculate how far sight is
                 self._sightFurthest.append(f'{ix + self._playerX - self._viewDistance}-{iy + self._playerY - self._viewDistance}')
+        #make the normal visability square
         self._sight = [] 
         for ix in range(self._viewDistance * 2 +1 - (math.ceil(self._viewDistance/2)*2)):
             for iy in range(self._viewDistance * 2 + 1 - (math.ceil(self._viewDistance/2)*2)):
+                #add it to a list, so it remembers to keep original texture
+                #the math to calculate how far sight is
                 self._sight.append(f'{ix + self._playerX - self._viewDistance+math.ceil(self._viewDistance/2)}-{iy + self._playerY - self._viewDistance+math.ceil(self._viewDistance/2)}')
+        
+        #for all tiles, display them
         for x in range(len(self._currentLevel)):
             for y in range(len(self._currentLevel[x])):
                 if f"{x}-{y}" in self._sightFurthest:
+                    #lookup what type of shading it needs
                     if f"{x}-{y}" in self._sight:
                         picType = 'normal-'.lower()
                     else:
@@ -310,6 +329,7 @@ class System:
                 else:
                     picType = 'darknessFull-'.lower()
                 
+                #display the tile
                 if x==self._playerX and y == self._playerY:
                     self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['playerImages'][self._facingDirectionTexture.upper()]}"])
                 else:
@@ -317,6 +337,7 @@ class System:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
                     else:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
+        #updae the window, so that it shows the new generated canvas
         self.gameWindow.update_idletasks()      
         self.gameWindow.update()
 
@@ -329,17 +350,22 @@ class System:
     def startGame(self, mode = 'Play', chosenLevel = 0):
         
         custom = False
+        #look what mode
         if str(mode).lower() not in ['play', 'create']:
             chosenLevel = mode
             mode = 'Play'
+        #look for given level
         if type(chosenLevel) == list:
             self._defaultlevels[0] = list(chosenLevel)
             chosenLevel = 0
             custom = True
+        #look for 10x10 format to generate that size level
         if type(chosenLevel) == str:
             if 'x' in str(chosenLevel):
+                #split it at the x, so it can read the margins
                 if chosenLevel.split('x')[0].isdigit() and chosenLevel.split('x')[1].isdigit():
                     level = []
+                    #generate the 2D erray of the level
                     for x in range(int(chosenLevel.split('x')[0])):
                         level.append([])
                         for y in range(int(chosenLevel.split('x')[1])):
@@ -350,22 +376,30 @@ class System:
                                     level[x].append(0)
                             else:
                                 level[x].append(0)
+                    #make level 0 the given level
                     self._defaultlevels[0] = level
+                    #force it to play level 0
                     chosenLevel = 0
                     custom = True
+        #if not given a number, it will force to play 0
         if not str(chosenLevel).isdigit():
             chosenLevel = 0
-        self._buttonsList = []
         if mode.lower() == 'create':
+            #if using level editor  
+            self._buttonsList = []
+            #make 2D erray
             for x in range(len(self._defaultlevels[chosenLevel])):
                 self._buttonsList.append([])
+            #create a lot of buttons
             for x in range(len(self._defaultlevels[chosenLevel])):
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
                     self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y)
             tkinter.Button(self.gameWindow, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
+        #if play mode
         if mode.lower() == 'play':
+            #generate starting level
             self.checkStates()
             if custom == False:
                 levelNumber = random.randint(0,len(self._defaultlevels)-1)
@@ -396,6 +430,7 @@ class System:
 
     #calculate distance between 2 cordinates
     def distence(self, cord1, cord2):
+        #a^2 + b^2 == c^2
         x1,y1 =cord1
         x2,y2 =cord2
         xDis = abs(x1-x2)

@@ -11,3 +11,6 @@ The number in there, which is a 0 here, is what controls how the dungeon looks l
 If you get bored of this one, or it's too difficult, just change it to another WHOLE NUMBER, so no 3.14.
 
 ## functions
+Usable commands:
+### player.movePlayer('Down')
+Instead of Down, you can also put Up, Left and Right.
