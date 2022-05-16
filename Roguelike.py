@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import string
@@ -40,6 +41,14 @@ class System:
     _items = []
     _rarityChance= {}
     _images = {}
+
+    #logging
+    now = datetime.datetime.now()
+    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+
+
+    log = open(f'log{dt_string}.txt', "w")
+    log.close()    
 
     #load Json
     try:
@@ -449,8 +458,10 @@ class System:
             if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
                 pass
             else:
+                self.logging(tile)
                 print(tile)
                 if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                    self.logging(f'{self._currentLevel[tile[0]][tile[1]]["entity"],tile[0],tile[1]}\n')
                     print(self._currentLevel[tile[0]][tile[1]]['entity'],tile[0],tile[1])
                     moves = ['Up', 'Down', 'Left', 'Right']
                     bestMoves = {}
@@ -473,6 +484,7 @@ class System:
                             else:
                                 bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
                                 nums.append(self.distence(cords, [self._playerX, self._playerY]))
+
                     #start picking a move
                     if len(bestMoves) != 0:
                         nums.sort()
@@ -481,7 +493,10 @@ class System:
                                 self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
                             else:
                                 self.moveEnemy(bestMoves[nums[0]][0])
+
+                        self.logging(bestMoves)
                         print(bestMoves)
+                    self.logging(f'{self.distence([tile[0], tile[1]], [self._playerX, self._playerY])}\n')
                     print(self.distence([tile[0], tile[1]], [self._playerX, self._playerY]))
 
 
@@ -489,17 +504,24 @@ class System:
         move, NewXY, XY = moveData
         newX,newY = NewXY
         x,y = XY
+
         types = ['display', 'entity']
         for each in types:
+            self.logging(f'before {self._currentLevel[x][y][each]}:{x}.{y}\nbefore {self._currentLevel[newX][newY][each]}:{newX}.{newY}\n')
+        
             switch = []
             switch.append(self._currentLevel[x][y][each])
             switch.append(self._currentLevel[newX][newY][each])
             self._currentLevel[x][y][each] = switch[1]
             self._currentLevel[newX][newY][each] = switch[0]
+
+            self.logging(f'after {self._currentLevel[x][y][each]}:{x}.{y}\nafter {self._currentLevel[newX][newY][each]}:{newX}.{newY}\n')
+
         
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up', wait = True):
         cords = [False]
+        self.logging(direction)
         match direction:
             case 'Up':
                 cords = [self._playerX, self._playerY-1]
@@ -523,7 +545,10 @@ class System:
                 self.enemyTurn()
             self.rendering()
 
-            
+    def logging(self, item):
+        self.log = open(f'log{self.dt_string}.txt', "a+")
+        self.log.write(f'{item}\n')
+        self.log.close()       
 
         
 
