@@ -1,5 +1,6 @@
 import datetime
 import json
+from logging import exception
 import os
 import string
 import time
@@ -42,9 +43,7 @@ class System:
     _rarityChance= {}
     _images = {}
 
-    #logging
-    now = datetime.datetime.now()
-    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+    
 
       
 
@@ -64,8 +63,8 @@ class System:
         dataDict = {}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': False, 'loot': {'amount' : 1,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
-        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
+        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': ['YEET'], 'npcText': ['I am a sign']}
@@ -95,6 +94,8 @@ class System:
 
     if doLogging:
         #logging
+        now = datetime.datetime.now()
+        dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
         try:
             os.mkdir('logs/')
         except:
@@ -125,7 +126,7 @@ class System:
         self._facing = 'R'
         self.gameWindow = tkinter.Tk()
         self.gameWindow.configure(bg='black')
-
+        self.inventory = {}
 
         self.rarityList = []
         for rar in self.dataDict['rarities'].keys():
@@ -190,7 +191,6 @@ class System:
         randomNumber = random.randint(0,100)
         randomNumber -= modifier
         chanceList = []
-
         for rarety in self.rarityList:
             chanceList.append(self._rarityChance[rarety] + modifier)
         return random.choices(self.rarityList, weights = chanceList, k = 1)[0]
@@ -210,7 +210,6 @@ class System:
 
     #read tile of 2D erray and convert into map
     def readTile(self, tile, x, y, extra = 'NONE'):
-        self.logging(f'readTile ',tile, x, y, extra)
         #all numbers are different type of tile:
         #0 air
         #1 wall
@@ -285,7 +284,6 @@ class System:
 
     #create a level off a 2D erray
     def createLevel(self, level):
-        self.logging(f'createLevel, {level}')
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
@@ -320,7 +318,7 @@ class System:
 
     #render how the dungeon looks like
     def rendering(self):
-        self.logging('rendering')
+        self._canvas.delete("all")
         #make the furthest visability square (the transition)
         self._sightFurthest = [] 
         for ix in range(self._viewDistance * 2 + 1):
@@ -434,6 +432,101 @@ class System:
         self.dataDict = accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         exit()
 
+    #check if tile is being able to be walked
+    def isWalkable(self, cordinates = [0,0], human = False):
+        x,y = cordinates
+        if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
+            return False
+        if x == self._playerX and y == self._playerY:
+            return False
+        if not human:
+            if self._currentLevel[x][y]['display'] == 'exit':
+                return False
+        return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
+
+    #calculate distance between 2 cordinates
+    def distence(self, cord1, cord2):
+        #a^2 + b^2 == c^2
+        x1,y1 =cord1
+        x2,y2 =cord2
+        xDis = abs(x1-x2)
+        yDis = abs(y1-y2)
+        distance = math.sqrt((xDis **2) + (yDis **2))
+        return distance
+
+    #check if enemy's want to move
+    def enemyTurn(self):
+        self.EnemyMoveRadius = [] 
+        for ix in range((self._viewDistance+1) * 2 + 1):
+            for iy in range((self._viewDistance+1) * 2 + 1):
+                self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
+        for tile in self.EnemyMoveRadius:
+            
+            if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
+                pass
+            elif tile in self.ignore:
+                pass
+            else:
+                if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                    moves = ['Up', 'Down', 'Left', 'Right']
+                    bestMoves = {}
+                    nums = []
+                    for move in moves:
+                        match move:
+                            case 'Up':
+                                cords = [tile[0], tile[1]-1]
+                            case 'Down':
+                                cords = [tile[0], tile[1]+1]
+                            case 'Left':
+                                cords = [tile[0]-1, tile[1]]
+                            case 'Right':
+                                cords = [tile[0]+1, tile[1]]
+                        if not self.isWalkable(cords):
+                            pass
+                        else:
+                            if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
+                                if bool(random.getrandbits(1)):
+                                    moveTheEnemy = True
+                                else:
+                                    self.ignore.append([tile[0],tile[1]])
+                                    moveTheEnemy = False
+                            else:
+                                moveTheEnemy = True
+                            if moveTheEnemy:
+                                if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
+                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                                else:
+                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
+                                    nums.append(self.distence(cords, [self._playerX, self._playerY]))
+
+                    #start picking a move
+                    if len(bestMoves) != 0:
+                        nums.sort()
+                        if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
+                            if len(bestMoves[nums[0]]) > 1:
+                                self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
+                            else:
+                                self.moveEnemy(bestMoves[nums[0]][0])
+
+
+
+
+    def moveEnemy(self, moveData):
+        move, NewXY, XY = moveData
+        newX,newY = NewXY
+        x,y = XY
+
+        types = ['display', 'entity']
+        for each in types:
+        
+            switch = []
+            switch.append(self._currentLevel[x][y][each])
+            switch.append(self._currentLevel[newX][newY][each])
+            self._currentLevel[x][y][each] = switch[1]
+            self._currentLevel[newX][newY][each] = switch[0]
+            self.ignore.append([newX,newY])
+
+
     #interact with something
     def interact(self):
         match self._facing:
@@ -446,127 +539,20 @@ class System:
             case 'R':
                 cords = [self._playerX +1, self._playerY]
         
+        if self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+            #if there is loot
+            #{'type': 'Stone sword', 'amount': 1}
+            if self._currentLevel[cords[0]][cords[1]]['loot']['type'] in self.inventory:
 
-
-    #check if tile is being able to be walked
-    def isWalkable(self, cordinates = [0,0], human = False):
-        self.logging('isWalkable,',cordinates)
-        x,y = cordinates
-        if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
-            return False
-        if x == self._playerX and y == self._playerY:
-            return False
-        if not human:
-            if self._currentLevel[x][y]['display'] == 'exit':
-                return False
-        self.logging(self._currentLevel[x][y]['display'])
-        self.logging(self.dataDict['tiles'][self._currentLevel[x][y]['display']])
-        self.logging(self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable'])
-        return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
-
-    #calculate distance between 2 cordinates
-    def distence(self, cord1, cord2):
-        self.logging('distence,',cord1,cord2)
-        #a^2 + b^2 == c^2
-        x1,y1 =cord1
-        x2,y2 =cord2
-        xDis = abs(x1-x2)
-        yDis = abs(y1-y2)
-        distance = math.sqrt((xDis **2) + (yDis **2))
-        self.logging('xDis,Ydis',xDis, yDis, 'dis',distance)
-        return distance
-
-    #check if enemy's want to move
-    def enemyTurn(self):
-        self.logging('enemyTurn')
-        self.EnemyMoveRadius = [] 
-        for ix in range((self._viewDistance+1) * 2 + 1):
-            for iy in range((self._viewDistance+1) * 2 + 1):
-                self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
-        for tile in self.EnemyMoveRadius:
-            
-            if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
-                pass
-            elif tile in self.ignore:
-                pass
+                self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']]['amount'] += self._currentLevel[cords[0]][cords[1]]['loot']['amount']
             else:
-                self.logging(tile)
-                if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
-                    self.logging(f'{self._currentLevel[tile[0]][tile[1]]["entity"],tile[0],tile[1]}\n')
-                    moves = ['Up', 'Down', 'Left', 'Right']
-                    bestMoves = {}
-                    nums = []
-                    for move in moves:
-                        self.logging('direction to maybe take:',move)
-                        match move:
-                            case 'Up':
-                                cords = [tile[0], tile[1]-1]
-                            case 'Down':
-                                cords = [tile[0], tile[1]+1]
-                            case 'Left':
-                                cords = [tile[0]-1, tile[1]]
-                            case 'Right':
-                                cords = [tile[0]+1, tile[1]]
-                        if not self.isWalkable(cords):
-                            self.logging('nope', move)
-                        else:
-                            if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
-                                if bool(random.getrandbits(1)):
-                                    moveTheEnemy = True
-                                else:
-                                    self.logging('nope, it\'s further', move)
-                                    self.ignore.append([tile[0],tile[1]])
-                                    moveTheEnemy = False
-                            else:
-                                moveTheEnemy = True
-                            if moveTheEnemy:
-                                if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
-                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
-                                    self.logging('append')
-                                else:
-                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
-                                    nums.append(self.distence(cords, [self._playerX, self._playerY]))
-                                    self.logging('new')
+                self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
+            print(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
 
-                    #start picking a move
-                    if len(bestMoves) != 0:
-                        nums.sort()
-                        if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
-                            if len(bestMoves[nums[0]]) > 1:
-                                self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
-                            else:
-                                self.moveEnemy(bestMoves[nums[0]][0])
-
-                        self.logging(bestMoves)
-                    self.logging(f'{self.distence([tile[0], tile[1]], [self._playerX, self._playerY])}\n')
-
-
-
-    def moveEnemy(self, moveData):
-        self.logging('moveEnemy,',moveData)
-        move, NewXY, XY = moveData
-        newX,newY = NewXY
-        x,y = XY
-
-        types = ['display', 'entity']
-        for each in types:
-            self.logging(f'before {self._currentLevel[x][y][each]}:{x}.{y}\nbefore {self._currentLevel[newX][newY][each]}:{newX}.{newY}\n')
-        
-            switch = []
-            switch.append(self._currentLevel[x][y][each])
-            switch.append(self._currentLevel[newX][newY][each])
-            self._currentLevel[x][y][each] = switch[1]
-            self._currentLevel[newX][newY][each] = switch[0]
-            self.ignore.append([newX,newY])
-
-            self.logging(f'after {self._currentLevel[x][y][each]}:{x}.{y}\nafter {self._currentLevel[newX][newY][each]}:{newX}.{newY}\n')
-
-        
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up', wait = True):
-        self.logging('movePlayer,',direction, wait)
+
         cords = [False]
-        self.logging(direction)
         match direction:
             case 'Up':
                 cords = [self._playerX, self._playerY-1]
@@ -615,6 +601,7 @@ class System:
         self.ignore = []
         self.enemyTurn()
         self.enemyTurn()
+        self.ignore = []
 
     def wait(self):
         pass
