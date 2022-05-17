@@ -71,8 +71,8 @@
         "amount": 1,
         "rarity": "common",
         "weapon": {
-          "minStrenght": 10,
-          "attack": 5,
+          "minStrenght": 8,
+          "attack": 4,
           "type": "stab"
         }
       }
@@ -88,8 +88,8 @@
         "amount": 1,
         "rarity": "uncommon",
         "weapon": {
-          "minStrenght": 8,
-          "attack": 4,
+          "minStrenght": 10,
+          "attack": 5,
           "type": "stab"
         }
       }
@@ -116,7 +116,7 @@
     }
   },
   "Gamma": {
-    "distance": 2,
+    "distance": 20,
     "darknessFull": 0.2,
     "darknessFade": 0.5
   },
@@ -144,5 +144,8 @@
       "white",
       "purple"
     ]
+  },
+  "debug": {
+    "logging": false
   }
 }

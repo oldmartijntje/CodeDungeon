@@ -46,13 +46,7 @@ class System:
     now = datetime.datetime.now()
     dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
 
-    #logging
-    try:
-        os.mkdir('logs/')
-    except:
-        pass
-    log = open(f'logs/log{dt_string}.txt', "w")
-    log.close()    
+      
 
     #load Json
     try:
@@ -76,6 +70,7 @@ class System:
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': ['YEET'], 'npcText': ['I am a sign']}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
+        dataDict['debug']= {'logging' : False}
         json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
@@ -93,11 +88,19 @@ class System:
         pixelSize = dataDict['appSettings']['size']
         darknessFull = dataDict['Gamma']['darknessFull']
         darknessFade = dataDict['Gamma']['darknessFade']
+        doLogging = dataDict['debug']['logging']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
 
-
+    if doLogging:
+        #logging
+        try:
+            os.mkdir('logs/')
+        except:
+            pass
+        log = open(f'logs/log{dt_string}.txt', "w")
+        log.close()  
     
     
 
@@ -106,7 +109,7 @@ class System:
         
         self._dungeonLevel = 0
         random.seed(seed)
-        print(seed,'seed')
+        self.logging(seed,'seed')
         self.accountConfigSettings = accounts_omac.configFileTkinter()
         self.accountDataDict = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.accountConfigSettings)
         random.randint(1,10)
@@ -433,16 +436,32 @@ class System:
 
     #interact with something
     def interact(self):
-        pass
+        match self._facing:
+            case 'U':
+                cords = [self._playerX, self._playerY-1]
+            case 'D':
+                cords = [self._playerX, self._playerY+1]
+            case 'L':
+                cords = [self._playerX -1, self._playerY]
+            case 'R':
+                cords = [self._playerX +1, self._playerY]
+        
+
 
     #check if tile is being able to be walked
-    def isWalkable(self, cordinates = [0,0]):
+    def isWalkable(self, cordinates = [0,0], human = False):
         self.logging('isWalkable,',cordinates)
         x,y = cordinates
         if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
             return False
         if x == self._playerX and y == self._playerY:
             return False
+        if not human:
+            if self._currentLevel[x][y]['display'] == 'exit':
+                return False
+        self.logging(self._currentLevel[x][y]['display'])
+        self.logging(self.dataDict['tiles'][self._currentLevel[x][y]['display']])
+        self.logging(self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable'])
         return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
 
     #calculate distance between 2 cordinates
@@ -454,12 +473,12 @@ class System:
         xDis = abs(x1-x2)
         yDis = abs(y1-y2)
         distance = math.sqrt((xDis **2) + (yDis **2))
+        self.logging('xDis,Ydis',xDis, yDis, 'dis',distance)
         return distance
 
     #check if enemy's want to move
     def enemyTurn(self):
         self.logging('enemyTurn')
-        self.ignore = []
         self.EnemyMoveRadius = [] 
         for ix in range((self._viewDistance+1) * 2 + 1):
             for iy in range((self._viewDistance+1) * 2 + 1):
@@ -472,14 +491,13 @@ class System:
                 pass
             else:
                 self.logging(tile)
-                print(tile)
                 if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
                     self.logging(f'{self._currentLevel[tile[0]][tile[1]]["entity"],tile[0],tile[1]}\n')
-                    print(self._currentLevel[tile[0]][tile[1]]['entity'],tile[0],tile[1])
                     moves = ['Up', 'Down', 'Left', 'Right']
                     bestMoves = {}
                     nums = []
                     for move in moves:
+                        self.logging('direction to maybe take:',move)
                         match move:
                             case 'Up':
                                 cords = [tile[0], tile[1]-1]
@@ -489,14 +507,26 @@ class System:
                                 cords = [tile[0]-1, tile[1]]
                             case 'Right':
                                 cords = [tile[0]+1, tile[1]]
-                        if not self.isWalkable(cords) or self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
-                            moves.remove(move)
+                        if not self.isWalkable(cords):
+                            self.logging('nope', move)
                         else:
-                            if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
-                                bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                            if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
+                                if bool(random.getrandbits(1)):
+                                    moveTheEnemy = True
+                                else:
+                                    self.logging('nope, it\'s further', move)
+                                    self.ignore.append([tile[0],tile[1]])
+                                    moveTheEnemy = False
                             else:
-                                bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
-                                nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                                moveTheEnemy = True
+                            if moveTheEnemy:
+                                if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
+                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                                    self.logging('append')
+                                else:
+                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
+                                    nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                                    self.logging('new')
 
                     #start picking a move
                     if len(bestMoves) != 0:
@@ -508,9 +538,8 @@ class System:
                                 self.moveEnemy(bestMoves[nums[0]][0])
 
                         self.logging(bestMoves)
-                        print(bestMoves)
                     self.logging(f'{self.distence([tile[0], tile[1]], [self._playerX, self._playerY])}\n')
-                    print(self.distence([tile[0], tile[1]], [self._playerX, self._playerY]))
+
 
 
     def moveEnemy(self, moveData):
@@ -556,8 +585,11 @@ class System:
             case 'Wait':
                 if wait:
                     time.sleep(1)
-                self.enemyTurn()
+                self.enemyFullTurn()
                 self.rendering()
+                return
+            case 'A':
+                self.interact()
                 return
                 
         if cords != [False]:
@@ -565,21 +597,24 @@ class System:
                 self._playerX, self._playerY = cords
                 if wait:
                     time.sleep(1)
-                self.enemyTurn()
+                self.enemyFullTurn()
             self.rendering()
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
-        
-        self.log = open(f'logs/log{self.dt_string}.txt', "a+")
-        self.log.write(f'{item}')
-        extra = [q,w,e,r,t,y]
-        for x in extra:
-            if x != 0:
-                self.log.write(f' {x} ')
-        self.log.write(f'\n')
-        self.log.close()       
+        if self.doLogging:
+            self.log = open(f'logs/log{self.dt_string}.txt', "a+")
+            self.log.write(f'{item}')
+            extra = [q,w,e,r,t,y]
+            for x in extra:
+                if x != 0:
+                    self.log.write(f' {x} ')
+            self.log.write(f'\n')
+            self.log.close()       
 
-        
+    def enemyFullTurn(self):
+        self.ignore = []
+        self.enemyTurn()
+        self.enemyTurn()
 
     def wait(self):
         pass
