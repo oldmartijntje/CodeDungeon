@@ -46,8 +46,12 @@ class System:
     now = datetime.datetime.now()
     dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
 
-
-    log = open(f'log{dt_string}.txt', "w")
+    #logging
+    try:
+        os.mkdir('logs/')
+    except:
+        pass
+    log = open(f'logs/log{dt_string}.txt', "w")
     log.close()    
 
     #load Json
@@ -203,6 +207,7 @@ class System:
 
     #read tile of 2D erray and convert into map
     def readTile(self, tile, x, y, extra = 'NONE'):
+        self.logging(f'readTile ',tile, x, y, extra)
         #all numbers are different type of tile:
         #0 air
         #1 wall
@@ -277,6 +282,7 @@ class System:
 
     #create a level off a 2D erray
     def createLevel(self, level):
+        self.logging(f'createLevel, {level}')
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
@@ -311,6 +317,7 @@ class System:
 
     #render how the dungeon looks like
     def rendering(self):
+        self.logging('rendering')
         #make the furthest visability square (the transition)
         self._sightFurthest = [] 
         for ix in range(self._viewDistance * 2 + 1):
@@ -430,6 +437,7 @@ class System:
 
     #check if tile is being able to be walked
     def isWalkable(self, cordinates = [0,0]):
+        self.logging('isWalkable,',cordinates)
         x,y = cordinates
         if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
             return False
@@ -439,6 +447,7 @@ class System:
 
     #calculate distance between 2 cordinates
     def distence(self, cord1, cord2):
+        self.logging('distence,',cord1,cord2)
         #a^2 + b^2 == c^2
         x1,y1 =cord1
         x2,y2 =cord2
@@ -449,6 +458,8 @@ class System:
 
     #check if enemy's want to move
     def enemyTurn(self):
+        self.logging('enemyTurn')
+        self.ignore = []
         self.EnemyMoveRadius = [] 
         for ix in range((self._viewDistance+1) * 2 + 1):
             for iy in range((self._viewDistance+1) * 2 + 1):
@@ -456,6 +467,8 @@ class System:
         for tile in self.EnemyMoveRadius:
             
             if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
+                pass
+            elif tile in self.ignore:
                 pass
             else:
                 self.logging(tile)
@@ -501,6 +514,7 @@ class System:
 
 
     def moveEnemy(self, moveData):
+        self.logging('moveEnemy,',moveData)
         move, NewXY, XY = moveData
         newX,newY = NewXY
         x,y = XY
@@ -514,12 +528,14 @@ class System:
             switch.append(self._currentLevel[newX][newY][each])
             self._currentLevel[x][y][each] = switch[1]
             self._currentLevel[newX][newY][each] = switch[0]
+            self.ignore.append([newX,newY])
 
             self.logging(f'after {self._currentLevel[x][y][each]}:{x}.{y}\nafter {self._currentLevel[newX][newY][each]}:{newX}.{newY}\n')
 
         
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up', wait = True):
+        self.logging('movePlayer,',direction, wait)
         cords = [False]
         self.logging(direction)
         match direction:
@@ -537,6 +553,13 @@ class System:
                 cords = [self._playerX +1, self._playerY]
                 self._facingDirectionTexture = 'R'
                 self._facing = 'R'
+            case 'Wait':
+                if wait:
+                    time.sleep(1)
+                self.enemyTurn()
+                self.rendering()
+                return
+                
         if cords != [False]:
             if self.isWalkable(cords):
                 self._playerX, self._playerY = cords
@@ -545,9 +568,15 @@ class System:
                 self.enemyTurn()
             self.rendering()
 
-    def logging(self, item):
-        self.log = open(f'log{self.dt_string}.txt', "a+")
-        self.log.write(f'{item}\n')
+    def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
+        
+        self.log = open(f'logs/log{self.dt_string}.txt', "a+")
+        self.log.write(f'{item}')
+        extra = [q,w,e,r,t,y]
+        for x in extra:
+            if x != 0:
+                self.log.write(f' {x} ')
+        self.log.write(f'\n')
         self.log.close()       
 
         
