@@ -43,8 +43,15 @@ class System:
     _rarityChance= {}
     _images = {}
 
+    defaultNPCText = ["I am the great Cackletta's most best pupil, who is named Fawful! I am here, laughing at you! If you are giving us the chase, just to get your silly princess's voice, then you are idiots of foolishness! Princess Peach's sweet voice will soon be the bread that makes the sandwich of Cackletta's desires! And this battle shall be the delicious mustard on that bread! The mustard of your doom!",
+      "Fink-rat!", "Have you readiness for this?!?", "Now is when I ram you!", "O Great Cackletta, unleash the voice of Princess Peach on the Beanstar when you are wanting to!", "Now is the time where my true might shines like many angry sunbeams of rage!", "Hah! Now taste the finale, when carelessness opens the door to a comeback not expected by you! Your lives that I spit on are now but a caricature of a cartoon drawn by a kid who is stupid! You shall all fall and vanish with your precious Beanbean Kingdom as I laugh heartily at you!",
+      "In the last moments of the finale of the finale, when relief leads to negligence that begets rashness... That is when the comeback that faltered comes back and beats your pathetic comeback that I scoff at!", "O Great Bowletta! The Mario Bros. who I hate are coming this way!", "Yes...Moustache...", "At last, my entrance with drama!","Stop it...such mumbling...", "ONE FELL SWOOP IS HOW I WILL DEAL WITH YOU FINK-RATS!!!",
+      "Next it is the turn of you!", "You! You are the fink-rats that came with the Bowser that I hate!", "I HAVE FURY!","Ouch! Hotness! It is the overheat!", "I have boredom...Guests? Now I have... FURY!", "I say to you WELCOME! Welcome to Fawful's Bean 'n' Badge!", "In this place, beans are like precious treasure milked from a famous cow made of jewels!", "All who come with beans leave with badges so rare they make mustaches droop with disbelief!",
+      "What? The story of Fawful? Your words are not beans. I am not wanting them.", "You are like brainless cats that are too dumb to know they are stupid! You have curiosity... ...But my tale is long, so long it makes babies old and hairy lips grow grey with aging. Do you dare hear?", "I am here, merchant of badges, only sometimes with fury, but I once had fury at all times.", "I drizzled rage dressing on the country next door. Rage dressing on a salad of evil!",
+      "Red and green puts the fog of rage in my eyes, and my mind goes crazy.","P-Please... I will be fine. No worrying for Fawful. We talk of beans.","Beans and badges... We begin trading!","The beans hide in the dirts of this country like dirt-fish who like to eat dirt for dinner. Bean symbols like this are marking all bean spots.","You are digging in dirt, right? You are digging under symbols. And you are finding much bean!","Bean symbols have sneakiness! When the beans are gone, the symbols flee like babies!",
+      "You are wanting much beans? Then you are hunting symbols. And digging and popping.","There are even places to win beans in games, maybe...","If you get many beans, you get many badges at this place, Fawful's Bean 'n' Badge!","I HAVE FURY!"]
     
-
+    defaultSignText = ['I am probably older than you are; my friendly traveler reading this.','This text took 49 bytes to store on your computer','I was a tree', 'I was Groot','Don\'t listen to the NPCs, They only speak nonsense','I am empty, wait did i just create a paradox?','Go left and then right','Danger ahead', 'Greetings traveler, be aware of Fawful.']
       
 
     #load Json
@@ -67,7 +74,7 @@ class System:
         dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
-        dataDict['text'] = {'signText': ['YEET'], 'npcText': ['I am a sign']}
+        dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
         dataDict['debug']= {'logging' : False}
         json_string = json.dumps(dataDict)
@@ -126,6 +133,7 @@ class System:
         self._facing = 'R'
         self.gameWindow = tkinter.Tk()
         self.gameWindow.configure(bg='black')
+        self.gameWindow.attributes('-topmost', True)
         self.inventory = {}
 
         self.rarityList = []
@@ -161,7 +169,7 @@ class System:
         self._nextStates.append(random.getstate())
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
-
+    
     #check if states are valid
     def checkStates(self):
         x = 0
@@ -257,11 +265,13 @@ class System:
             else:
                 text = self.dataDict['text']['signText'][random.randint(0,len(self.dataDict['text']['signText'])-1)]
             self._currentLevel[x][y] = {'tile': 'sign', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            print(text)
         elif tile == 7:
             if extra != 'NONE':
                 text = extra
             else:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
+            print(text)
             self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'}
@@ -548,6 +558,12 @@ class System:
             else:
                 self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
             print(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+            self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
+            self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
+            self.rendering()
+        elif 'text' in self._currentLevel[cords[0]][cords[1]]:
+            print(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
+
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up', wait = True):

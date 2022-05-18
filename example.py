@@ -5,7 +5,7 @@ player.startGame()
 # Jouw python instructies zet je vanaf hier:
 
 
-while True: player.movePlayer('Wait', False)
+#while True: player.movePlayer('Wait', False)
 while True: player.movePlayer(input(), False)
 player.movePlayer('Down')    
 player.movePlayer('Left')    
