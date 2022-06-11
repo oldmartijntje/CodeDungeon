@@ -595,7 +595,7 @@ class System:
                 return
                 
         if cords != [False]:
-            if self.isWalkable(cords):
+            if self.isWalkable(cords, True):
                 self._playerX, self._playerY = cords
                 if wait:
                     time.sleep(1)
