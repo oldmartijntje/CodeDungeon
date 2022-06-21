@@ -27,13 +27,12 @@ class System:
     [[4, 0, 4, 0, 1, 2, 1, 4, 5, 4], [4, 5, 0, 4, 1, 0, 1, 0, 4, 0], [0, 4, 0, 0, 0, 0, 1, 4, 5, 4], [0, 0, 4, 0, 1, 0, 1, 0, 4, 0], [4, 0, 5, 4, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 0]],
     [[4, 0, 4, 1, 0, 2, 1, 4, 5, 4], [4, 5, 0, 1, 7, 0, 1, 0, 4, 0], [0, 4, 0, 0, 1, 0, 1, 4, 5, 4], [0, 0, 4, 0, 0, 0, 1, 0, 4, 0], [4, 0, 5, 0, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 7]],
     [[1, 4, 0, 0, 5, 0, 4, 1, 0, 3], [0, 1, 1, 1, 0, 1, 1, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 5, 0, 0], [2, 0, 1, 5, 0, 1, 0, 0, 1, 0], [0, 0, 4, 1, 0, 5, 1, 1, 4, 1], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 5, 1, 4, 1, 5, 1, 0, 1], [0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 1, 0, 5, 0, 0, 1, 1, 0, 1], [4, 0, 0, 1, 4, 0, 5, 0, 0, 5]],
-    [[8, 8, 8, 8, 8, 8, 1, 2, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, [6, 'Goodluck with the bossfight\nBeat him to spanw exit.'], 0, 0], [8, 8, 9, 8, 8, 8, 0, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 0], [8, 8, 8, 8, 8, 8, 1, 0, 0, 4], [8, 8, 8, 8, 8, 8, 1, 4, 4, 4]],
     [[0, 0, 0, 0, 1, 6, 4, 1, 4, 7], [0, 1, 1, 5, 1, 0, 5, 1, 0, 0], [5, 1, 3, 0, 1, 0, 1, 1, 1, 0], [0, 1, 1, 1, 1, 5, 0, 0, 1, 0], [0, 0, 4, 1, 4, 0, 1, 5, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 0, 6], [4, 1, 0, 0, 5, 0, 0, 1, 0, 1], [4, 1, 1, 1, 1, 1, 0, 1, 0, 0], [0, 1, 3, 0, 1, 4, 0, 1, 1, 5], [2, 1, 1, 0, 0, 0, 1, 3, 0, 0]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     
-    
+    bugmessage = []
     _buttonsList = []
     #melee, throwables, magic
     _enemies = []
@@ -76,7 +75,7 @@ class System:
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
-        dataDict['debug']= {'logging' : False}
+        dataDict['debug']= {'logging' : False, 'combat' : True, 'moveEnemies' : True}
         json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
@@ -95,9 +94,12 @@ class System:
         darknessFull = dataDict['Gamma']['darknessFull']
         darknessFade = dataDict['Gamma']['darknessFade']
         doLogging = dataDict['debug']['logging']
+        doCombat = dataDict['debug']['combat']
+        doEnemyMovement = dataDict['debug']['moveEnemies']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
+        bugmessage.append([e,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
     if doLogging:
         #logging
@@ -143,6 +145,10 @@ class System:
         #if no account has been logged into
         if self.accountDataDict == False:
             exit()
+
+        if len(self.bugmessage) > 0:
+            for x in range(len(self.bugmessage)):
+                self.logging(self.bugmessage[x])
 
         #change json into usable data part2
         for player in self.dataDict['playerImages'].keys():
@@ -293,7 +299,8 @@ class System:
         self._currentLevel[x][y]['display'] = display
 
     #create a level off a 2D erray
-    def createLevel(self, level):
+    def createLevel(self, levelDefault):
+        level = list(levelDefault)
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
@@ -466,57 +473,58 @@ class System:
 
     #check if enemy's want to move
     def enemyTurn(self):
-        self.EnemyMoveRadius = [] 
-        for ix in range((self._viewDistance+1) * 2 + 1):
-            for iy in range((self._viewDistance+1) * 2 + 1):
-                self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
-        for tile in self.EnemyMoveRadius:
-            
-            if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
-                pass
-            elif tile in self.ignore:
-                pass
-            else:
-                if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
-                    moves = ['Up', 'Down', 'Left', 'Right']
-                    bestMoves = {}
-                    nums = []
-                    for move in moves:
-                        match move:
-                            case 'Up':
-                                cords = [tile[0], tile[1]-1]
-                            case 'Down':
-                                cords = [tile[0], tile[1]+1]
-                            case 'Left':
-                                cords = [tile[0]-1, tile[1]]
-                            case 'Right':
-                                cords = [tile[0]+1, tile[1]]
-                        if not self.isWalkable(cords):
-                            pass
-                        else:
-                            if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
-                                if bool(random.getrandbits(1)):
+        if self.doEnemyMovement != False:
+            self.EnemyMoveRadius = [] 
+            for ix in range((self._viewDistance+1) * 2 + 1):
+                for iy in range((self._viewDistance+1) * 2 + 1):
+                    self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
+            for tile in self.EnemyMoveRadius:
+                
+                if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
+                    pass
+                elif tile in self.ignore:
+                    pass
+                else:
+                    if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                        moves = ['Up', 'Down', 'Left', 'Right']
+                        bestMoves = {}
+                        nums = []
+                        for move in moves:
+                            match move:
+                                case 'Up':
+                                    cords = [tile[0], tile[1]-1]
+                                case 'Down':
+                                    cords = [tile[0], tile[1]+1]
+                                case 'Left':
+                                    cords = [tile[0]-1, tile[1]]
+                                case 'Right':
+                                    cords = [tile[0]+1, tile[1]]
+                            if not self.isWalkable(cords):
+                                pass
+                            else:
+                                if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
+                                    if bool(random.getrandbits(1)):
+                                        moveTheEnemy = True
+                                    else:
+                                        self.ignore.append([tile[0],tile[1]])
+                                        moveTheEnemy = False
+                                else:
                                     moveTheEnemy = True
-                                else:
-                                    self.ignore.append([tile[0],tile[1]])
-                                    moveTheEnemy = False
-                            else:
-                                moveTheEnemy = True
-                            if moveTheEnemy:
-                                if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
-                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
-                                else:
-                                    bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
-                                    nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                                if moveTheEnemy:
+                                    if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
+                                        bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                                    else:
+                                        bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
+                                        nums.append(self.distence(cords, [self._playerX, self._playerY]))
 
-                    #start picking a move
-                    if len(bestMoves) != 0:
-                        nums.sort()
-                        if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
-                            if len(bestMoves[nums[0]]) > 1:
-                                self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
-                            else:
-                                self.moveEnemy(bestMoves[nums[0]][0])
+                        #start picking a move
+                        if len(bestMoves) != 0:
+                            nums.sort()
+                            if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
+                                if len(bestMoves[nums[0]]) > 1:
+                                    self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
+                                else:
+                                    self.moveEnemy(bestMoves[nums[0]][0])
 
 
 

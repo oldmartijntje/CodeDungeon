@@ -192,6 +192,8 @@
     ]
   },
   "debug": {
-    "logging": false
+    "logging": true,
+    "combat": true,
+    "moveEnemies": false
   }
 }

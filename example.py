@@ -1,6 +1,6 @@
 import Roguelike
 import random
-player = Roguelike.System(random.randint(0,1000000),3)
+player = Roguelike.System(random.randint(0,1000000))
 player.startGame()
 # Jouw python instructies zet je vanaf hier:
 
