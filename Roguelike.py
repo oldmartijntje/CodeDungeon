@@ -173,7 +173,7 @@ class System:
     #check if states are valid
     def checkStates(self):
         x = 0
-        while len(self._nextStates) > 2:
+        while len(self._nextStates) < 2:
             self.newState()
         while self._nextStates[0] == self._nextStates[1]:
             x += 1
@@ -597,9 +597,12 @@ class System:
         if cords != [False]:
             if self.isWalkable(cords, True):
                 self._playerX, self._playerY = cords
+                if self._currentLevel[self._playerX][self._playerY]['tile'] == 'exit':
+                    self.newLevel()
+                else:
+                    self.enemyFullTurn()
                 if wait:
                     time.sleep(1)
-                self.enemyFullTurn()
             self.rendering()
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
@@ -631,3 +634,11 @@ class System:
     def useItem(self,slot):
         pass
 
+    def newLevel(self):
+        self.loadState()
+        levelNumber = random.randint(0,len(self._defaultlevels)-1)
+        print(levelNumber)
+        self._canvas.destroy()
+        self.createLevel(self._defaultlevels[levelNumber])
+        self.createWindow()
+        self.rendering()
