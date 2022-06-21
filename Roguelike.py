@@ -2,12 +2,10 @@ import datetime
 import json
 from logging import exception
 import os
-import string
 import time
 import accounts_omac
 import random
 import tkinter
-from tkinter import ttk
 from PIL import Image, ImageTk, ImageEnhance
 import math
 import copy
