@@ -194,6 +194,6 @@
   "debug": {
     "logging": true,
     "combat": true,
-    "moveEnemies": false
+    "enemyAI": false
   }
 }

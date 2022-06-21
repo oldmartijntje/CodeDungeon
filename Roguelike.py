@@ -10,7 +10,7 @@ import tkinter
 from tkinter import ttk
 from PIL import Image, ImageTk, ImageEnhance
 import math
-    
+import copy
 
 
 
@@ -75,7 +75,7 @@ class System:
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
-        dataDict['debug']= {'logging' : False, 'combat' : True, 'moveEnemies' : True}
+        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True}
         json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
@@ -95,7 +95,7 @@ class System:
         darknessFade = dataDict['Gamma']['darknessFade']
         doLogging = dataDict['debug']['logging']
         doCombat = dataDict['debug']['combat']
-        doEnemyMovement = dataDict['debug']['moveEnemies']
+        doEnemyMovement = dataDict['debug']['enemyAI']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
@@ -300,9 +300,10 @@ class System:
 
     #create a level off a 2D erray
     def createLevel(self, levelDefault):
-        level = list(levelDefault)
+        level = copy.deepcopy(levelDefault)
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
+            self.logging('entrance needed')
             while not any(2 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
                 if 0 in level[tryLine] or 8 in level[tryLine]:
@@ -312,6 +313,7 @@ class System:
                     level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 2
         #if there isn't an exit declared, and not a bossfight, generate random exit
         if not any(3 in sublist for sublist in level) and not any(9 in sublist for sublist in level):
+            self.logging('exit needed')
             while not any(3 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
                 if 0 in level[tryLine]or 8 in level[tryLine]:
@@ -643,6 +645,7 @@ class System:
         pass
 
     def newLevel(self):
+        self._enemyLevel += 1
         self.loadState()
         levelNumber = random.randint(0,len(self._defaultlevels)-1)
         print(levelNumber)
