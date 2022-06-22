@@ -16,7 +16,11 @@
       "Image": "rat",
       "isEnemy": true,
       "isInteractable": false,
-      "isLoot": false
+    "isLoot": false,
+    "statsPerLevel": {
+        "HP": 10,
+        "ATK": 3
+    }
     },
     "exit": {
       "ShowOutsideAs": "floor",
@@ -192,8 +196,8 @@
     ]
   },
   "debug": {
-    "logging": true,
+    "logging": false,
     "combat": true,
-    "enemyAI": false
+    "enemyAI": true
   }
 }
