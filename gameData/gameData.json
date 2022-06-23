@@ -1,13 +1,21 @@
 {
-  "playerImages": {
-    "L": "player left",
-    "R": "player right"
-  },
-  "chance": {
-    "enemyAir": 5,
-    "enemySpawn": 40,
-    "lootAir": 3,
-    "lootSpawn": 40
+"playerStats": {
+    "statsPerLevel": {
+        "HP": 10,
+        "ATK": 4
+    },
+    "beginStats": {
+        "HP": 5,
+        "ATK": 5
+    },
+    "startLevel": 3,
+    "XPneeded": {
+        "multiplyByLevel": 20,
+        "startingNumber": 10
+    }
+},
+"dungeon": {
+    "startLevel": 3
   },
   "tiles": {
     "rat": {
@@ -19,7 +27,8 @@
     "isLoot": false,
     "statsPerLevel": {
         "HP": 10,
-        "ATK": 3
+        "ATK": 3,
+        "deathXP": 5
     }
     },
     "exit": {
@@ -122,12 +131,7 @@
     "impossible": {
       "chance": 1
     }
-  },
-  "Gamma": {
-    "distance": 20,
-    "darknessFull": 0.2,
-    "darknessFade": 0.5
-  },
+},
   "text": {
     "signText": [
       "I am probably older than you are; my friendly traveler reading this.",
@@ -178,6 +182,12 @@
       "I HAVE FURY!"
     ]
   },
+"chance": {
+    "enemyAir": 5,
+    "enemySpawn": 40,
+    "lootAir": 3,
+    "lootSpawn": 40
+},
   "appSettings": {
     "offset": 18,
     "size": 32,
@@ -195,9 +205,22 @@
       "purple"
     ]
   },
+"playerImages": {
+    "L": "player left",
+    "R": "player right"
+},
+"preference": {
+    "sleepTime": 0.1
+},
   "debug": {
     "logging": false,
     "combat": true,
-    "enemyAI": true
+    "enemyAI": true,
+    "sleep": false
+},
+"Gamma": {
+    "distance": 20,
+    "darknessFull": 0.2,
+    "darknessFade": 0.5
   }
 }

@@ -3,6 +3,7 @@ import json
 from logging import exception
 import os
 import time
+from tkinter import ttk
 import accounts_omac
 import random
 import tkinter
@@ -65,15 +66,18 @@ class System:
                 dataDict= dataString
     else:
         dataDict = {}
-        dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
-        dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
+        dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'ATK':4}, 'beginStats':{'HP':5, 'ATK':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':20, 'startingNumber':10}}
+        dataDict['dungeon'] = {'startLevel': 3}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3, 'deathXP' : 5}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
         dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
-        dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
+        dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
-        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True}
+        dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
+        dataDict['preference'] = {'sleepTime':0.1}
+        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True}
+        dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(json_string, outfile)
@@ -94,6 +98,8 @@ class System:
         doLogging = dataDict['debug']['logging']
         doCombat = dataDict['debug']['combat']
         doEnemyMovement = dataDict['debug']['enemyAI']
+        _enemyLevel = dataDict['dungeon']['startLevel']
+        playerStats = dataDict['playerStats']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
@@ -113,7 +119,7 @@ class System:
     
 
 
-    def __init__(self, seed : int = 0, startingDifficulty : int = 3):
+    def __init__(self, seed : int = 0):
         
         self._dungeonLevel = 0
         random.seed(seed)
@@ -125,7 +131,6 @@ class System:
         self.newState()
         self.newState()
         self.checkStates()
-        self._enemyLevel = startingDifficulty
         self._createdBefore = False
         self._playerX = 0
         self._playerY = 0
@@ -135,6 +140,8 @@ class System:
         self.gameWindow.configure(bg='black')
         self.gameWindow.attributes('-topmost', True)
         self.inventory = {}
+        
+        
 
         self.rarityList = []
         for rar in self.dataDict['rarities'].keys():
@@ -165,6 +172,12 @@ class System:
             self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()).convert('RGB')).enhance(self.darknessFull))
             self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()).convert('RGB')).enhance(self.darknessFade))
             self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()))
+    
+    #for when something is missign from the json
+    def jsonError(self,error):
+        print(error)
+        print('something is wrong with the gameData/gameData.json, delete it or fix it.')
+        self.logging([error,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
     #generate a new state
     def newState(self, modifier = 0):
@@ -269,13 +282,11 @@ class System:
             else:
                 text = self.dataDict['text']['signText'][random.randint(0,len(self.dataDict['text']['signText'])-1)]
             self._currentLevel[x][y] = {'tile': 'sign', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
-            print(text)
         elif tile == 7:
             if extra != 'NONE':
                 text = extra
             else:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
-            print(text)
             self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'}
@@ -376,10 +387,32 @@ class System:
         self.gameWindow.update()
 
     #create the window
-    def createWindow(self):
+    def createCanvas(self):
         self._canvas = tkinter.Canvas(self.gameWindow, bg="black", height=len(self._currentLevel[0])*32, width=len(self._currentLevel)*32)
-        self._canvas.pack()
+        self._canvas.grid(row=0,column=0)
         
+    #for the stats like hp    
+    def createStats(self):
+        self._hpTextvar = tkinter.StringVar()
+        self._hpTextvar.set(f'HP:')
+        self._xpVar = tkinter.StringVar()
+        self._xpVar.set(f'XP:')
+        self._strengthVar = tkinter.StringVar()
+        self._strengthVar.set(f'Strength:')
+        self._levelVar = tkinter.StringVar()
+        self._levelVar.set(f'Level:')
+        self._hpLabel = ttk.Label(self.gameWindow, textvariable=self._hpTextvar)
+        self._hpLabel.grid(row=1,column=0, sticky="EW")
+        self._strengthLabel = ttk.Label(self.gameWindow, textvariable=self._strengthVar)
+        self._strengthLabel.grid(row=2,column=0, sticky="EW")
+        self._xpLabel = ttk.Label(self.gameWindow, textvariable=self._xpVar)
+        self._xpLabel.grid(row=3,column=0, sticky="EW")
+        self._levelLabel = ttk.Label(self.gameWindow, textvariable=self._levelVar)
+        self._levelLabel.grid(row=4,column=0, sticky="EW")
+
+    def updateStats(self):
+        pass
+
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
         
@@ -441,12 +474,13 @@ class System:
                 levelNumber = chosenLevel
             print(levelNumber)
             self.createLevel(self._defaultlevels[levelNumber])
-            self.createWindow()
+            self.createStats()
+            self.createCanvas()
             self.rendering()
         
 
     def exit(self):
-        self.dataDict = accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
+        accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         exit()
 
     #check if tile is being able to be walked
@@ -526,6 +560,16 @@ class System:
                                 else:
                                     self.moveEnemy(bestMoves[nums[0]][0])
 
+                            #delay of enemy movement
+                            try:
+                                if self.dataDict['debug']['sleep']:
+                                    time.sleep(self.dataDict['preference']['sleepTime'])
+                            except Exception as e:
+                                self.jsonError(e)
+                            self.rendering()
+
+
+
 
 
 
@@ -579,9 +623,8 @@ class System:
 
 
     #checks if move is possible, and then moves
-    def movePlayer(self, direction = 'Up', wait = True):
-
-        cords = [False]
+    def movePlayer(self, direction = 'Up'):
+        cords = False
         match direction:
             case 'Up':
                 cords = [self._playerX, self._playerY-1]
@@ -598,24 +641,20 @@ class System:
                 self._facingDirectionTexture = 'R'
                 self._facing = 'R'
             case 'Wait':
-                if wait:
-                    time.sleep(1)
                 self.enemyFullTurn()
-                self.rendering()
+                
                 return
             case 'A':
                 self.interact()
                 return
                 
-        if cords != [False]:
+        if cords != False:
             if self.isWalkable(cords, True):
                 self._playerX, self._playerY = cords
                 if self._currentLevel[self._playerX][self._playerY]['tile'] == 'exit':
                     self.newLevel()
                 else:
                     self.enemyFullTurn()
-                if wait:
-                    time.sleep(1)
             self.rendering()
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
@@ -654,5 +693,5 @@ class System:
         print(levelNumber)
         self._canvas.destroy()
         self.createLevel(self._defaultlevels[levelNumber])
-        self.createWindow()
+        self.createCanvas()
         self.rendering()

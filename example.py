@@ -6,7 +6,7 @@ player.startGame()
 
 
 #while True: player.movePlayer('Wait', False)
-while True: player.movePlayer(input(), False)
+while True: player.movePlayer(input())
 player.movePlayer('Down')    
 player.movePlayer('Left')    
 player.movePlayer('Right')    
