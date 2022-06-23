@@ -2,11 +2,11 @@
 "playerStats": {
     "statsPerLevel": {
         "HP": 10,
-        "ATK": 4
+        "strength": 4
     },
     "beginStats": {
         "HP": 5,
-        "ATK": 5
+        "strength": 5
     },
     "startLevel": 3,
     "XPneeded": {

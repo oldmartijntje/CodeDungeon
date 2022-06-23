@@ -66,7 +66,7 @@ class System:
                 dataDict= dataString
     else:
         dataDict = {}
-        dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'ATK':4}, 'beginStats':{'HP':5, 'ATK':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':20, 'startingNumber':10}}
+        dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':20, 'startingNumber':10}}
         dataDict['dungeon'] = {'startLevel': 3}
         dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3, 'deathXP' : 5}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
         dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
@@ -99,7 +99,7 @@ class System:
         doCombat = dataDict['debug']['combat']
         doEnemyMovement = dataDict['debug']['enemyAI']
         _enemyLevel = dataDict['dungeon']['startLevel']
-        playerStats = dataDict['playerStats']
+        defaultPlayerStats = dataDict['playerStats']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
@@ -140,6 +140,7 @@ class System:
         self.gameWindow.configure(bg='black')
         self.gameWindow.attributes('-topmost', True)
         self.inventory = {}
+        self.gameWindow.protocol("WM_DELETE_WINDOW", self.exit)
         
         
 
@@ -382,6 +383,8 @@ class System:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
                     else:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
+        #for if stats changed, update those
+        self.updateStats()
         #updae the window, so that it shows the new generated canvas
         self.gameWindow.update_idletasks()      
         self.gameWindow.update()
@@ -411,7 +414,17 @@ class System:
         self._levelLabel.grid(row=4,column=0, sticky="EW")
 
     def updateStats(self):
-        pass
+        self._levelVar.set(f'Level: {self.playerStats["level"]}')
+        self._strengthVar.set(f'Strength: {self.playerStats["strength"]}')
+        while True:
+            xpNeeded = self.defaultPlayerStats["XPneeded"]["multiplyByLevel"] * self.playerStats['level'] + self.defaultPlayerStats["XPneeded"]["startingNumber"]
+            if self.playerStats['XP'] > xpNeeded:
+                self.playerStats['XP'] -= xpNeeded
+                self.playerStats['level'] += 1
+            else:
+                break
+        self._xpVar.set(f'XP: {self.playerStats["XP"]} / {xpNeeded}')
+        self._hpTextvar.set(f'HP: {self.playerStats["HP"]["current"]} / {self.playerStats["HP"]["max"]}')
 
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
@@ -466,6 +479,13 @@ class System:
             tkinter.Button(self.gameWindow, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
         #if play mode
         if mode.lower() == 'play':
+            #generate player
+            hp = (self.defaultPlayerStats["statsPerLevel"]["HP"] * self.defaultPlayerStats["startLevel"]) + self.defaultPlayerStats["beginStats"]["HP"]
+            strength = (self.defaultPlayerStats["statsPerLevel"]["strength"] * self.defaultPlayerStats["startLevel"]) + self.defaultPlayerStats["beginStats"]["strength"]
+            self.playerStats = {'HP': {'max': hp, 'current': hp}, 'level' : self.defaultPlayerStats["startLevel"], 'XP': 0, 'strength': strength}
+
+
+
             #generate starting level
             self.checkStates()
             if custom == False:

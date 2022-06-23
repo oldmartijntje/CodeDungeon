@@ -15,7 +15,5 @@ The robotarm: https://github.com/jeroenslemmer/robotarm-python-2021
 
 Pixeldungeon: http://pixeldungeon.watabou.ru
 
-Pokemon: https://www.pokemon.com/us/
-
 ### explenations
 states are generated first, to ensure that the followup level is exactly the same, and that random choices by Program won't change it
