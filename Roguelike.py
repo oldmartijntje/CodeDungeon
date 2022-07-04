@@ -66,16 +66,19 @@ class System:
                 dataDict= dataString
     else:
         dataDict = {}
+        dataDict['preference'] = {'autoEquipBetter': True, 'sleepTime':0.1}
+        dataDict['startingLoot'] = {'wooden_sword': {'amount': 1}}
+        dataDict['equippedWeapon'] = {'weapon': 'wooden_sword', 'weight': 1}
         dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':20, 'startingNumber':10}}
         dataDict['dungeon'] = {'startLevel': 3}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3, 'deathXP' : 5}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 4, 'type': 'stab'}}}}
-        dataDict['tiles']['Stone sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 5, 'type': 'stab'}}}
+        dataDict['strengthDamage'] = {'doStrengthDamage': True, 'devidedBy': 3}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3, 'deathXP' : 5}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
+        dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
-        dataDict['preference'] = {'sleepTime':0.1}
         dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         json_string = json.dumps(dataDict)
@@ -100,6 +103,9 @@ class System:
         doEnemyMovement = dataDict['debug']['enemyAI']
         _enemyLevel = dataDict['dungeon']['startLevel']
         defaultPlayerStats = dataDict['playerStats']
+        autoEquip = dataDict['preference']['autoEquipBetter']
+        hasWeaponWeight = dataDict['equippedWeapon']['weight']
+        equipped = dataDict['equippedWeapon']['weapon']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
@@ -608,9 +614,22 @@ class System:
             self._currentLevel[newX][newY][each] = switch[0]
             self.ignore.append([newX,newY])
 
+    def damageMessage(self, cords, damage):
+        if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] > 0:
+            print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he has {self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current']}HP left")
+        else:
+            print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
+
+
+    def sliceEnemy(self, cords, damage):
+        if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
+            self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
+            self.damageMessage(cords, damage)
+            
 
     #interact with something
     def interact(self):
+        
         match self._facing:
             case 'U':
                 cords = [self._playerX, self._playerY-1]
@@ -624,12 +643,19 @@ class System:
         if self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
             #if there is loot
             #{'type': 'Stone sword', 'amount': 1}
+            print(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
             if self._currentLevel[cords[0]][cords[1]]['loot']['type'] in self.inventory:
 
                 self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']]['amount'] += self._currentLevel[cords[0]][cords[1]]['loot']['amount']
             else:
                 self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
-            print(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+                
+                if self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['isWeapon'] == True:
+                    if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight']:
+                        self.hasWeaponWeight = 0
+                        self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                        print(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+            
             self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
             self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
             self.rendering()
@@ -638,25 +664,50 @@ class System:
         elif self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
             if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
                 hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
-                self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'Current': hp + random.randint(-1,1)}
-            print(self._currentLevel[cords[0]][cords[1]]['entity']['HP'])
+                self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
+            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] < self.playerStats['strength']:
+                damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
+                if self.dataDict['strengthDamage']['doStrengthDamage']:
+                    damage += self.playerStats['strength'] // self.dataDict['strengthDamage']['devidedBy']
+                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
+                    self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
+                    self.damageMessage(cords, damage)
+                elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
+                    self.sliceEnemy([self._playerX, self._playerY-1],damage)
+                    self.sliceEnemy([self._playerX, self._playerY+1],damage)
+                    self.sliceEnemy([self._playerX-1, self._playerY],damage)
+                    self.sliceEnemy([self._playerX+1, self._playerY],damage)
+                
+
+
+            if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
+                if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
+                    self._currentLevel[cords[0]][cords[1]]['loot']= {'type' : self._currentLevel[cords[0]][cords[1]]['entity']['item']['type'], 'amount': self._currentLevel[cords[0]][cords[1]]['entity']['item']['amount']}
+                    self._currentLevel[cords[0]][cords[1]]['display'] = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                else:
+                    self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
+                self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
+                    
+
+            self.enemyFullTurn()
+            self.rendering()
 
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
         cords = False
         match direction:
-            case 'Up':
+            case 'w':
                 cords = [self._playerX, self._playerY-1]
                 self._facing = 'U'
-            case 'Down':
+            case 's':
                 cords = [self._playerX, self._playerY+1]
                 self._facing = 'D'
-            case 'Left':
+            case 'a':
                 cords = [self._playerX -1, self._playerY]
                 self._facingDirectionTexture = 'L'
                 self._facing = 'L'
-            case 'Right':
+            case 'd':
                 cords = [self._playerX +1, self._playerY]
                 self._facingDirectionTexture = 'R'
                 self._facing = 'R'
@@ -664,7 +715,7 @@ class System:
                 self.enemyFullTurn()
                 
                 return
-            case 'A':
+            case 'e':
                 self.interact()
                 return
                 

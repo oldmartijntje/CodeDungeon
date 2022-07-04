@@ -9,7 +9,7 @@ player.startGame()
 while True: player.movePlayer(input())
 player.movePlayer('Down')    
 player.movePlayer('Left')    
-player.movePlayer('Right')    
+player.movePlayer('Right')   
 
 
 #launch program
