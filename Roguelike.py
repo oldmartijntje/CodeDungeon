@@ -72,8 +72,9 @@ class System:
         dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':50, 'startingNumber':10}}
         dataDict['dungeon'] = {'startLevel': 3}
         dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1, 'entetyLootDroppingChance': 50}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
-        dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isConsumable": False,'rarity': 'common', 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
+        dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrenght': 10, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
+        dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": False,"isConsumable": False,'rarity': 'common', 'consumable': {'restoreHP': 30, 'restoreHPpercentage': False}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
@@ -674,8 +675,8 @@ class System:
                 
                 if self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['isWeapon'] == True:
                     if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight']:
-                        self.hasWeaponWeight = 0
                         self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                        self.hasWeaponWeight = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['weaponWeight']
                         self.displayText(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
             
             self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
@@ -804,8 +805,32 @@ class System:
         else:
             return False
 
-    def selectItem(self,item):
+    def useItem(self, item):
+        if self.inInventory(item):
+            if self.dataDict['tiles'][item]["loot"]["isConsumable"]:
+                if self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHPpercentage"]:
+                    extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHP"] * (self.playerStats["HP"]["max"] // 100)
+                else:
+                    extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHP"]
+                self.playerStats["HP"]["current"] += extraHP
+                if self.playerStats["HP"]["current"] > self.playerStats["HP"]["max"]:
+                    self.playerStats["HP"]["current"] = self.playerStats["HP"]["max"]
+            elif self.dataDict['tiles'][item]["loot"]["isWeapon"]:
+                self.displayText(f"Item: '{item}' is defined as a weapon\nUse 'equipWeapon({item})' to equip it as weapon, or check the item information with 'itemInfo({item})'")
+
+    def itemInfo(self, item):
         pass
+
+    def equipWeapon(self,item):
+        if self.inInventory(item):
+            if self.dataDict['tiles'][item]["loot"]["isWeapon"]:
+                self.equipped = item
+                self.hasWeaponWeight = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['weaponWeight']
+                self.displayText(f"You equipped {item}")
+            else:
+                self.displayText(f"Item: '{item}' is not defined as a weapon\nUse 'useItem({item})' to use it as item, or check the item information with 'itemInfo({item})'")
+        else:
+            self.displayText(f"You don\'t have: {item}\nUse 'showInventory()' to see the items you have")
 
     def newLevel(self):
         self._dungeonLevel += 1
