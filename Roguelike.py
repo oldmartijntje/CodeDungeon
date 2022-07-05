@@ -69,10 +69,10 @@ class System:
         dataDict['preference'] = {'autoEquipBetter': True, 'sleepTime':0.1}
         dataDict['startingLoot'] = {'wooden_sword': {'amount': 1}}
         dataDict['equippedWeapon'] = {'weapon': 'wooden_sword', 'weight': 1}
-        dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':20, 'startingNumber':10}}
+        dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':50, 'startingNumber':10}}
         dataDict['dungeon'] = {'startLevel': 3}
-        dataDict['strengthDamage'] = {'doStrengthDamage': True, 'devidedBy': 3}
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'statsPerLevel': {'HP':10,'ATK':3, 'deathXP' : 5}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
+        dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
@@ -420,17 +420,21 @@ class System:
         self._levelLabel.grid(row=4,column=0, sticky="EW")
 
     def updateStats(self):
-        self._levelVar.set(f'Level: {self.playerStats["level"]}')
-        self._strengthVar.set(f'Strength: {self.playerStats["strength"]}')
         while True:
             xpNeeded = self.defaultPlayerStats["XPneeded"]["multiplyByLevel"] * self.playerStats['level'] + self.defaultPlayerStats["XPneeded"]["startingNumber"]
             if self.playerStats['XP'] > xpNeeded:
                 self.playerStats['XP'] -= xpNeeded
                 self.playerStats['level'] += 1
+                print(f'You levelled up to level {self.playerStats["level"]}!')
+                self.playerStats["strength"] += self.defaultPlayerStats['statsPerLevel']['strength']
+                self.playerStats["HP"]["current"] += self.defaultPlayerStats['statsPerLevel']['HP']
+                self.playerStats["HP"]["max"] += self.defaultPlayerStats['statsPerLevel']['HP']
             else:
                 break
         self._xpVar.set(f'XP: {self.playerStats["XP"]} / {xpNeeded}')
         self._hpTextvar.set(f'HP: {self.playerStats["HP"]["current"]} / {self.playerStats["HP"]["max"]}')
+        self._levelVar.set(f'Level: {self.playerStats["level"]}')
+        self._strengthVar.set(f'Strength: {self.playerStats["strength"]}')
 
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
@@ -586,6 +590,17 @@ class System:
                                 else:
                                     self.moveEnemy(bestMoves[nums[0]][0])
 
+                            else:
+                                ATK = self._currentLevel[tile[0]][tile[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['statsPerLevel']['ATK']
+                                if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['hitChance'] > random.randint(1,99):
+                                    ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['lessATKpointsPercentage'])
+                                    self.playerStats["HP"]["current"] -= ATK
+                                    print(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
+                                    if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['doubleAttack'] == False:
+                                        self.ignore.append([tile[0],tile[1]])
+
+
+
                             #delay of enemy movement
                             try:
                                 if self.dataDict['debug']['sleep']:
@@ -606,7 +621,6 @@ class System:
 
         types = ['display', 'entity']
         for each in types:
-        
             switch = []
             switch.append(self._currentLevel[x][y][each])
             switch.append(self._currentLevel[newX][newY][each])
@@ -617,8 +631,11 @@ class System:
     def damageMessage(self, cords, damage):
         if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] > 0:
             print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he has {self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current']}HP left")
+            self.playerStats['XP'] += damage // self.dataDict['balancing']['XPperDamageDevidedBy']
         else:
             print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
+            self.playerStats['XP'] += damage * self.dataDict['balancing']['killMultiplierXP'] // self.dataDict['balancing']['XPperDamageDevidedBy']
+            self.playerStats['XP'] += self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['deathXP'] * self._currentLevel[cords[0]][cords[1]]['entity']['level']
 
 
     def sliceEnemy(self, cords, damage):
@@ -665,18 +682,27 @@ class System:
             if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
                 hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
                 self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
-            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] < self.playerStats['strength']:
-                damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
-                if self.dataDict['strengthDamage']['doStrengthDamage']:
-                    damage += self.playerStats['strength'] // self.dataDict['strengthDamage']['devidedBy']
-                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
+            
+            damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
+            if self.dataDict['balancing']['doStrengthDamage']:
+                damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
+            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
+                damage = random.randint(1,damage)
+            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
+                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
                     self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
                     self.damageMessage(cords, damage)
-                elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
+                else:
+                    print(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+            elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
+                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
                     self.sliceEnemy([self._playerX, self._playerY-1],damage)
                     self.sliceEnemy([self._playerX, self._playerY+1],damage)
                     self.sliceEnemy([self._playerX-1, self._playerY],damage)
                     self.sliceEnemy([self._playerX+1, self._playerY],damage)
+                else:
+                    print(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+
                 
 
 
@@ -758,7 +784,7 @@ class System:
         pass
 
     def newLevel(self):
-        self._enemyLevel += 1
+        self._dungeonLevel += 1
         self.loadState()
         levelNumber = random.randint(0,len(self._defaultlevels)-1)
         print(levelNumber)

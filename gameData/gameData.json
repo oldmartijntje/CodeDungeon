@@ -1,1 +1,246 @@
-"{\"preference\": {\"autoEquipBetter\": true, \"sleepTime\": 0.1}, \"startingLoot\": {\"wooden_sword\": {\"amount\": 1}}, \"equippedWeapon\": {\"weapon\": \"wooden_sword\", \"weight\": 1}, \"playerStats\": {\"statsPerLevel\": {\"HP\": 10, \"strength\": 4}, \"beginStats\": {\"HP\": 5, \"strength\": 5}, \"startLevel\": 3, \"XPneeded\": {\"multiplyByLevel\": 20, \"startingNumber\": 10}}, \"dungeon\": {\"startLevel\": 3}, \"strengthDamage\": {\"doStrengthDamage\": true, \"devidedBy\": 3}, \"tiles\": {\"rat\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": false, \"Image\": \"rat\", \"isEnemy\": true, \"isInteractable\": false, \"isLoot\": false, \"statsPerLevel\": {\"HP\": 10, \"ATK\": 3, \"deathXP\": 5}}, \"exit\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": true, \"Image\": \"exit\", \"isEnemy\": false, \"isInteractable\": false, \"isLoot\": false}, \"floor\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": true, \"Image\": \"floor\", \"isEnemy\": false, \"isInteractable\": false, \"isLoot\": false}, \"sign\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": false, \"Image\": \"sign\", \"isEnemy\": false, \"isInteractable\": true, \"isLoot\": false, \"text\": \"signText\"}, \"wall\": {\"ShowOutsideAs\": \"wall\", \"Walkable\": false, \"Image\": \"wall\", \"isEnemy\": false, \"isInteractable\": false, \"isLoot\": false}, \"npc\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": false, \"Image\": \"npc\", \"isEnemy\": false, \"isInteractable\": true, \"isLoot\": false, \"text\": \"npcText\"}, \"wooden_sword\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": false, \"Image\": \"loot\", \"isEnemy\": false, \"isInteractable\": false, \"isLoot\": true, \"loot\": {\"amount\": 1, \"isWeapon\": true, \"isFood\": false, \"rarity\": \"common\", \"weapon\": {\"minStrenght\": 8, \"attack\": 8, \"type\": \"stab\", \"weaponWeight\": 1}}}, \"stone_sword\": {\"ShowOutsideAs\": \"floor\", \"Walkable\": false, \"Image\": \"loot\", \"isEnemy\": false, \"isInteractable\": false, \"isLoot\": true, \"loot\": {\"amount\": 1, \"isWeapon\": true, \"isFood\": false, \"rarity\": \"uncommon\", \"weapon\": {\"minStrenght\": 10, \"attack\": 10, \"type\": \"stab\", \"weaponWeight\": 3}}}}, \"rarities\": {\"common\": {\"chance\": 100}, \"uncommon\": {\"chance\": 55}, \"rare\": {\"chance\": 30}, \"epic\": {\"chance\": 15}, \"legendary\": {\"chance\": 5}, \"impossible\": {\"chance\": 1}}, \"text\": {\"signText\": [\"I am probably older than you are; my friendly traveler reading this.\", \"This text took 49 bytes to store on your computer\", \"I was a tree\", \"I was Groot\", \"Don't listen to the NPCs, They only speak nonsense\", \"I am empty, wait did i just create a paradox?\", \"Go left and then right\", \"Danger ahead\", \"Greetings traveler, be aware of Fawful.\"], \"npcText\": [\"I am the great Cackletta's most best pupil, who is named Fawful! I am here, laughing at you! If you are giving us the chase, just to get your silly princess's voice, then you are idiots of foolishness! Princess Peach's sweet voice will soon be the bread that makes the sandwich of Cackletta's desires! And this battle shall be the delicious mustard on that bread! The mustard of your doom!\", \"Fink-rat!\", \"Have you readiness for this?!?\", \"Now is when I ram you!\", \"O Great Cackletta, unleash the voice of Princess Peach on the Beanstar when you are wanting to!\", \"Now is the time where my true might shines like many angry sunbeams of rage!\", \"Hah! Now taste the finale, when carelessness opens the door to a comeback not expected by you! Your lives that I spit on are now but a caricature of a cartoon drawn by a kid who is stupid! You shall all fall and vanish with your precious Beanbean Kingdom as I laugh heartily at you!\", \"In the last moments of the finale of the finale, when relief leads to negligence that begets rashness... That is when the comeback that faltered comes back and beats your pathetic comeback that I scoff at!\", \"O Great Bowletta! The Mario Bros. who I hate are coming this way!\", \"Yes...Moustache...\", \"At last, my entrance with drama!\", \"Stop it...such mumbling...\", \"ONE FELL SWOOP IS HOW I WILL DEAL WITH YOU FINK-RATS!!!\", \"Next it is the turn of you!\", \"You! You are the fink-rats that came with the Bowser that I hate!\", \"I HAVE FURY!\", \"Ouch! Hotness! It is the overheat!\", \"I have boredom...Guests? Now I have... FURY!\", \"I say to you WELCOME! Welcome to Fawful's Bean 'n' Badge!\", \"In this place, beans are like precious treasure milked from a famous cow made of jewels!\", \"All who come with beans leave with badges so rare they make mustaches droop with disbelief!\", \"What? The story of Fawful? Your words are not beans. I am not wanting them.\", \"You are like brainless cats that are too dumb to know they are stupid! You have curiosity... ...But my tale is long, so long it makes babies old and hairy lips grow grey with aging. Do you dare hear?\", \"I am here, merchant of badges, only sometimes with fury, but I once had fury at all times.\", \"I drizzled rage dressing on the country next door. Rage dressing on a salad of evil!\", \"Red and green puts the fog of rage in my eyes, and my mind goes crazy.\", \"P-Please... I will be fine. No worrying for Fawful. We talk of beans.\", \"Beans and badges... We begin trading!\", \"The beans hide in the dirts of this country like dirt-fish who like to eat dirt for dinner. Bean symbols like this are marking all bean spots.\", \"You are digging in dirt, right? You are digging under symbols. And you are finding much bean!\", \"Bean symbols have sneakiness! When the beans are gone, the symbols flee like babies!\", \"You are wanting much beans? Then you are hunting symbols. And digging and popping.\", \"There are even places to win beans in games, maybe...\", \"If you get many beans, you get many badges at this place, Fawful's Bean 'n' Badge!\", \"I HAVE FURY!\"]}, \"chance\": {\"enemyAir\": 5, \"enemySpawn\": 40, \"lootAir\": 3, \"lootSpawn\": 40}, \"appSettings\": {\"offset\": 18, \"size\": 32, \"maxTypes\": 9, \"colors\": [\"white\", \"black\", \"green\", \"blue\", \"pink\", \"red\", \"brown\", \"orange\", \"white\", \"purple\"]}, \"playerImages\": {\"L\": \"player left\", \"R\": \"player right\"}, \"debug\": {\"logging\": false, \"combat\": true, \"enemyAI\": true, \"sleep\": true}, \"Gamma\": {\"distance\": 2, \"darknessFull\": 0.2, \"darknessFade\": 0.5}}"
+{
+    "preference": {
+        "autoEquipBetter": true,
+        "sleepTime": 0.1
+    },
+    "startingLoot": {
+        "wooden_sword": {
+            "amount": 1
+        }
+    },
+    "equippedWeapon": {
+        "weapon": "wooden_sword",
+        "weight": 1
+    },
+    "playerStats": {
+        "statsPerLevel": {
+            "HP": 10,
+            "strength": 4
+        },
+        "beginStats": {
+            "HP": 5,
+            "strength": 5
+        },
+        "startLevel": 3,
+        "XPneeded": {
+            "multiplyByLevel": 50,
+            "startingNumber": 10
+        }
+    },
+    "dungeon": {
+        "startLevel": 3
+    },
+    "balancing": {
+        "doStrengthDamage": true,
+        "strengthDevidedBy": 3,
+        "killMultiplierXP": 2,
+        "XPperDamageDevidedBy": 1
+    },
+    "tiles": {
+        "rat": {
+            "ShowOutsideAs": "floor",
+            "Walkable": false,
+            "Image": "rat",
+            "isEnemy": true,
+            "isInteractable": false,
+            "isLoot": false,
+            "statsPerLevel": {
+                "HP": 5,
+                "ATK": 2,
+                "deathXP": 5
+            },
+            "hitChance": 80,
+            "lessATKpointsPercentage": 20
+        },
+        "exit": {
+            "ShowOutsideAs": "floor",
+            "Walkable": true,
+            "Image": "exit",
+            "isEnemy": false,
+            "isInteractable": false,
+            "isLoot": false
+        },
+        "floor": {
+            "ShowOutsideAs": "floor",
+            "Walkable": true,
+            "Image": "floor",
+            "isEnemy": false,
+            "isInteractable": false,
+            "isLoot": false
+        },
+        "sign": {
+            "ShowOutsideAs": "floor",
+            "Walkable": false,
+            "Image": "sign",
+            "isEnemy": false,
+            "isInteractable": true,
+            "isLoot": false,
+            "text": "signText"
+        },
+        "wall": {
+            "ShowOutsideAs": "wall",
+            "Walkable": false,
+            "Image": "wall",
+            "isEnemy": false,
+            "isInteractable": false,
+            "isLoot": false
+        },
+        "npc": {
+            "ShowOutsideAs": "floor",
+            "Walkable": false,
+            "Image": "npc",
+            "isEnemy": false,
+            "isInteractable": true,
+            "isLoot": false,
+            "text": "npcText"
+        },
+        "wooden_sword": {
+            "ShowOutsideAs": "floor",
+            "Walkable": false,
+            "Image": "loot",
+            "isEnemy": false,
+            "isInteractable": false,
+            "isLoot": true,
+            "loot": {
+                "amount": 1,
+                "isWeapon": true,
+                "isFood": false,
+                "rarity": "common",
+                "weapon": {
+                    "minStrenght": 8,
+                    "attack": 8,
+                    "type": "stab",
+                    "weaponWeight": 1
+                }
+            }
+        },
+        "stone_sword": {
+            "ShowOutsideAs": "floor",
+            "Walkable": false,
+            "Image": "loot",
+            "isEnemy": false,
+            "isInteractable": false,
+            "isLoot": true,
+            "loot": {
+                "amount": 1,
+                "isWeapon": true,
+                "isFood": false,
+                "rarity": "uncommon",
+                "weapon": {
+                    "minStrenght": 10,
+                    "attack": 10,
+                    "type": "stab",
+                    "weaponWeight": 3
+                }
+            }
+        }
+    },
+    "rarities": {
+        "common": {
+            "chance": 100
+        },
+        "uncommon": {
+            "chance": 55
+        },
+        "rare": {
+            "chance": 30
+        },
+        "epic": {
+            "chance": 15
+        },
+        "legendary": {
+            "chance": 5
+        },
+        "impossible": {
+            "chance": 1
+        }
+    },
+    "text": {
+        "signText": [
+            "I am probably older than you are; my friendly traveler reading this.",
+            "This text took 49 bytes to store on your computer",
+            "I was a tree",
+            "I was Groot",
+            "Don't listen to the NPCs, They only speak nonsense",
+            "I am empty, wait did i just create a paradox?",
+            "Go left and then right",
+            "Danger ahead",
+            "Greetings traveler, be aware of Fawful."
+        ],
+        "npcText": [
+            "I am the great Cackletta's most best pupil, who is named Fawful! I am here, laughing at you! If you are giving us the chase, just to get your silly princess's voice, then you are idiots of foolishness! Princess Peach's sweet voice will soon be the bread that makes the sandwich of Cackletta's desires! And this battle shall be the delicious mustard on that bread! The mustard of your doom!",
+            "Fink-rat!",
+            "Have you readiness for this?!?",
+            "Now is when I ram you!",
+            "O Great Cackletta, unleash the voice of Princess Peach on the Beanstar when you are wanting to!",
+            "Now is the time where my true might shines like many angry sunbeams of rage!",
+            "Hah! Now taste the finale, when carelessness opens the door to a comeback not expected by you! Your lives that I spit on are now but a caricature of a cartoon drawn by a kid who is stupid! You shall all fall and vanish with your precious Beanbean Kingdom as I laugh heartily at you!",
+            "In the last moments of the finale of the finale, when relief leads to negligence that begets rashness... That is when the comeback that faltered comes back and beats your pathetic comeback that I scoff at!",
+            "O Great Bowletta! The Mario Bros. who I hate are coming this way!",
+            "Yes...Moustache...",
+            "At last, my entrance with drama!",
+            "Stop it...such mumbling...",
+            "ONE FELL SWOOP IS HOW I WILL DEAL WITH YOU FINK-RATS!!!",
+            "Next it is the turn of you!",
+            "You! You are the fink-rats that came with the Bowser that I hate!",
+            "I HAVE FURY!",
+            "Ouch! Hotness! It is the overheat!",
+            "I have boredom...Guests? Now I have... FURY!",
+            "I say to you WELCOME! Welcome to Fawful's Bean 'n' Badge!",
+            "In this place, beans are like precious treasure milked from a famous cow made of jewels!",
+            "All who come with beans leave with badges so rare they make mustaches droop with disbelief!",
+            "What? The story of Fawful? Your words are not beans. I am not wanting them.",
+            "You are like brainless cats that are too dumb to know they are stupid! You have curiosity... ...But my tale is long, so long it makes babies old and hairy lips grow grey with aging. Do you dare hear?",
+            "I am here, merchant of badges, only sometimes with fury, but I once had fury at all times.",
+            "I drizzled rage dressing on the country next door. Rage dressing on a salad of evil!",
+            "Red and green puts the fog of rage in my eyes, and my mind goes crazy.",
+            "P-Please... I will be fine. No worrying for Fawful. We talk of beans.",
+            "Beans and badges... We begin trading!",
+            "The beans hide in the dirts of this country like dirt-fish who like to eat dirt for dinner. Bean symbols like this are marking all bean spots.",
+            "You are digging in dirt, right? You are digging under symbols. And you are finding much bean!",
+            "Bean symbols have sneakiness! When the beans are gone, the symbols flee like babies!",
+            "You are wanting much beans? Then you are hunting symbols. And digging and popping.",
+            "There are even places to win beans in games, maybe...",
+            "If you get many beans, you get many badges at this place, Fawful's Bean 'n' Badge!",
+            "I HAVE FURY!"
+        ]
+    },
+    "chance": {
+        "enemyAir": 5,
+        "enemySpawn": 40,
+        "lootAir": 3,
+        "lootSpawn": 40
+    },
+    "appSettings": {
+        "offset": 18,
+        "size": 32,
+        "maxTypes": 9,
+        "colors": [
+            "white",
+            "black",
+            "green",
+            "blue",
+            "pink",
+            "red",
+            "brown",
+            "orange",
+            "white",
+            "purple"
+        ]
+    },
+    "playerImages": {
+        "L": "player left",
+        "R": "player right"
+    },
+    "debug": {
+        "logging": false,
+        "combat": true,
+        "enemyAI": true,
+        "sleep": true
+    },
+    "Gamma": {
+        "distance": 2,
+        "darknessFull": 0.2,
+        "darknessFade": 0.5
+    }
+}
