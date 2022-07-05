@@ -10,7 +10,7 @@ import tkinter
 from PIL import Image, ImageTk, ImageEnhance
 import math
 import copy
-
+from tkinter.messagebox import showerror
 
 
 
@@ -71,7 +71,7 @@ class System:
         dataDict['equippedWeapon'] = {'weapon': 'wooden_sword', 'weight': 1}
         dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':50, 'startingNumber':10}}
         dataDict['dungeon'] = {'startLevel': 3}
-        dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1}
+        dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1, 'entetyLootDroppingChance': 50}
         dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1, "isWeapon": True,"isFood": False,'rarity': 'common', 'weapon': True, 'weapon': {'minStrenght': 8, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : 1,"isWeapon": True,"isFood": False,'rarity': 'uncommon', 'weapon': True, 'weapon': {'minStrenght': 10, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 55},'rare': {'chance': 30},'epic': {'chance': 15},'legendary': {'chance': 5},'impossible': {'chance': 1}}
@@ -182,8 +182,7 @@ class System:
     
     #for when something is missign from the json
     def jsonError(self,error):
-        print(error)
-        print('something is wrong with the gameData/gameData.json, delete it or fix it.')
+        self.displayText(f'{error}\nsomething is wrong with the gameData/gameData.json, delete it or fix it.')
         self.logging([error,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
     #generate a new state
@@ -228,17 +227,20 @@ class System:
         return random.choices(self.rarityList, weights = chanceList, k = 1)[0]
 
     #generate loot
-    def getLoot(self, modifier: int = 0):
-        while True:
-            itemType = self.itemRarity(modifier)
-            if len(self._itemRarety[itemType]) != 0:
-                break
-        item = self._itemRarety[itemType][random.randint(0,len(self._itemRarety[itemType])-1)]
-        amount = self.dataDict['tiles'][item]['loot']['amount']
-        if type(amount) == list:
-            amount = random.randint(amount[0], amount[1])
-        loot = {'type':item, 'amount':amount}
-        return loot
+    def getLoot(self, modifier: int = 0, chanceOfNothing: int = 100):
+        if random.randint(1,99) < chanceOfNothing:
+            while True:
+                itemType = self.itemRarity(modifier)
+                if len(self._itemRarety[itemType]) != 0:
+                    break
+            item = self._itemRarety[itemType][random.randint(0,len(self._itemRarety[itemType])-1)]
+            amount = self.dataDict['tiles'][item]['loot']['amount']
+            if type(amount) == list:
+                amount = random.randint(amount[0], amount[1])
+            loot = {'type':item, 'amount':amount}
+            return loot
+        else:
+            return 'NONE'
 
     #read tile of 2D erray and convert into map
     def readTile(self, tile, x, y, extra = 'NONE'):
@@ -257,7 +259,7 @@ class System:
             entity = 'NONE'
             loot = 'NONE'
             if random.randint(1,100) <= self.chanceEnemyAir:
-                entityLoot = self.getLoot()
+                entityLoot = self.getLoot(0, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             if random.randint(1,100) <= self.chanceLootAir:
                 loot = self.getLoot()
@@ -280,7 +282,7 @@ class System:
             entity = 'NONE'
             loot = 'NONE'
             if random.randint(1,100) <= self.chanceEnemySpawn:
-                entityLoot = self.getLoot()
+                entityLoot = self.getLoot(0, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
         elif tile == 6:
@@ -420,12 +422,15 @@ class System:
         self._levelLabel.grid(row=4,column=0, sticky="EW")
 
     def updateStats(self):
+        if self.playerStats["HP"]["current"] <= 0:
+            showerror(title='Error',message='You died!')
+            self.exit()
         while True:
             xpNeeded = self.defaultPlayerStats["XPneeded"]["multiplyByLevel"] * self.playerStats['level'] + self.defaultPlayerStats["XPneeded"]["startingNumber"]
             if self.playerStats['XP'] > xpNeeded:
                 self.playerStats['XP'] -= xpNeeded
                 self.playerStats['level'] += 1
-                print(f'You levelled up to level {self.playerStats["level"]}!')
+                self.displayText(f'You levelled up to level {self.playerStats["level"]}!')
                 self.playerStats["strength"] += self.defaultPlayerStats['statsPerLevel']['strength']
                 self.playerStats["HP"]["current"] += self.defaultPlayerStats['statsPerLevel']['HP']
                 self.playerStats["HP"]["max"] += self.defaultPlayerStats['statsPerLevel']['HP']
@@ -595,7 +600,7 @@ class System:
                                 if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['hitChance'] > random.randint(1,99):
                                     ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['lessATKpointsPercentage'])
                                     self.playerStats["HP"]["current"] -= ATK
-                                    print(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
+                                    self.displayText(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
                                     if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['doubleAttack'] == False:
                                         self.ignore.append([tile[0],tile[1]])
 
@@ -630,10 +635,10 @@ class System:
 
     def damageMessage(self, cords, damage):
         if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] > 0:
-            print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he has {self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current']}HP left")
+            self.displayText(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he has {self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current']}HP left")
             self.playerStats['XP'] += damage // self.dataDict['balancing']['XPperDamageDevidedBy']
         else:
-            print(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
+            self.displayText(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
             self.playerStats['XP'] += damage * self.dataDict['balancing']['killMultiplierXP'] // self.dataDict['balancing']['XPperDamageDevidedBy']
             self.playerStats['XP'] += self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['deathXP'] * self._currentLevel[cords[0]][cords[1]]['entity']['level']
 
@@ -660,7 +665,7 @@ class System:
         if self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
             #if there is loot
             #{'type': 'Stone sword', 'amount': 1}
-            print(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+            self.displayText(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
             if self._currentLevel[cords[0]][cords[1]]['loot']['type'] in self.inventory:
 
                 self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']]['amount'] += self._currentLevel[cords[0]][cords[1]]['loot']['amount']
@@ -671,13 +676,13 @@ class System:
                     if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight']:
                         self.hasWeaponWeight = 0
                         self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
-                        print(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+                        self.displayText(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
             
             self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
             self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
             self.rendering()
         elif 'text' in self._currentLevel[cords[0]][cords[1]]:
-            print(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
+            self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
         elif self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
             if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
                 hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
@@ -693,7 +698,7 @@ class System:
                     self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
                     self.damageMessage(cords, damage)
                 else:
-                    print(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                    self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
             elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
                 if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
                     self.sliceEnemy([self._playerX, self._playerY-1],damage)
@@ -701,10 +706,7 @@ class System:
                     self.sliceEnemy([self._playerX-1, self._playerY],damage)
                     self.sliceEnemy([self._playerX+1, self._playerY],damage)
                 else:
-                    print(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
-
-                
-
+                    self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
 
             if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
                 if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
@@ -774,13 +776,35 @@ class System:
     def wait(self):
         pass
 
-    def switchInventory(self, slot1, slot2):
-        pass
+    def autoSelect(self, syntax= 'show'):
+        match syntax:
+            case 0:
+                syntax = False
+            case 1:
+                syntax = True
+        if syntax == 'show':
+            self.displayText(f'"autoSelect better weapons" is set to: {self.autoEquip}')
+        elif syntax == True or syntax == False:
+            self.autoEquip = syntax
+            self.displayText(f'"autoSelect better weapons" has been set to: {self.autoEquip}')
+        else:
+            self.displayText(f'invalid syntax in autoSelect() function.\nSyntax needed: (True/False/\'show\'), syntax received: {syntax}')
 
-    def inInventory(self):
-        pass
 
-    def useItem(self,slot):
+    def showInventory(self):
+        items = list(self.inventory.keys())
+        text = 'Your inventory contains:\n'
+        for item in items:
+            text += f'{self.inventory[item]["amount"]} x {item}\n'
+        self.displayText(text)
+
+    def inInventory(self, item):
+        if item in self.inventory:
+            return True
+        else:
+            return False
+
+    def selectItem(self,item):
         pass
 
     def newLevel(self):
@@ -792,3 +816,10 @@ class System:
         self.createLevel(self._defaultlevels[levelNumber])
         self.createCanvas()
         self.rendering()
+
+    def displayText(self, text,q=0, w=0, e=0,r=0 ,t=0,y=0):
+        extra = [q,w,e,r,t,y]
+        for x in extra:
+            if x != 0:
+                text += f'\n{x}'
+        print(text)
