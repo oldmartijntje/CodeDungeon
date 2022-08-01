@@ -1,13 +1,31 @@
-# Mini-RPG
-It's an rpg / rogue-like game where you have to code your movement through a dungeon
+# Mini-Roguelike
+>Learning to code should be fun!
 
-## How to play
-stay away from rpg.py, That is the core system. You need to edit example.py to play.
+This Project is there as learning tool, a tool to teach kids the logic of programming in a fun way, By programming the movement of your character in a game.
+
+##### Table of Contents  
+[Installation](#installation)  
+[Emphasis](#emphasis)  
+
+## Installation
+
+First of all you need to <a href='https://www.python.org/downloads/'>install Python</a>, It works with <a href='https://www.python.org/downloads/release/python-3101/'>Python 3.10.1</a>, I don't know about other versions
+>Make sure that when you are installing python you enable this:
+>
+>![GitHub Logo](sprites/readmePython.png)
+
+When you have python installed, install <a href="https://pillow.readthedocs.io/en/stable/installation.html">PIL</a> (Pillow),
+If you have Pip installed you can do it by typing this into your console:
+>pip install Pillow
+
+<small><i><a href='https://pypi.org/project/Pillow/'>PIL on the Python Package Index</a></i></small>
+
+And the last step: Run <a href="setup.py">setup.py</a>
 
 
 
 ### Notes
-This uses Oldmartijntje's account system: https://github.com/oldmartijntje/accounts-system
+This uses @oldmartijntje his account system: https://github.com/oldmartijntje/accounts-system
 
 This is a project inspired by:
 
