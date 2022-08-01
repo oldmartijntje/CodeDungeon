@@ -20,7 +20,7 @@ If you have Pip installed you can do it by typing this into your console:
 
 <small><i><a href='https://pypi.org/project/Pillow/'>PIL on the Python Package Index</a></i></small>
 
-And the last step: Run <a href="setup.py">setup.py</a>
+And the last step: Run <a href="https://github.com/oldmartijntje/Mini-Roguelike/blob/main/setup.py">setup.py</a> which should be installed when you downloaded the Release
 
 
 
