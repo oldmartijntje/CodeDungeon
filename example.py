@@ -1,15 +1,8 @@
 import Roguelike
-import random
-player = Roguelike.System(random.randint(0,1000000))
+player = Roguelike.System()
 player.startGame()
-# Jouw python instructies zet je vanaf hier:
+# Your Python instructions go here:
 
-
-#while True: player.movePlayer('Wait', False)
-while True: player.movePlayer(input())
-player.movePlayer('Down')    
-player.movePlayer('Left')    
-player.movePlayer('Right')   
 
 
 #launch program

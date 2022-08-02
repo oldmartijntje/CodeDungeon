@@ -748,44 +748,70 @@ class System:
         cords = False
         match direction:
             case 'w':
-                cords = [self._playerX, self._playerY-1]
-                self._facing = 'U'
+                self.moveUp()
             case 's':
-                cords = [self._playerX, self._playerY+1]
-                self._facing = 'D'
+                self.moveDown()
             case 'a':
-                cords = [self._playerX -1, self._playerY]
-                self._facingDirectionTexture = 'L'
-                self._facing = 'L'
+                self.moveLeft()
             case 'd':
-                cords = [self._playerX +1, self._playerY]
-                self._facingDirectionTexture = 'R'
-                self._facing = 'R'
+                self.moveRight()
             case 'wait':
-                self.enemyFullTurn()
-                
-                return
+                self.wait()
             case 'e':
                 self.interact()
-                return
             case 'item':
                 self.useItem(input('item>>'))
-                return
             case 'inv':
                 self.showInventory()
-                return
             case 'weapon':
                 self.equipWeapon(input('weapon>>'))
-                return
-                
-        if cords != False:
-            if self.isWalkable(cords, True):
-                self._playerX, self._playerY = cords
-                if self._currentLevel[self._playerX][self._playerY]['tile'] == 'exit':
-                    self.newLevel()
-                else:
-                    self.enemyFullTurn()
-            self.rendering()
+
+    def lookUp(self):
+        self._facing = 'U'
+
+    def lookDown(self):
+        self._facing = 'D'
+
+    def lookLeft(self):
+        self._facing = 'L'
+        self._facingDirectionTexture = 'L'
+        self.rendering()
+
+    def lookRight(self):
+        self._facing = 'R'
+        self._facingDirectionTexture = 'R'
+        self.rendering()
+
+    def moveUp(self):
+        cords = [self._playerX, self._playerY-1]
+        self._facing = 'U'
+        self.checkMovement(cords)
+
+    def moveDown(self):
+        cords = [self._playerX, self._playerY+1]
+        self._facing = 'D'
+        self.checkMovement(cords)
+
+    def moveLeft(self):
+        cords = [self._playerX -1, self._playerY]
+        self._facingDirectionTexture = 'L'
+        self._facing = 'L'
+        self.checkMovement(cords)
+
+    def moveRight(self):
+        cords = [self._playerX +1, self._playerY]
+        self._facingDirectionTexture = 'R'
+        self._facing = 'R'
+        self.checkMovement(cords)
+
+    def checkMovement(self, cords):            
+        if self.isWalkable(cords, True):
+            self._playerX, self._playerY = cords
+            if self._currentLevel[self._playerX][self._playerY]['tile'] == 'exit':
+                self.newLevel()
+            else:
+                self.enemyFullTurn()
+        self.rendering()
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
         if self.doLogging:
@@ -805,7 +831,7 @@ class System:
         self.ignore = []
 
     def wait(self):
-        pass
+        self.enemyFullTurn()
 
     def autoSelect(self, syntax= 'show'):
         match syntax:
@@ -828,6 +854,7 @@ class System:
         for item in items:
             text += f'{self.inventory[item]["amount"]} x {item}\n'
         self.displayText(text)
+        return self.inventory
 
     def inInventory(self, item):
         if item in self.inventory:
