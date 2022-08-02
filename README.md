@@ -6,6 +6,7 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
 ##### Table of Contents  
 [Installation](#installation)  
 [How to use](#how-to-use)  
+[How to change content](#how-to-create)  
 
 ## Installation
 
@@ -53,9 +54,14 @@ You need to click 'Ok'
 This is the game, you can close it, and the installation process is done.
 
 ## How To Use
+
 Open example.py, and your code should go between line 4 and 7:
 
 ![Code](sprites/readme/examplepy.png)
+
+for different dungeons, put a number here.
+
+![Code](sprites/readme/use7.png)
 
 >How to move the player:
 >
@@ -108,6 +114,9 @@ You can go as advanced as you want to go, by using anything python can do.
 >And with these:
 >
 >![Code](sprites/readme/use6.png)
+
+## How to create
+
 
 
 ### Notes
