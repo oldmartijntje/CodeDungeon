@@ -532,9 +532,9 @@ class System:
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
                     self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
-                    self._buttonsList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
-            tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=y+1,columnspan=x//2+1, ipadx=20, ipady=10, sticky="EW")
-            tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self._defaultlevels[chosenLevel])).grid(column=x//2+1,row=y+1,columnspan=x//2+1, ipadx=20, ipady=10, sticky="EW")
+                    self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
+            tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")
+            tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self._defaultlevels[chosenLevel])).grid(column=x//2+1,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")
         #if play mode
         if mode.lower() == 'play':
             #generate player
@@ -774,7 +774,7 @@ class System:
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
-        return
+        #return
         cords = False
         match direction:
             case 'w':

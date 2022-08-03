@@ -1,6 +1,6 @@
 import Roguelike
 player = Roguelike.System()
-player.startGame('Create', '10x5')
+player.startGame('Create')
 # Your Python instructions go here:
 
 

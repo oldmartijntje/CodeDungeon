@@ -125,6 +125,14 @@ This program is highly configurable so i am splitting it into multiple parts
 
 ## Level Editor
 
+>The level editor is enabled by putting 'Create' (or lowercase) in between the brackets as seen on this picture:
+>
+>![Code](sprites/readme/level1.png)
+
+When enabled you will see something like this:
+
+![Code](sprites/readme/level2.png)
+
 ## GameData Editing
 
 ### Notes
