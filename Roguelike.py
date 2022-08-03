@@ -10,7 +10,7 @@ import tkinter
 from PIL import Image, ImageTk, ImageEnhance
 import math
 import copy
-from tkinter.messagebox import showerror
+from tkinter.messagebox import showerror, askyesno, showinfo
 
 
 
@@ -28,7 +28,8 @@ class System:
     [[1, 4, 0, 0, 5, 0, 4, 1, 0, 3], [0, 1, 1, 1, 0, 1, 1, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 5, 0, 0], [2, 0, 1, 5, 0, 1, 0, 0, 1, 0], [0, 0, 4, 1, 0, 5, 1, 1, 4, 1], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 5, 1, 4, 1, 5, 1, 0, 1], [0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 1, 0, 5, 0, 0, 1, 1, 0, 1], [4, 0, 0, 1, 4, 0, 5, 0, 0, 5]],
     [[0, 0, 0, 0, 1, 6, 4, 1, 4, 7], [0, 1, 1, 5, 1, 0, 5, 1, 0, 0], [5, 1, 3, 0, 1, 0, 1, 1, 1, 0], [0, 1, 1, 1, 1, 5, 0, 0, 1, 0], [0, 0, 4, 1, 4, 0, 1, 5, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 0, 6], [4, 1, 0, 0, 5, 0, 0, 1, 0, 1], [4, 1, 1, 1, 1, 1, 0, 1, 0, 0], [0, 1, 3, 0, 1, 4, 0, 1, 1, 5], [2, 1, 1, 0, 0, 0, 1, 3, 0, 0]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
-    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 4, 1, 1, 5, 0, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 5, 1, 1, 4, 0, 0, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
     ]
     
     bugmessage = []
@@ -94,9 +95,22 @@ class System:
         dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrenght': 30, 'attack': 5, 'type': 'slice', 'weaponWeight' : 5}}}
         dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': True}}}
     
-        json_string = json.dumps(dataDict)
         with open(f'gameData/gameData.json', 'w') as outfile:
-            json.dump(json_string, outfile)
+            json.dump(dataDict, outfile, indent=4)
+
+    #map data
+    if os.path.exists(f'gameData/levelData.json'):
+        with open(f'gameData/levelData.json') as level_json_file:
+            levelDataString = json.load(level_json_file)
+            if type(levelDataString) != dict and type(levelDataString) != list:
+                levelDataDict = json.loads(levelDataString)
+            else:
+                levelDataDict = levelDataString
+    else:
+        with open(f'gameData/levelData.json', 'w') as outfile:
+            json.dump(_defaultlevels, outfile)
+
+
 
     #change json into usable data part1
     try:
@@ -343,8 +357,8 @@ class System:
                     whereNonAir = [i for i, x in enumerate(level[tryLine]) if x == 8]
                     spawnable = whereAir + whereNonAir
                     level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 2
-        #if there isn't an exit declared, and not a bossfight, generate random exit
-        if not any(3 in sublist for sublist in level) and not any(9 in sublist for sublist in level):
+        #if there isn't an exit declared, generate random exit
+        if not any(3 in sublist for sublist in level):
             self.logging('exit needed')
             while not any(3 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
@@ -457,7 +471,21 @@ class System:
 
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
-        
+        def exportMap(map):
+            if askyesno('export', 'are you sure you want to export? \nIf you don\'t know how to edit it might be hard to remove'):
+                if os.path.exists(f'gameData/levelData.json'):
+                    with open(f'gameData/levelData.json') as level_json_file:
+                        levelDataString = json.load(level_json_file)
+                        if type(levelDataString) != dict and type(levelDataString) != list:
+                            levelDataDict = json.loads(levelDataString)
+                        else:
+                            levelDataDict = levelDataString
+
+                    levelDataDict.append(map)
+            
+                    with open(f'gameData/levelData.json', 'w') as outfile:
+                        json.dump(levelDataDict, outfile)
+                    showinfo('export', 'exported succesfully!')
         custom = False
         #look what mode
         if str(mode).lower() not in ['play', 'create']:
@@ -504,8 +532,9 @@ class System:
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
                     self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
-                    self._buttonsList[x][y].grid(column=x, row=y)
-            tkinter.Button(self.gameWindow, text='export',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=x+1,columnspan=y+1)
+                    self._buttonsList[x][y].grid(column=x, row=y, ipadx=20, ipady=10, sticky="EW")
+            tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=y+1,columnspan=x//2+1, ipadx=20, ipady=10, sticky="EW")
+            tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self._defaultlevels[chosenLevel])).grid(column=x//2+1,row=y+1,columnspan=x//2+1, ipadx=20, ipady=10, sticky="EW")
         #if play mode
         if mode.lower() == 'play':
             #generate player
@@ -745,6 +774,7 @@ class System:
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
+        return
         cords = False
         match direction:
             case 'w':
@@ -852,7 +882,8 @@ class System:
         items = list(self.inventory.keys())
         text = 'Your inventory contains:\n'
         for item in items:
-            text += f'{self.inventory[item]["amount"]} x {item}\n'
+            if self.inventory[item]["amount"] > 0:
+                text += f'{self.inventory[item]["amount"]} x {item}\n' 
         self.displayText(text)
         return self.inventory
 

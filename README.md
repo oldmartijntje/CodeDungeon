@@ -4,9 +4,11 @@
 This Project is there as learning tool, a tool to teach kids the logic of programming in a fun way, By programming the movement of your character in a game.
 
 ##### Table of Contents  
-[Installation](#installation)  
-[How to use](#how-to-use)  
-[How to change content](#how-to-create)  
+- [Installation](#installation)  
+- [How to use](#how-to-use)  
+- [How to change content](#how-to-create)  
+  + [Level Editor](#level-editor)
+  + [GameData Editing](#gamedata-editing)
 
 ## Installation
 
@@ -117,7 +119,13 @@ You can go as advanced as you want to go, by using anything python can do.
 
 ## How to create
 
+This program is highly configurable so i am splitting it into multiple parts
+ - [Level Editor](#level-editor)
+ - [GameData](#gamedata-editing)
 
+## Level Editor
+
+## GameData Editing
 
 ### Notes
 This uses @oldmartijntje his account system: https://github.com/oldmartijntje/accounts-system
