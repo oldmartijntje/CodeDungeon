@@ -9,6 +9,7 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
 - [How to change content](#how-to-create)  
   + [Level Editor](#level-editor)
   + [GameData Editing](#gamedata-editing)
+  + [Testing tools](#testing-tools)
 
 ## Installation
 
@@ -122,6 +123,7 @@ You can go as advanced as you want to go, by using anything python can do.
 This program is highly configurable so i am splitting it into multiple parts
  - [Level Editor](#level-editor)
  - [GameData](#gamedata-editing)
+ - [Testing tools](#testing-tools)
 
 ## Level Editor
 
@@ -133,7 +135,67 @@ When enabled you will see something like this:
 
 ![Code](sprites/readme/level2.png)
 
+When you click a square it will change number and color, here is the list of what is what:
+ - 0: Air, with a chance to spawn loot or enemy (configurable in json).
+ - 1: A wall.
+ - 2: Entrance, if you have multiple it will spawn you at the last entrance.
+ - 3: Exit, walk through this to go to the next level, a lavel can have multiple exits.
+ - 4: High loot chance and normal enemy chance (configurable in json).
+ - 5: High enemy chance and normal loot chance (configurable in json).
+ - 6: Sign, it will have a message (configurable in multiple ways).
+ - 7: Npc, it will have a message (configurable in multiple ways) (might make it be able to walk in the future, so be aware of that when putting it in a map).
+ - 8: Nothing spawns here, just air.
+ - 9: Bossfight, an enemy which is stronger than a normal enemy with chance of better loot, don't need to defeat it to proceed to next level.
+
+When you are happy with the map, you can export it in 2 ways:
+ - export to console:
+
+You can copy the map from the console and easily edit it, but you need to put it in the json yourself later.
+ - export to json:
+
+It will automatically be put into the levelData.json, but it will be harder to edit the map from the json since it's one big list of numbers in the json.
+
+This is how it looks in the json:
+
+![Code](sprites/readme/level3.png)
+
+If you want to give an npc or sign specific text, you can edit the levelList:
+
+>Change it from this:
+>
+>![Code](sprites/readme/level4.png)
+>
+>To something like this:
+>
+>![Code](sprites/readme/level5.png)
+>
+>And then the sign will display that text.
+
+The same works with 0, 4, 5 and 9, but instead of text it takse different data:
+
+>0, 4 and 5 have a loot modifier, the higher the number, the higher the chance of better loot (enemy loot drops too). just put it into a list and add a number:
+>
+>![Code](sprites/readme/level6.png)
+
+For 9 it's a bit different since it can take 3 modifiers:
+
+>![Code](sprites/readme/level7.png)
+>
+> - The first one is the modifier for the loot that might spawn on that tile. (put 'NONE' for default)
+> - The second one is the modifier for the loot you get when you kill the enemy. (put 'NONE' for default)
+> - The third one is the boss difficulty, it ranges from the first number to the last, but if you want it to always be a specific number you can do it by putting it like this:
+>
+>![Code](sprites/readme/level8.png)
+>
+>You can also just put only 1 modifier if you only want to change 1:
+>
+>![Code](sprites/readme/level9.png)
+
+If you don't put the extra argument there, the sign will pick a random text out of the gameData.json, it's the same with the NPC but they have different texts they pick from.
+
 ## GameData Editing
+
+## Testing Tools
 
 ### Notes
 This uses @oldmartijntje his account system: https://github.com/oldmartijntje/accounts-system

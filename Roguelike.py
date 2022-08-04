@@ -284,13 +284,16 @@ class System:
         #8 nothing able to spawn
         #9 bossfight
         if tile == 0:
+            modifier = 0
+            if extra != 'NONE':
+                modifier = extra[0]
             entity = 'NONE'
             loot = 'NONE'
             if random.randint(1,100) <= self.chanceEnemyAir:
-                entityLoot = self.getLoot(0, self.dataDict['balancing']['entetyLootDroppingChance'])
+                entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             if random.randint(1,100) <= self.chanceLootAir:
-                loot = self.getLoot()
+                loot = self.getLoot(modifier)
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
         elif tile == 1:
             self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE'} 
@@ -301,37 +304,59 @@ class System:
         elif tile == 3:
             self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE'} 
         elif tile == 4:
+            modifier = 0
+            if extra != 'NONE':
+                modifier = extra[0]
             entity = 'NONE'
             loot = 'NONE'
             if random.randint(1,100) <= self.chanceLootSpawn:
-                loot = self.getLoot()
+                loot = self.getLoot(modifier)
+            if random.randint(1,100) <= self.chanceEnemyAir:
+                entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
+                entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
         elif tile == 5:
+            modifier = 0
+            if extra != 'NONE':
+                modifier = extra[0]
             entity = 'NONE'
             loot = 'NONE'
+            if random.randint(1,100) <= self.chanceLootAir:
+                loot = self.getLoot(modifier)
             if random.randint(1,100) <= self.chanceEnemySpawn:
-                entityLoot = self.getLoot(0, self.dataDict['balancing']['entetyLootDroppingChance'])
+                entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
         elif tile == 6:
             if extra != 'NONE':
-                text = extra
+                text = extra[0]
             else:
                 text = self.dataDict['text']['signText'][random.randint(0,len(self.dataDict['text']['signText'])-1)]
             self._currentLevel[x][y] = {'tile': 'sign', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 7:
             if extra != 'NONE':
-                text = extra
+                text = extra[0]
             else:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
             self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'}
         elif tile == 9:
+            modifier1 = 0
+            modifier2 = 10
+            modifier3 = [1,4]
+            if extra != 'NONE':
+                modifier1 = extra[0]
+                if len(extra)> 1:
+                    modifier2 = extra[1]
+                if len(extra)> 2:
+                    modifier3 = extra[2]
+                    if type(modifier3) != list:
+                        modifier3 = [extra[2],extra[2]]
             entity = 'NONE'
-            loot = self.getLoot()
-            entityLoot = self.getLoot(10)
-            entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(1,4)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+            loot = self.getLoot(modifier1)
+            entityLoot = self.getLoot(modifier2)
+            entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
@@ -375,7 +400,11 @@ class System:
                 self._currentLevel[x].append({})
                 if type(level[x][y]) == list:
                     #read the tile(with extra argument, for given text to signs and npc)
-                    self.readTile(level[x][y][0], x, y, level[x][y][1])
+                    extraData = []
+                    for z in range(len(level[x][y])):
+                        if z != 0:
+                            extraData.append(level[x][y][z])
+                    self.readTile(level[x][y][0], x, y, extraData)
                 else:
                     #read the tile(with extra argument
                     self.readTile(level[x][y], x, y)

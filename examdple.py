@@ -1,7 +1,7 @@
 import Roguelike
 import random
 player = Roguelike.System(random.randint(0,1000000))
-player.startGame('play')
+player.startGame('play', [[[6,[4,69]],0],[0,0]])
 # Jouw python instructies zet je vanaf hier:
 
 
