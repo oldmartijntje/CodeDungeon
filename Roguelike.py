@@ -346,9 +346,11 @@ class System:
             modifier2 = 10
             modifier3 = [1,4]
             if extra != 'NONE':
-                modifier1 = extra[0]
+                if extra[0].lower() != 'none':
+                    modifier1 = extra[0]
                 if len(extra)> 1:
-                    modifier2 = extra[1]
+                    if extra[1].lower() != 'none':
+                        modifier2 = extra[1]
                 if len(extra)> 2:
                     modifier3 = extra[2]
                     if type(modifier3) != list:
