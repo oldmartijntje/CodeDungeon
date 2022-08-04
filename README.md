@@ -9,6 +9,20 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
 - [How to change content](#how-to-create)  
   + [Level Editor](#level-editor)
   + [GameData Editing](#gamedata-editing)
+    - [Preference](#preference)
+    - [StartingLoot](#startingLoot)
+    - [equippedWeapon](#equippedweapon)
+    - [playerStats](#playerstats)
+    - [dungeon](#dungeon)
+    - [balancing](#balancing)
+    - [rarities](#rarities)
+    - [chance](#chance)
+    - [appSettings](#appsettings)
+    - [playerImages](#playerimages)
+    - [debug](#debug)
+    - [Gamma](#gamma)
+    - [text](#text)
+    - [tiles](#tiles)
   + [Testing tools](#testing-tools)
 
 ## Installation
@@ -125,7 +139,7 @@ This program is highly configurable so i am splitting it into multiple parts
  - [GameData](#gamedata-editing)
  - [Testing tools](#testing-tools)
 
-## Level Editor
+## Map Editor
 
 >The level editor is enabled by putting 'Create' (or lowercase) in between the brackets as seen on this picture:
 >
@@ -194,6 +208,52 @@ For 9 it's a bit different since it can take 3 modifiers:
 If you don't put the extra argument there, the sign will pick a random text out of the gameData.json, it's the same with the NPC but they have different texts they pick from.
 
 ## GameData Editing
+
+Gamedata is massive so again, i'll make a quick navigation menu:
+ - [Preference](#preference)
+ - [StartingLoot](#startingLoot)
+ - [equippedWeapon](#equippedweapon)
+ - [playerStats](#playerstats)
+ - [dungeon](#dungeon)
+ - [balancing](#balancing)
+ - [rarities](#rarities)
+ - [chance](#chance)
+ - [appSettings](#appsettings)
+ - [playerImages](#playerimages)
+ - [debug](#debug)
+ - [Gamma](#gamma)
+ - [text](#text)
+ - [tiles](#tiles)
+
+### Preference
+Preference is quite small, it hass 2 things:
+
+![Code](sprites/readme/data1.png)
+
+autoEquipBetter is something you can toggle in game: 
+
+![Code](sprites/readme/use5.png)
+
+autoEquipBetter means that if you pickup a better weapon than ur currently holdinng, that it will equip the new one. and sleeptime is the time it takes for an enemy to move, if set to 0 everything will happen instantly, and if set to 1, you'll be there for a while.
+
+### StartingLoot
+
+![Code](sprites/readme/data1.png)
+
+startingLoot can have as many items as you want, make sure that the items also exist in the tiles tho, otherwise it will give errors.
+
+### equippedWeapon
+### playerStats
+### dungeon
+### balancing
+### rarities
+### chance
+### appSettings
+### playerImages
+### debug
+### Gamma
+### text
+### tiles
 
 ## Testing Tools
 
