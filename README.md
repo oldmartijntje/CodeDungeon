@@ -135,7 +135,7 @@ You can go as advanced as you want to go, by using anything python can do.
 ## How to create
 
 This program is highly configurable so i am splitting it into multiple parts
- - [Level Editor](#level-editor)
+ - [Level Editor](#map-editor)
  - [GameData](#gamedata-editing)
  - [Testing tools](#testing-tools)
 
