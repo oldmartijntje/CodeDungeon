@@ -7,7 +7,7 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
 - [Installation](#installation)  
 - [How to use](#how-to-use)  
 - [How to change content](#how-to-create)  
-  + [Level Editor](#level-editor)
+  + [Map Editor](#map-editor)
   + [GameData Editing](#gamedata-editing)
     - [Preference](#preference)
     - [StartingLoot](#startingLoot)
@@ -135,7 +135,7 @@ You can go as advanced as you want to go, by using anything python can do.
 ## How to create
 
 This program is highly configurable so i am splitting it into multiple parts
- - [Level Editor](#map-editor)
+ - [Map Editor](#map-editor)
  - [GameData](#gamedata-editing)
  - [Testing tools](#testing-tools)
 
