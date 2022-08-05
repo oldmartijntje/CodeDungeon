@@ -1,3 +1,4 @@
+from ast import Str
 import datetime
 import json
 from logging import exception
@@ -294,15 +295,15 @@ class System:
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             if random.randint(1,100) <= self.chanceLootAir:
                 loot = self.getLoot(modifier)
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 1:
-            self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE'} 
+            self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
         elif tile == 2:
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
             self._playerX = x
             self._playerY = y
         elif tile == 3:
-            self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE'} 
+            self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
         elif tile == 4:
             modifier = 0
             if extra != 'NONE':
@@ -314,7 +315,7 @@ class System:
             if random.randint(1,100) <= self.chanceEnemyAir:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'}  
         elif tile == 5:
             modifier = 0
             if extra != 'NONE':
@@ -326,7 +327,7 @@ class System:
             if random.randint(1,100) <= self.chanceEnemySpawn:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot} 
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 6:
             if extra != 'NONE':
                 text = extra[0]
@@ -340,7 +341,7 @@ class System:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
             self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE'}
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'}
         elif tile == 9:
             modifier1 = 0
             modifier2 = 10
@@ -359,7 +360,26 @@ class System:
             loot = self.getLoot(modifier1)
             entityLoot = self.getLoot(modifier2)
             entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot}  
+            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'}  
+        elif type(tile) == dict:
+            tileTile = 'NONE'
+            tileEntity = 'NONE'
+            tileLoot = 'NONE'
+            tileText = 'NONE'
+            if 'tile' in tile:
+                tileTile = tile['tile']
+                if 'tile' in tile:
+                    tileEntity = tile['entity']
+                if 'tile' in tile:
+                    tileLoot = tile['loot']
+                if 'tile' in tile:
+                    tileText = tile['text']
+                self._currentLevel[x][y] = {'tile': tileTile, 'entity': tileEntity, 'loot': tileLoot, 'text': tileText}
+        
+        else:
+            
+            self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()')
+
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
             display = self._currentLevel[x][y]['entity']['type']
@@ -763,8 +783,7 @@ class System:
             self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
             self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
             self.rendering()
-        elif 'text' in self._currentLevel[cords[0]][cords[1]]:
-            self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
+
         elif self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
             if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
                 hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
@@ -797,11 +816,16 @@ class System:
                 else:
                     self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
                 self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
-                    
-
+                self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
             self.enemyFullTurn()
             self.rendering()
 
+        if self._currentLevel[cords[0]][cords[1]]['text'] != 'NONE':
+            if type(self._currentLevel[cords[0]][cords[1]]['text']) == list:
+                showText = self._currentLevel[cords[0]][cords[1]]['text'][random.randint(0,len(self._currentLevel[cords[0]][cords[1]]['text']) -1)]
+            else:
+                showText = self._currentLevel[cords[0]][cords[1]]['text']
+            self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {showText}")
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):

@@ -238,22 +238,133 @@ autoEquipBetter means that if you pickup a better weapon than ur currently holdi
 
 ### StartingLoot
 
-![Code](sprites/readme/data1.png)
+![Code](sprites/readme/data2.png)
 
 startingLoot can have as many items as you want, make sure that the items also exist in the tiles tho, otherwise it will give errors.
 
 ### equippedWeapon
+
+This contans which weapon you are using, make sure it's defined in Tiles too, otherwise bugs will happen.
+
+![Code](sprites/readme/data3.png)
+
+The weight is for the automatic equip better, so that it knows which is better, put it at 0 if you want anything to replace it.
+
 ### playerStats
+
+![Code](sprites/readme/data4.png)
+
+These are self explanetory:
+
+ - "statsPerLevel" is the amount of everything you'll gain for every level
+ - "beginStats" is the stats you have at level 0
+ - "startLevel" is the level your character has at the beginning
+ - "XPneeded" is the amount of xp you need per level
+
 ### dungeon
+
+![Code](sprites/readme/data5.png)
+
+The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number
+
 ### balancing
+
+![Code](sprites/readme/data6.png)
+
+These are settings to balance out the game.
+ - "doStrengthDamage"
+
+This means that your strength adds to the attack damage, without it the damage is defined by the wepon you are using and will never get better.
+ - "strengthDevidedBy"
+
+This only is usefull when the doStrengthDamage is set to true, this is the amount of damage it does, if its set to 3 and you have 9 strength, it will do 3 attack damage.
+
 ### rarities
+
+![Code](sprites/readme/data7.png)
+
+This is the chance of loot appearing, it's not in percentages, it's in weight, just add any rarity you want.
+
 ### chance
+
+![Code](sprites/readme/data8.png)
+
+These are the chances of things to spawn in maps, the chance of enemies and loot to spawn in air, and in their dedicated tiles (4/5 in the editor)
+
+If you make it 100 or higher it will always spawn
+
 ### appSettings
+These are app settings, technical stuff.
+
+![Code](sprites/readme/data9.png)
+
+The offset and size are for the level renderer.
+
+offset is offset in pixels, and size is tilesize.
+
+maxtypes and colors is for the level editor, if you increase mextypes then also add an color, tho adding a maxtype does liturally nothing. Changing colors just changes the colors in the level editor.
+
 ### playerImages
+
+![Code](sprites/readme/data10.png)
+
+These are the textures the player has:
+
+![Code](sprites/readme/player.png)
+
 ### debug
+
+![Code](sprites/readme/data11.png)
+
+These are debug settings.
+ - Logging logs some details.
+ - Combat enables combat.
+ - Enemyai enables enemy AI (which is not an AI but an simple algorithm).
+ - Sleep means that it takes time delay between enemy movement.
+ - Enemy loop is the amount of times it checks to see if an enemy can move (for if another enemy moved out of the way).
+
 ### Gamma
+
+![Code](sprites/readme/data12.png)
+
+This is about the view square:
+
+![Code](sprites/readme/view1.png)
+
+>If you change distance to 4:
+>
+>![Code](sprites/readme/view2.png)
+
+>If you change darknessfull to 0.8 and darknessfade to 0.1:
+>
+>![Code](sprites/readme/view3.png)
+
+>If you change darkness fade and full above 1:
+>
+>![Code](sprites/readme/view4.png)
+
+You can create some funky things with these settings, but you probably don't need to change this like ever.
+
 ### text
+
+![Code](sprites/readme/data13.png)
+
+This is the npc and sign text, the 2 lists it picks random text from if it's not defined in the level code. The default text is quite useless.
+
 ### tiles
+
+Tiles, this is where everything is defined, items, walls, enemies, exits, floors and signs, just everything.
+
+Everything in here has these items:
+
+![Code](sprites/readme/tiles1.png)
+
+- "ShowOutsideAs" means which texture it shoud show outside of the viewing area
+- "Walkable" can you walk on it? floor yes, wall no
+- "Image" The texture it has in the sprites/ folder
+- "isEnemy" is it an enemy? (this enables more settings)
+- "isInteractable" can you interact with it? like a sign? But it does nothing, you can remove it form the sign but u can still interact with it.
+- "isLoot" is it loot? can you pick it up? (this enables more settings)
 
 ## Testing Tools
 
