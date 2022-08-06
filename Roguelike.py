@@ -154,7 +154,7 @@ class System:
 
 
     def __init__(self, seed : int = 0):
-        
+        self.logging('__init__()')
         self._dungeonLevel = 0
         random.seed(seed)
         self.logging(seed,'seed')
@@ -211,11 +211,13 @@ class System:
     
     #for when something is missign from the json
     def jsonError(self,error):
+        self.logging('jsonError()')
         self.displayText(f'{error}\nsomething is wrong with the gameData/gameData.json, delete it or fix it.')
         self.logging([error,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
     #generate a new state
     def newState(self, modifier = 0):
+        self.logging('newState()')
         for x in range(random.randint(1,10)+ modifier):
             random.randint(1,10)
         self._nextStates.append(random.getstate())
@@ -224,6 +226,7 @@ class System:
     
     #check if states are valid
     def checkStates(self):
+        self.logging('checkStates()')
         x = 0
         while len(self._nextStates) < 2:
             self.newState()
@@ -234,12 +237,14 @@ class System:
 
     #load a state for the dungeon generation
     def loadState(self):
+        self.logging(f'states len: {len(self._nextStates)}, LoadState()')
         random.setstate(self._nextStates[0])
         self._nextStates.pop(0)
         self.checkStates()
 
     #change tile type in the creator app
     def changeEditorButton(self,location, chosenLevel):
+        self.logging('changeEditorButton()')
         x, y = location
         self._defaultlevels[chosenLevel][x][y]+= 1
         if self._defaultlevels[chosenLevel][x][y] > self.maxTypes:
@@ -248,6 +253,7 @@ class System:
 
     #get a random rarity
     def itemRarity(self, modifier : int = 0):
+        self.logging(f'itemRarity({modifier})')
         randomNumber = random.randint(0,100)
         randomNumber -= modifier
         chanceList = []
@@ -257,6 +263,7 @@ class System:
 
     #generate loot
     def getLoot(self, modifier: int = 0, chanceOfNothing: int = 100):
+        self.logging(f'getLoot({modifier}, {chanceOfNothing}')
         if random.randint(1,99) < chanceOfNothing:
             while True:
                 itemType = self.itemRarity(modifier)
@@ -272,7 +279,7 @@ class System:
             return 'NONE'
 
     #read tile of 2D erray and convert into map
-    def readTile(self, tile, x, y, extra = 'NONE'):
+    def readTile(self, tile, x, y, extra, levelNumber):
         #all numbers are different type of tile:
         #0 air
         #1 wall
@@ -378,7 +385,9 @@ class System:
         
         else:
             
-            self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()')
+            self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()', f'Map: {levelNumber}', f'X: {x}, Y: {y}')
+            showerror('error', 'Error code 0001')
+            self.exit()
 
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
@@ -392,7 +401,8 @@ class System:
         self._currentLevel[x][y]['display'] = display
 
     #create a level off a 2D erray
-    def createLevel(self, levelDefault):
+    def createLevel(self, levelDefault, levelNumber):
+        self.logging(f'levelNumber: {levelNumber}', 'createLevel()')
         level = copy.deepcopy(levelDefault)
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
@@ -426,10 +436,10 @@ class System:
                     for z in range(len(level[x][y])):
                         if z != 0:
                             extraData.append(level[x][y][z])
-                    self.readTile(level[x][y][0], x, y, extraData)
+                    self.readTile(level[x][y][0], x, y, extraData, levelNumber)
                 else:
                     #read the tile(with extra argument
-                    self.readTile(level[x][y], x, y)
+                    self.readTile(level[x][y], x, y, 'NONE', levelNumber)
         self.levelSize = [len(self._currentLevel), len(self._currentLevel[0])]
 
     #render how the dungeon looks like
@@ -478,11 +488,13 @@ class System:
 
     #create the window
     def createCanvas(self):
+        self.logging('createCanvas()')
         self._canvas = tkinter.Canvas(self.gameWindow, bg="black", height=len(self._currentLevel[0])*32, width=len(self._currentLevel)*32)
         self._canvas.grid(row=0,column=0)
         
     #for the stats like hp    
     def createStats(self):
+        self.logging('createStats()')
         self._hpTextvar = tkinter.StringVar()
         self._hpTextvar.set(f'HP:')
         self._xpVar = tkinter.StringVar()
@@ -502,7 +514,8 @@ class System:
 
     def updateStats(self):
         if self.playerStats["HP"]["current"] <= 0:
-            showerror(title='Error',message='You died!')
+            showerror(title='Error',message=f'You died at floor {self._dungeonLevel + 1}!')
+            self.logging(f'U died, playerstats: {self.playerStats}, invetory: {self.inventory}, floor: {self._dungeonLevel + 1}')
             self.exit()
         while True:
             xpNeeded = self.defaultPlayerStats["XPneeded"]["multiplyByLevel"] * self.playerStats['level'] + self.defaultPlayerStats["XPneeded"]["startingNumber"]
@@ -522,6 +535,7 @@ class System:
 
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
+        self.logging(f'startGame({mode}, {chosenLevel})')
         def exportMap(map):
             if askyesno('export', 'are you sure you want to export? \nIf you don\'t know how to edit it might be hard to remove'):
                 if os.path.exists(f'gameData/levelData.json'):
@@ -602,27 +616,37 @@ class System:
             else:
                 levelNumber = chosenLevel
             print(levelNumber)
-            self.createLevel(self._defaultlevels[levelNumber])
+            self.createLevel(self._defaultlevels[levelNumber], levelNumber)
             self.createStats()
             self.createCanvas()
             self.rendering()
         
 
     def exit(self):
+        self.logging('exit()')
         accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         exit()
+
+
+    def onGrid(self, cords):
+        x,y = cords
+        if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
+            return False
+        else:
+            return True
 
     #check if tile is being able to be walked
     def isWalkable(self, cordinates = [0,0], human = False):
         x,y = cordinates
-        if x < 0 or y < 0 or y > self.levelSize[1]-1 or x > self.levelSize[0]-1:
-            return False
-        if x == self._playerX and y == self._playerY:
-            return False
-        if not human:
-            if self._currentLevel[x][y]['display'] == 'exit':
+        if self.onGrid(cordinates):
+            if x == self._playerX and y == self._playerY:
                 return False
-        return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
+            if not human:
+                if self._currentLevel[x][y]['display'] == 'exit':
+                    return False
+            return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
+        else:
+            return False
 
     #calculate distance between 2 cordinates
     def distence(self, cord1, cord2):
@@ -636,6 +660,7 @@ class System:
 
     #check if enemy's want to move
     def enemyTurn(self):
+        self.logging('enemyTurn')
         if self.doEnemyMovement != False:
             self.EnemyMoveRadius = [] 
             for ix in range((self._viewDistance+1) * 2 + 1):
@@ -751,9 +776,31 @@ class System:
             self.logging(e, f'cords: {cords}', f'damage: {damage}', 'Function = sliceEnemy()')
             
 
+
+
     #interact with something
     def interact(self):
+        self.logging('interact()')
         
+        def pickupLoot():
+            if self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+                self.displayText(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+                if self._currentLevel[cords[0]][cords[1]]['loot']['type'] in self.inventory:
+
+                    self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']]['amount'] += self._currentLevel[cords[0]][cords[1]]['loot']['amount']
+                else:
+                    self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
+                    
+                if self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['isWeapon'] == True:
+                    if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight'] and self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength']:
+                        self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                        self.hasWeaponWeight = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['weaponWeight']
+                        self.displayText(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+                
+                self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
+                self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
+                self.rendering()
+
         match self._facing:
             case 'U':
                 cords = [self._playerX, self._playerY-1]
@@ -764,72 +811,65 @@ class System:
             case 'R':
                 cords = [self._playerX +1, self._playerY]
         
-        if self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
-            #if there is loot
-            #{'type': 'Stone sword', 'amount': 1}
-            self.displayText(f"You picked up {self._currentLevel[cords[0]][cords[1]]['loot']['amount']} X {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
-            if self._currentLevel[cords[0]][cords[1]]['loot']['type'] in self.inventory:
+        if self.onGrid(cords):
 
-                self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']]['amount'] += self._currentLevel[cords[0]][cords[1]]['loot']['amount']
-            else:
-                self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
+            if self._currentLevel[cords[0]][cords[1]]['text'] != 'NONE':
+                if type(self._currentLevel[cords[0]][cords[1]]['text']) == list:
+                    self._currentLevel[cords[0]][cords[1]]['text'] = self._currentLevel[cords[0]][cords[1]]['text'][random.randint(0,len(self._currentLevel[cords[0]][cords[1]]['text']) -1)]
+                self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
+                if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE' or self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+                    self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
+
+            if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
+                if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
+                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
+                    self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
                 
-            if self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['isWeapon'] == True:
-                if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight'] and self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength']:
-                    self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
-                    self.hasWeaponWeight = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['weaponWeight']
-                    self.displayText(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
+                damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
+                if self.dataDict['balancing']['doStrengthDamage']:
+                    damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
+                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
+                    damage = random.randint(1,damage)
+                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
+                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                        self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
+                        self.damageMessage(cords, damage)
+                    else:
+                        self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
+                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                        self.sliceEnemy([self._playerX, self._playerY-1],damage)
+                        self.sliceEnemy([self._playerX, self._playerY+1],damage)
+                        self.sliceEnemy([self._playerX-1, self._playerY],damage)
+                        self.sliceEnemy([self._playerX+1, self._playerY],damage)
+                    else:
+                        self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+
+                if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
+                    if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
+                        pickupLoot()
+                        self._currentLevel[cords[0]][cords[1]]['loot']= {'type' : self._currentLevel[cords[0]][cords[1]]['entity']['item']['type'], 'amount': self._currentLevel[cords[0]][cords[1]]['entity']['item']['amount']}
+                        self._currentLevel[cords[0]][cords[1]]['display'] = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                    else:
+                        self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
+                    self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
+                    self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
+                self.enemyFullTurn()
+                self.rendering()
+
+            elif self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+                pickupLoot()
             
-            self._currentLevel[cords[0]][cords[1]]['loot']= 'NONE'
-            self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
-            self.rendering()
 
-        elif self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
-            if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
-                hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
-                self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
-            
-            damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
-            if self.dataDict['balancing']['doStrengthDamage']:
-                damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
-            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
-                damage = random.randint(1,damage)
-            if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
-                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
-                    self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
-                    self.damageMessage(cords, damage)
-                else:
-                    self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
-            elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
-                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
-                    self.sliceEnemy([self._playerX, self._playerY-1],damage)
-                    self.sliceEnemy([self._playerX, self._playerY+1],damage)
-                    self.sliceEnemy([self._playerX-1, self._playerY],damage)
-                    self.sliceEnemy([self._playerX+1, self._playerY],damage)
-                else:
-                    self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+        
 
-            if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
-                if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
-                    self._currentLevel[cords[0]][cords[1]]['loot']= {'type' : self._currentLevel[cords[0]][cords[1]]['entity']['item']['type'], 'amount': self._currentLevel[cords[0]][cords[1]]['entity']['item']['amount']}
-                    self._currentLevel[cords[0]][cords[1]]['display'] = self._currentLevel[cords[0]][cords[1]]['loot']['type']
-                else:
-                    self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
-                self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
-                self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
-            self.enemyFullTurn()
-            self.rendering()
+        
 
-        if self._currentLevel[cords[0]][cords[1]]['text'] != 'NONE':
-            if type(self._currentLevel[cords[0]][cords[1]]['text']) == list:
-                showText = self._currentLevel[cords[0]][cords[1]]['text'][random.randint(0,len(self._currentLevel[cords[0]][cords[1]]['text']) -1)]
-            else:
-                showText = self._currentLevel[cords[0]][cords[1]]['text']
-            self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {showText}")
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
         #return
+        self.logging(f'movePlayer({direction})')
         cords = False
         match direction:
             case 'w':
@@ -853,40 +893,49 @@ class System:
 
     def lookUp(self):
         self._facing = 'U'
+        self.logging('lookUp')
 
     def lookDown(self):
         self._facing = 'D'
+        self.logging('lookDown')
 
     def lookLeft(self):
         self._facing = 'L'
         self._facingDirectionTexture = 'L'
         self.rendering()
+        self.logging('lookLeft')
 
     def lookRight(self):
         self._facing = 'R'
         self._facingDirectionTexture = 'R'
         self.rendering()
+        self.logging('lookRight')
 
     def moveUp(self):
         cords = [self._playerX, self._playerY-1]
         self._facing = 'U'
+        self.logging('moveUp')
         self.checkMovement(cords)
+
 
     def moveDown(self):
         cords = [self._playerX, self._playerY+1]
         self._facing = 'D'
+        self.logging('moveDown')
         self.checkMovement(cords)
 
     def moveLeft(self):
         cords = [self._playerX -1, self._playerY]
         self._facingDirectionTexture = 'L'
         self._facing = 'L'
+        self.logging('moveLeft')
         self.checkMovement(cords)
 
     def moveRight(self):
         cords = [self._playerX +1, self._playerY]
         self._facingDirectionTexture = 'R'
         self._facing = 'R'
+        self.logging('moveRight')
         self.checkMovement(cords)
 
     def checkMovement(self, cords):            
@@ -898,11 +947,11 @@ class System:
                 self.enemyFullTurn()
         self.rendering()
 
-    def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0):
+    def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0, u=0, i=0, o=0, p=0):
         if self.doLogging:
             self.log = open(f'logs/log{self.dt_string}.txt', "a+")
             self.log.write(f'{item}')
-            extra = [q,w,e,r,t,y]
+            extra = [q,w,e,r,t,y,u,i,o,p]
             for x in extra:
                 if x != 0:
                     self.log.write(f' {x} ')
@@ -916,6 +965,7 @@ class System:
         self.ignore = []
 
     def wait(self):
+        self.logging('wait()')
         self.enemyFullTurn()
 
     def autoSelect(self, syntax= 'show'):
@@ -992,10 +1042,6 @@ class System:
                 if self.dataDict["tiles"][item]["loot"]["special"]["nextFloor"]:
                     self.displayText('It will warp you to the next floor')
 
-
-
-            
-
     def equipWeapon(self,item):
         if self.inInventory(item):
             if self.dataDict['tiles'][item]["loot"]["isWeapon"]:
@@ -1008,12 +1054,13 @@ class System:
             self.displayText(f"You don\'t have: {item}\nUse 'showInventory()' to see the items you have")
 
     def newLevel(self):
+        self.logging('newLevel()')
         self._dungeonLevel += 1
         self.loadState()
         levelNumber = random.randint(0,len(self._defaultlevels)-1)
         print(levelNumber)
         self._canvas.destroy()
-        self.createLevel(self._defaultlevels[levelNumber])
+        self.createLevel(self._defaultlevels[levelNumber], levelNumber)
         self.createCanvas()
         self.rendering()
 

@@ -85,7 +85,7 @@
         "R": "player right"
     },
     "debug": {
-        "logging": false,
+        "logging": true,
         "combat": true,
         "enemyAI": true,
         "sleep": true,

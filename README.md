@@ -147,7 +147,7 @@ This program is highly configurable so i am splitting it into multiple parts
 
 When enabled you will see something like this:
 
-![Code](sprites/readme/level2.png)
+![editor](sprites/readme/level2.png)
 
 When you click a square it will change number and color, here is the list of what is what:
  - 0: Air, with a chance to spawn loot or enemy (configurable in json).
@@ -171,17 +171,17 @@ It will automatically be put into the levelData.json, but it will be harder to e
 
 This is how it looks in the json:
 
-![Code](sprites/readme/level3.png)
+![level erray](sprites/readme/level3.png)
 
 If you want to give an npc or sign specific text, you can edit the levelList:
 
 >Change it from this:
 >
->![Code](sprites/readme/level4.png)
+>![erray](sprites/readme/level4.png)
 >
 >To something like this:
 >
->![Code](sprites/readme/level5.png)
+>![erray](sprites/readme/level5.png)
 >
 >And then the sign will display that text.
 
@@ -189,23 +189,45 @@ The same works with 0, 4, 5 and 9, but instead of text it takse different data:
 
 >0, 4 and 5 have a loot modifier, the higher the number, the higher the chance of better loot (enemy loot drops too). just put it into a list and add a number:
 >
->![Code](sprites/readme/level6.png)
+>![erray](sprites/readme/level6.png)
 
 For 9 it's a bit different since it can take 3 modifiers:
 
->![Code](sprites/readme/level7.png)
+>![erray 1](sprites/readme/level7.png)
 >
 > - The first one is the modifier for the loot that might spawn on that tile. (put 'NONE' for default)
 > - The second one is the modifier for the loot you get when you kill the enemy. (put 'NONE' for default)
 > - The third one is the boss difficulty, it ranges from the first number to the last, but if you want it to always be a specific number you can do it by putting it like this:
 >
->![Code](sprites/readme/level8.png)
+>![erray 2](sprites/readme/level8.png)
 >
 >You can also just put only 1 modifier if you only want to change 1:
 >
->![Code](sprites/readme/level9.png)
+>![erray 3](sprites/readme/level9.png)
 
 If you don't put the extra argument there, the sign will pick a random text out of the gameData.json, it's the same with the NPC but they have different texts they pick from.
+
+If you want to make maps a bit more advanced, you can do that. What the game does when it encounters a map number, it creates a dictionary at the cordinate. the dictionary looks like this when empty:
+
+![Dictionary](sprites/readme/level10.png)
+
+And if you want to create loot, replace the 'NONE' with this: 
+
+![Loot](sprites/readme/level11.png)
+
+To give it text, put one of these:
+
+>![text](sprites/readme/level12.png)
+>
+>If you put the erray, it will choose one that it always will display once u interact with it.
+
+If you give an enemy or loot text, it will only show the text the first time you interact with it.
+
+This is how you create an enemy:
+
+![text](sprites/readme/level13.png)
+
+The item in the entity is what it drops when it dies.
 
 ## GameData Editing
 

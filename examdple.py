@@ -1,7 +1,7 @@
 import Roguelike
 import random
-player = Roguelike.System(random.randint(0,1000000))
-player.startGame('play', [[[6,[4,69]],0],[0,0],[0,{'tile': 'floor', 'entity': 'NONE', 'loot': {'type':'gold_coin', 'amount':1}, 'text': 'NONE'}]])
+player = Roguelike.System(714505)
+player.startGame('play', [[[6,[4,69]],0],[0,0],[0,{'tile': 'floor', 'entity': {'type': 'rat', 'level': 4, 'item': {'type': 'bandaid', 'amount': 2}}, 'loot': {'type':'gold_coin', 'amount':1}, 'text': ['cheese','kaasblokje']}]])
 # Jouw python instructies zet je vanaf hier:
 
 
