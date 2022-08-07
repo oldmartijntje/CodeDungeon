@@ -78,7 +78,7 @@ class System:
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
-        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2}
+        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2, 'replayMode': False}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
 
@@ -134,30 +134,40 @@ class System:
         autoEquip = dataDict['preference']['autoEquipBetter']
         hasWeaponWeight = dataDict['equippedWeapon']['weight']
         equipped = dataDict['equippedWeapon']['weapon']
+        doReplayMode = dataDict['debug']['replayMode']
     except Exception as e:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
         bugmessage.append([e,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
+
+    now = datetime.datetime.now()
+    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+    try:
+        os.mkdir('logs/')
+    except:
+        pass
+    try:
+        os.mkdir('logs/logFiles/')
+        os.mkdir('logs/replayFiles/')
+    except:
+        pass
+
     if doLogging:
         #logging
-        now = datetime.datetime.now()
-        dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
-        try:
-            os.mkdir('logs/')
-        except:
-            pass
-        log = open(f'logs/log{dt_string}.txt', "w")
+        log = open(f'logs/logFiles/log{dt_string}.txt', "w")
         log.close()  
     
-    
-
+    if doReplayMode:
+        replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
+        replay.close() 
 
     def __init__(self, seed : int = 0):
         self.logging('__init__()')
         self._dungeonLevel = 0
         random.seed(seed)
         self.logging(seed,'seed')
+        self.replayWrite(f'seed: {seed}')
         self.accountConfigSettings = accounts_omac.configFileTkinter()
         self.accountDataDict = accounts_omac.defaultConfigurations.defaultLoadingTkinter(self.accountConfigSettings)
         random.randint(1,10)
@@ -212,8 +222,9 @@ class System:
     #for when something is missign from the json
     def jsonError(self,error):
         self.logging('jsonError()')
-        self.displayText(f'{error}\nsomething is wrong with the gameData/gameData.json, delete it or fix it.')
+        showerror('error', f'{error}\nerror code 0002')
         self.logging([error,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
+        self.exit()
 
     #generate a new state
     def newState(self, modifier = 0):
@@ -897,49 +908,48 @@ class System:
 
     def lookUp(self):
         self._facing = 'U'
-        self.logging('lookUp')
+        self.replayWrite('lookUp')
 
     def lookDown(self):
         self._facing = 'D'
-        self.logging('lookDown')
+        self.replayWrite('lookDown')
 
     def lookLeft(self):
         self._facing = 'L'
         self._facingDirectionTexture = 'L'
         self.rendering()
-        self.logging('lookLeft')
+        self.replayWrite('lookLeft')
 
     def lookRight(self):
         self._facing = 'R'
         self._facingDirectionTexture = 'R'
         self.rendering()
-        self.logging('lookRight')
+        self.replayWrite('lookRight')
 
     def moveUp(self):
         cords = [self._playerX, self._playerY-1]
         self._facing = 'U'
-        self.logging('moveUp')
+        self.replayWrite('moveUp')
         self.checkMovement(cords)
-
 
     def moveDown(self):
         cords = [self._playerX, self._playerY+1]
         self._facing = 'D'
-        self.logging('moveDown')
+        self.replayWrite('moveDown')
         self.checkMovement(cords)
 
     def moveLeft(self):
         cords = [self._playerX -1, self._playerY]
         self._facingDirectionTexture = 'L'
         self._facing = 'L'
-        self.logging('moveLeft')
+        self.replayWrite('moveLeft')
         self.checkMovement(cords)
 
     def moveRight(self):
         cords = [self._playerX +1, self._playerY]
         self._facingDirectionTexture = 'R'
         self._facing = 'R'
-        self.logging('moveRight')
+        self.replayWrite('moveRight')
         self.checkMovement(cords)
 
     def checkMovement(self, cords):            
@@ -953,14 +963,20 @@ class System:
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0, u=0, i=0, o=0, p=0):
         if self.doLogging:
-            self.log = open(f'logs/log{self.dt_string}.txt', "a+")
+            self.log = open(f'logs/logFiles/log{self.dt_string}.txt', "a+")
             self.log.write(f'{item}')
             extra = [q,w,e,r,t,y,u,i,o,p]
             for x in extra:
                 if x != 0:
                     self.log.write(f' {x} ')
             self.log.write(f'\n')
-            self.log.close()       
+            self.log.close()  
+
+    def replayWrite(self, text):
+        if self.doReplayMode: 
+            self.replay = open(f'logs/replayFiles/replay{self.dt_string}.txt', "a+")  
+            self.replay.write(f'{text}\n')
+            self.replay.close() 
 
     def enemyFullTurn(self):
         self.ignore = []
@@ -969,10 +985,11 @@ class System:
         self.ignore = []
 
     def wait(self):
-        self.logging('wait()')
+        self.replayWrite('wait()')
         self.enemyFullTurn()
 
     def autoSelect(self, syntax= 'show'):
+        self.replayWrite(f'autoSelect({syntax})')
         match syntax:
             case 0:
                 syntax = False
@@ -1003,6 +1020,7 @@ class System:
         return False
 
     def useItem(self, item):
+        self.replayWrite(f'useItem({item})')
         if self.inInventory(item):
             if self.dataDict['tiles'][item]["loot"]["isConsumable"]:
                 self.inventory[item]['amount'] -= 1
@@ -1047,6 +1065,7 @@ class System:
                     self.displayText('It will warp you to the next floor')
 
     def equipWeapon(self,item):
+        self.replayWrite(f'equipWeapon({item})')
         if self.inInventory(item):
             if self.dataDict['tiles'][item]["loot"]["isWeapon"]:
                 self.equipped = item

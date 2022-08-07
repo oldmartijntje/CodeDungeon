@@ -264,17 +264,17 @@ Gamedata is massive so again, i'll make a quick navigation menu:
 ### Preference
 Preference is quite small, it hass 2 things:
 
-![Code](sprites/readme/data1.png)
+![Preference](sprites/readme/data1.png)
 
 autoEquipBetter is something you can toggle in game: 
 
-![Code](sprites/readme/use5.png)
+![AutoEquip](sprites/readme/use5.png)
 
 autoEquipBetter means that if you pickup a better weapon than ur currently holdinng, that it will equip the new one. and sleeptime is the time it takes for an enemy to move, if set to 0 everything will happen instantly, and if set to 1, you'll be there for a while.
 
 ### StartingLoot
 
-![Code](sprites/readme/data2.png)
+![StartingLoot](sprites/readme/data2.png)
 
 startingLoot can have as many items as you want, make sure that the items also exist in the tiles tho, otherwise it will give errors.
 
@@ -282,13 +282,13 @@ startingLoot can have as many items as you want, make sure that the items also e
 
 This contans which weapon you are using, make sure it's defined in Tiles too, otherwise bugs will happen.
 
-![Code](sprites/readme/data3.png)
+![equippedWeapon](sprites/readme/data3.png)
 
 The weight is for the automatic equip better, so that it knows which is better, put it at 0 if you want anything to replace it.
 
 ### playerStats
 
-![Code](sprites/readme/data4.png)
+![playerStats](sprites/readme/data4.png)
 
 These are self explanetory:
 
@@ -299,13 +299,13 @@ These are self explanetory:
 
 ### dungeon
 
-![Code](sprites/readme/data5.png)
+![dungeon](sprites/readme/data5.png)
 
 The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number
 
 ### balancing
 
-![Code](sprites/readme/data6.png)
+![balancing](sprites/readme/data6.png)
 
 These are settings to balance out the game.
  - "doStrengthDamage"
@@ -317,13 +317,13 @@ This only is usefull when the doStrengthDamage is set to true, this is the amoun
 
 ### rarities
 
-![Code](sprites/readme/data7.png)
+![rarities](sprites/readme/data7.png)
 
 This is the chance of loot appearing, it's not in percentages, it's in weight, just add any rarity you want.
 
 ### chance
 
-![Code](sprites/readme/data8.png)
+![chance](sprites/readme/data8.png)
 
 These are the chances of things to spawn in maps, the chance of enemies and loot to spawn in air, and in their dedicated tiles (4/5 in the editor)
 
@@ -332,7 +332,7 @@ If you make it 100 or higher it will always spawn
 ### appSettings
 These are app settings, technical stuff.
 
-![Code](sprites/readme/data9.png)
+![appSettings](sprites/readme/data9.png)
 
 The offset and size are for the level renderer.
 
@@ -342,15 +342,15 @@ maxtypes and colors is for the level editor, if you increase mextypes then also 
 
 ### playerImages
 
-![Code](sprites/readme/data10.png)
+![playerImages](sprites/readme/data10.png)
 
 These are the textures the player has:
 
-![Code](sprites/readme/player.png)
+![file names](sprites/readme/player.png)
 
 ### debug
 
-![Code](sprites/readme/data11.png)
+![debug](sprites/readme/data11.png)
 
 These are debug settings.
  - Logging logs some details.
@@ -358,32 +358,33 @@ These are debug settings.
  - Enemyai enables enemy AI (which is not an AI but an simple algorithm).
  - Sleep means that it takes time delay between enemy movement.
  - Enemy loop is the amount of times it checks to see if an enemy can move (for if another enemy moved out of the way).
+ - replayMode writes down every movement you make and item you use/equip, so that you can get to the same place as you once were on that 1 seed.
 
 ### Gamma
 
-![Code](sprites/readme/data12.png)
+![Gamma](sprites/readme/data12.png)
 
 This is about the view square:
 
-![Code](sprites/readme/view1.png)
+![show](sprites/readme/view1.png)
 
 >If you change distance to 4:
 >
->![Code](sprites/readme/view2.png)
+>![show](sprites/readme/view2.png)
 
 >If you change darknessfull to 0.8 and darknessfade to 0.1:
 >
->![Code](sprites/readme/view3.png)
+>![show](sprites/readme/view3.png)
 
 >If you change darkness fade and full above 1:
 >
->![Code](sprites/readme/view4.png)
+>![show](sprites/readme/view4.png)
 
 You can create some funky things with these settings, but you probably don't need to change this like ever.
 
 ### text
 
-![Code](sprites/readme/data13.png)
+![text](sprites/readme/data13.png)
 
 This is the npc and sign text, the 2 lists it picks random text from if it's not defined in the level code. The default text is quite useless.
 
@@ -393,7 +394,7 @@ Tiles, this is where everything is defined, items, walls, enemies, exits, floors
 
 Everything in here has these items:
 
-![Code](sprites/readme/tiles1.png)
+![tiles](sprites/readme/tiles1.png)
 
 - "ShowOutsideAs" means which texture it shoud show outside of the viewing area
 - "Walkable" can you walk on it? floor yes, wall no
@@ -402,9 +403,51 @@ Everything in here has these items:
 - "isInteractable" can you interact with it? like a sign? But it does nothing, you can remove it form the sign but u can still interact with it.
 - "isLoot" is it loot? can you pick it up? (this enables more settings)
 
+#### loot:
+
+To show how to do loot i'll show 2 examples, weapon and food.
+
+>![loot](sprites/readme/data14.png)
+>
+>When you enable isLoot to True, you need to add this dictionary.
+
+- "amount" is self explanetory: the amount you'll find per tile.
+- "isWeapon" is it a weapon?
+- "isConsumable" is it consumable?
+- "rarity" How rare is it? (pick one from the rarities you defined or 'NONE' for not generatable loot)
+
+If you set isWeapon to true, you need to add the "weapon" dict:
+
+![weapon](sprites/readme/data15.png)
+- "minStrenght" the amount of strenght you need to use the weapon (you can use it earlier but u'll miss 50% and do less damage)
+- "attack" the attack damage
+- "type" there are 2 types: stab and slice, stab stabs 1 enemy, slice attacks all enemies next to u
+- "weaponWeight" the order of defined weapons (for auto equip to know which is better)
+
+If you set isConsumable to true, you need to add the "consumable" dict:
+
+![food](sprites/readme/data16.png)
+- "restoreHP" is how much it restores.
+- "restoreHPpercentage" if set to true it will give you ___ % of your max HP back, and if it's false it will give you __ HP back.
+
+>![special](sprites/readme/data17.png)
+>
+>You can also add this dictionary
+> - "nextFloor" will instantly warp you to the next floor.
+
+#### enemy:
+
+When you put "isEnemy" to true, you should add these items:
+
+![enemy](sprites/readme/data18.png)
+
 ## Testing Tools
 
-### Notes
+## help
+
+Go to the [TroubleShooting.md](troubleShooting.md) for error codes
+
+## Notes
 This uses @oldmartijntje his account system: https://github.com/oldmartijntje/accounts-system
 
 This is a project inspired by:

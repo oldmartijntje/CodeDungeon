@@ -85,11 +85,12 @@
         "R": "player right"
     },
     "debug": {
-        "logging": true,
+        "logging": false,
         "combat": true,
         "enemyAI": true,
         "sleep": true,
-        "enemyLoop": 2
+        "enemyLoop": 2,
+        "replayMode": false
     },
     "Gamma": {
         "distance": 2,
