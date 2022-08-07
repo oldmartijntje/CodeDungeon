@@ -12,4 +12,18 @@ How to fix:
 
 Make sure your map in [levelData.json](gameData/levelData.json) are all valid, as explained in the [readme](README.md) at 'Map Editor' explenation.
 
+### Error code: 0002:
 
+Something is wrong with the gameData.json
+
+How to fix:
+
+Delete the gameData.json, or fix it using logging.
+
+### Error code: 0003:
+
+Something is wrong with the level you are trying to load.
+
+How to fix:
+
+Try to fix the map you are loading, logging can give some helpfull information, make sure that if ur loading a dictionary that u use '//' and not 'x'

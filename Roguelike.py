@@ -82,7 +82,7 @@ class System:
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
 
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrenght': 22, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'restoreHP': 5, 'restoreHPpercentage': False}}}
         dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'restoreHP': 10, 'restoreHPpercentage': False}}}
@@ -140,27 +140,27 @@ class System:
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
         bugmessage.append([e,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
+    if doLogging or doReplayMode:
+        now = datetime.datetime.now()
+        dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+        try:
+            os.mkdir('logs/')
+        except:
+            pass
+        try:
+            os.mkdir('logs/logFiles/')
+            os.mkdir('logs/replayFiles/')
+        except:
+            pass
 
-    now = datetime.datetime.now()
-    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
-    try:
-        os.mkdir('logs/')
-    except:
-        pass
-    try:
-        os.mkdir('logs/logFiles/')
-        os.mkdir('logs/replayFiles/')
-    except:
-        pass
-
-    if doLogging:
-        #logging
-        log = open(f'logs/logFiles/log{dt_string}.txt', "w")
-        log.close()  
-    
-    if doReplayMode:
-        replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
-        replay.close() 
+        if doLogging:
+            #logging
+            log = open(f'logs/logFiles/log{dt_string}.txt', "w")
+            log.close()  
+        
+        if doReplayMode:
+            replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
+            replay.close() 
 
     def __init__(self, seed : int = 0):
         self.logging('__init__()')
@@ -578,17 +578,29 @@ class System:
             custom = True
         #look for 10x10 format to generate that size level
         if type(chosenLevel) == str:
-            if 'x' in str(chosenLevel):
+            if '//' in str(chosenLevel):
+                splitting = '//'
+            elif 'x' in str(chosenLevel):
+                splitting = 'x'
+            if splitting in str(chosenLevel):
                 #split it at the x, so it can read the margins
-                if chosenLevel.split('x')[0].isdigit() and chosenLevel.split('x')[1].isdigit():
+                if chosenLevel.split(splitting)[0].isdigit() and chosenLevel.split(splitting)[1].isdigit():
                     level = []
                     #generate the 2D erray of the level
-                    for x in range(int(chosenLevel.split('x')[0])):
+                    for x in range(int(chosenLevel.split(splitting)[0])):
                         level.append([])
-                        for y in range(int(chosenLevel.split('x')[1])):
-                            if len(chosenLevel.split('x')) > 2:
-                                if chosenLevel.split('x')[2].isdigit():
-                                    level[x].append(int(chosenLevel.split('x')[2]))
+                        for y in range(int(chosenLevel.split(splitting)[1])):
+                            if len(chosenLevel.split(splitting)) > 2:
+                                if chosenLevel.split(splitting)[2].isdigit():
+                                    level[x].append(int(chosenLevel.split(splitting)[2]))
+                                elif chosenLevel.split(splitting)[2][0] == '[' or chosenLevel.split(splitting)[2][0] == '{':
+                                    print(chosenLevel.split(splitting)[2])
+                                    try:
+                                        level[x].append(json.loads(chosenLevel.split(splitting)[2]))
+                                    except Exception as e:
+                                        self.logging(f'error: {e}, error 0003, tries to read: {chosenLevel.split(splitting)}, splitter: {splitting}')
+                                        showerror('error', 'Error code 0003')
+                                        self.exit()
                                 else:
                                     level[x].append(0)
                             else:
@@ -730,12 +742,12 @@ class System:
                                     self.moveEnemy(bestMoves[nums[0]][0])
 
                             else:
-                                ATK = self._currentLevel[tile[0]][tile[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['statsPerLevel']['ATK']
-                                if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['hitChance'] > random.randint(1,99):
-                                    ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['lessATKpointsPercentage'])
+                                ATK = self._currentLevel[tile[0]][tile[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['statsPerLevel']['ATK']
+                                if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['hitChance'] > random.randint(1,99):
+                                    ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['lessATKpointsPercentage'])
                                     self.playerStats["HP"]["current"] -= ATK
                                     self.displayText(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
-                                    if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['doubleAttack'] == False:
+                                    if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['doubleAttack'] == False:
                                         self.ignore.append([tile[0],tile[1]])
 
 
@@ -774,14 +786,14 @@ class System:
         else:
             self.displayText(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
             self.playerStats['XP'] += damage * self.dataDict['balancing']['killMultiplierXP'] // self.dataDict['balancing']['XPperDamageDevidedBy']
-            self.playerStats['XP'] += self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['deathXP'] * self._currentLevel[cords[0]][cords[1]]['entity']['level']
+            self.playerStats['XP'] += self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['deathXP'] * self._currentLevel[cords[0]][cords[1]]['entity']['level']
 
 
     def sliceEnemy(self, cords, damage):
         try:
             if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
                 if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
-                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
+                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['HP']
                     self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
                 self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
                 self.damageMessage(cords, damage)
@@ -837,7 +849,7 @@ class System:
 
             if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
                 if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
-                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]['statsPerLevel']['HP']
+                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['HP']
                     self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
                 
                 damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
