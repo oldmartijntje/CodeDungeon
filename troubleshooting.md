@@ -2,7 +2,7 @@
 
 Welcome to the troubleshooting.md
 
-[Get me back to readme](readme.md)
+[Get me back to readme](README.md)
 
 ### Error code: 0001:
 
@@ -10,6 +10,6 @@ There is a tile that is inpossible to create in the map generator, it's not any 
 
 How to fix:
 
-Make sure your map in [levelData.json](gameData/levelData.json) are all valid, as explained in the [readme](readme.md) at 'Map Editor' explenation.
+Make sure your map in [levelData.json](gameData/levelData.json) are all valid, as explained in the [readme](README.md) at 'Map Editor' explenation.
 
 
