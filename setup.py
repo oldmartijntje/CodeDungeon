@@ -19,8 +19,8 @@ tested += 1
 if exampleMade == True or examplePy.read() == '':
     examplePy.close()
     examplePy = open(f"{exampleName}.py", "w")
-    examplePy.write("""import Roguelike
-player = Roguelike.System()
+    examplePy.write("""import CodeDungeon
+player = CodeDungeon.System()
 player.startGame()
 # Your Python instructions go here:
 

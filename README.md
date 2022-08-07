@@ -1,4 +1,4 @@
-# Mini-Roguelike
+# Code Dungeon
 >Learning to code should be fun!
 
 This Project is there as learning tool, a tool to teach kids the logic of programming in a fun way, By programming the movement of your character in a game.
@@ -39,7 +39,7 @@ If you have Pip installed you can do it by typing this into your console:
 
 <small><i><a href='https://pypi.org/project/Pillow/'>PIL on the Python Package Index.</a></i></small>
 
-And the last step: Run <a href="https://github.com/oldmartijntje/Mini-Roguelike/blob/main/setup.py">setup.py</a> which should be installed when you downloaded the Release.
+And the last step: Run <a href="https://github.com/oldmartijntjeCodeDungeon/blob/main/setup.py">setup.py</a> which should be installed when you downloaded the Release.
 
 There should be code that looks like this in example.py.
 
@@ -476,7 +476,7 @@ When you put "isEnemy" to true, you need to add this dictionary:
 
 ## help
 
-Go to the <a href = https://github.com/oldmartijntje/Mini-Roguelike/blob/main/troubleshooting.md>TroubleShooting.md</a> for error codes and how to solve them.
+Go to the <a href = https://github.com/oldmartijntje/CodeDungeon/blob/main/troubleshooting.md>TroubleShooting.md</a> for error codes and how to solve them.
 
 ## Credits
 This uses @oldmartijntje his account system: https://github.com/oldmartijntje/accounts-system

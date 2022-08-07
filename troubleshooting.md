@@ -1,4 +1,4 @@
-# Mini-Roguelike
+# Code Dungeon
 
 Welcome to the troubleshooting.md
 
