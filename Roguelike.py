@@ -895,9 +895,8 @@ class System:
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
-        #return
+        return
         self.logging(f'movePlayer({direction})')
-        cords = False
         match direction:
             case 'w':
                 self.moveUp()
