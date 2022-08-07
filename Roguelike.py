@@ -431,6 +431,10 @@ class System:
             for y in range(len(level[x])):
                 self._currentLevel[x].append({})
                 if type(level[x][y]) == list:
+                    if level[x][y][0] == '?':
+                        level[x][y] = level[x][y][random.randint(1,len(level[x][y])-1)]
+
+                if type(level[x][y]) == list:
                     #read the tile(with extra argument, for given text to signs and npc)
                     extraData = []
                     for z in range(len(level[x][y])):

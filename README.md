@@ -229,6 +229,20 @@ This is how you create an enemy:
 
 The item in the entity is what it drops when it dies.
 
+If you want a map where it has a chance to have a wall, and chance to have air, that's possible.
+
+If you put on the tile a list where the first argument in the list is an '?' and the other arguments in the list are the possabillities it will work:
+
+>![text](sprites/readme/level14.png)
+>
+>This wil randomly select between air or a wall.
+
+And you can combine it with the dict method too:
+
+>![text](sprites/readme/level15.png)
+>
+>This wil randomly select between air or this predefined tile.
+
 ## GameData Editing
 
 Gamedata is massive so again, i'll make a quick navigation menu:
