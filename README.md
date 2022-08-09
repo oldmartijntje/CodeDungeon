@@ -244,6 +244,20 @@ And you can combine it with the dict method too:
 >
 >This wil randomly select between air or this predefined tile.
 
+>If you haven't put in an exit, or start, it will randomly replace an 0 or 8 for an exit and start, unless if you add this in the level list on the first position:
+>
+>![level erray](sprites/readme/level17.png)
+>
+>This is needed if you predefine an exit as dictionary, cause it won't see that as defined exit
+
+#### v1.1.0+
+
+>![text](sprites/readme/level16.png)
+>
+>You can lock a tile, (doesn't work on moving things, so if there is a lock on an entety only there will be a lock on air) you can lock it by minimum: HP, Strength, Level or needing a specific item
+>
+>This is not used by default, only when you put a tile in with dictionary
+
 ## GameData Editing
 
 Gamedata is massive so again, i'll make a quick navigation menu:
@@ -404,6 +418,12 @@ Everything in here has these items:
 - "isInteractable" can you interact with it? like a sign? But it does nothing, you can remove it form the sign but u can still interact with it.
 - "isLoot" is it loot? can you pick it up? (this enables more settings)
 
+You can also add a transform dict to tiles:
+
+>![transform](sprites/readme/data19.png)
+>
+>With this you can transform a closed or locked door into an opened door for example.
+
 #### loot:
 
 To show how to do loot i'll show 2 examples, weapon and food.
@@ -428,8 +448,10 @@ If you set isWeapon to true, you need to add the "weapon" dict:
 If you set isConsumable to true, you need to add the "consumable" dict:
 
 ![food](sprites/readme/data16.png)
-- "restoreHP" is how much it restores.
-- "restoreHPpercentage" if set to true it will give you ___ % of your max HP back, and if it's false it will give you __ HP back.
+- "restoreHP" (only till v1.0.1) is how much it restores.
+- "restoreHPpercentage" (only till v1.0.1) if set to true it will give you ___ % of your max HP back, and if it's false it will give you __ HP back.
+- "type" + or - or % or set HP
+- "HPAmount" the amount of HP
 
 >![special](sprites/readme/data17.png)
 >

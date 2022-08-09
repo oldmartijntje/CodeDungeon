@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 accounts/
 logs/
+gameData/
+example.py
 systemConfig.ini
 .Python
 build/

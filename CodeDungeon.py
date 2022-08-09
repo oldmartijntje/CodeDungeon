@@ -1,4 +1,3 @@
-from ast import Str
 import datetime
 import json
 from logging import exception
@@ -82,19 +81,30 @@ class System:
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
 
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}, 'exit':{'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'floor':{'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'sign':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}, 'wall':{'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}, 'npc':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}, 'wooden_sword':{'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}}
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}}
+        dataDict['tiles']['exit'] = {'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+        dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
+        dataDict['tiles']['npc'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}
+        dataDict['tiles']['wall'] = {'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+        dataDict['tiles']['sign'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}
+        dataDict['tiles']['floor'] = {'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+        dataDict['tiles']['lockedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'lockedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
+        dataDict['tiles']['closedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'closedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
+        dataDict['tiles']['openDoor'] = {'ShowOutsideAs': 'openDoor','Walkable': True, 'Image': 'openDoor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+        
+        
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrenght': 22, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
-        dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'restoreHP': 5, 'restoreHPpercentage': False}}}
-        dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'restoreHP': 10, 'restoreHPpercentage': False}}}
-        dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'restoreHP': 20, 'restoreHPpercentage': False}}}
-        dataDict['tiles']['bandaid'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'restoreHP': 10, 'restoreHPpercentage': True}}}
+        dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 5, 'type': '+'}}}
+        dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 10, 'type': '+'}}}
+        dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 20, 'type': '+'}}}
+        dataDict['tiles']['bandaid'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 10, 'type': '%'}}}
         dataDict['tiles']['bronze_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':10},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
         dataDict['tiles']['silver_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
         dataDict['tiles']['gold_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'uncommon'}}
         dataDict['tiles']['iron_dagger'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'rare', 'weapon': {'minStrenght': 20, 'attack': 10, 'type': 'stab', 'weaponWeight' : 4}}}
         dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrenght': 40, 'attack': 20, 'type': 'stab', 'weaponWeight' : 6}}}
         dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrenght': 30, 'attack': 5, 'type': 'slice', 'weaponWeight' : 5}}}
-        dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': True}}}
+        dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': True}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor'}}
     
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(dataDict, outfile, indent=4)
@@ -215,9 +225,9 @@ class System:
                 if self.dataDict['tiles'][data]['loot']['rarity'] != 'NONE':
                     self._itemRarety[self.dataDict['tiles'][data]['loot']['rarity']].append(data)
                     self._items.append(data)
-            self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()).convert('RGB')).enhance(self.darknessFull))
-            self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()).convert('RGB')).enhance(self.darknessFade))
-            self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'.lower()] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png".lower()))
+            self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFull))
+            self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFade))
+            self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png"))
     
     #for when something is missign from the json
     def jsonError(self,error):
@@ -384,15 +394,26 @@ class System:
             tileEntity = 'NONE'
             tileLoot = 'NONE'
             tileText = 'NONE'
+            lockText = 'NONE'
+
             if 'tile' in tile:
                 tileTile = tile['tile']
-                if 'tile' in tile:
+                if 'entity' in tile:
                     tileEntity = tile['entity']
-                if 'tile' in tile:
+                if 'loot' in tile:
                     tileLoot = tile['loot']
-                if 'tile' in tile:
+                if 'text' in tile:
                     tileText = tile['text']
-                self._currentLevel[x][y] = {'tile': tileTile, 'entity': tileEntity, 'loot': tileLoot, 'text': tileText}
+                if 'lock' in tile:
+                    for item in list(tile['lock'].keys()):
+                        if type(tile['lock'][item]) == list:
+                            tile['lock'][item] = tile['lock'][item][random.randint(0,len(tile['lock'][item])-1)]
+                    if type(tile['lock']['item']['amount']) == list:
+                        tile['lock']['item']['amount'] = tile['lock']['item']['amount'][random.randint(0,len(tile['lock']['item']['amount'])-1)]
+                    lockText = tile['lock']
+
+
+                self._currentLevel[x][y] = {'tile': tileTile, 'entity': tileEntity, 'loot': tileLoot, 'text': tileText, 'lock': lockText}
         
         else:
             
@@ -409,12 +430,17 @@ class System:
         else:
             #else display the tile
             display = self._currentLevel[x][y]['tile']
-        self._currentLevel[x][y]['display'] = display
+        if 'display' not in self._currentLevel[x][y]:
+            self._currentLevel[x][y]['display'] = display
 
     #create a level off a 2D erray
     def createLevel(self, levelDefault, levelNumber):
         self.logging(f'levelNumber: {levelNumber}', 'createLevel()')
         level = copy.deepcopy(levelDefault)
+        searchForExit = True
+        if level[0] == 'NONE':
+            level.pop(0)
+            searchForExit = False
         #if there isn't an entrance declared, generate random entrance
         if not any(2 in sublist for sublist in level):
             self.logging('entrance needed')
@@ -426,7 +452,7 @@ class System:
                     spawnable = whereAir + whereNonAir
                     level[tryLine][spawnable[random.randint(0,len(spawnable)-1)]] = 2
         #if there isn't an exit declared, generate random exit
-        if not any(3 in sublist for sublist in level):
+        if not any(3 in sublist for sublist in level) and searchForExit:
             self.logging('exit needed')
             while not any(3 in sublist for sublist in level) and (any(0 in sublist for sublist in level) or any(8 in sublist for sublist in level)):
                 tryLine = random.randint(0,len(level)-1)
@@ -481,17 +507,17 @@ class System:
                 if f"{x}-{y}" in self._sightFurthest:
                     #lookup what type of shading it needs
                     if f"{x}-{y}" in self._sight:
-                        picType = 'normal-'.lower()
+                        picType = 'normal-'
                     else:
-                        picType = 'darknessFade-'.lower()
+                        picType = 'darknessFade-'
                 else:
-                    picType = 'darknessFull-'.lower()
+                    picType = 'darknessFull-'
                 
                 #display the tile
                 if x==self._playerX and y == self._playerY:
                     self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['playerImages'][self._facingDirectionTexture.upper()]}"])
                 else:
-                    if picType == 'darknessFull-'.lower():
+                    if picType == 'darknessFull-':
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
                     else:
                         self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
@@ -671,7 +697,10 @@ class System:
             if not human:
                 if self._currentLevel[x][y]['display'] == 'exit':
                     return False
-            return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
+            if 'lock' in self._currentLevel[cordinates[0]][cordinates[1]] and self._currentLevel[cordinates[0]][cordinates[1]]['lock'] != 'NONE':
+                self.displayText('The tile is locked, Interact with it')
+                return False
+            return self.dataDict['tiles'][self._currentLevel[x][y]['tile']]['Walkable']
         else:
             return False
 
@@ -802,7 +831,28 @@ class System:
         except Exception as e:
             self.logging(e, f'cords: {cords}', f'damage: {damage}', 'Function = sliceEnemy()')
             
-
+    def lockedTile(self, cords):
+        if self.playerStats["HP"]["current"] < self._currentLevel[cords[0]][cords[1]]['lock']['HP']:
+            self.displayText(f"It's locked, Not enough HP, {self._currentLevel[cords[0]][cords[1]]['lock']['HP']} HP needed to unlock this lock")
+        elif self.playerStats["strength"] < self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']:
+            self.displayText(f"It's locked, Not enough Strenght, {self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']} Strenght needed to unlock this lock")
+        elif self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
+            self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
+        elif self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
+            self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x {self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}")
+        else:
+            if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE':
+                if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] == self.equipped and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] == self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
+                    self.displayText(f"You have item: '{self.equipped}' equipped as weapon, to use it you need to unequip it first")
+                else:
+                    self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] -= self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']
+                    self.displayText(f"The lock has been unlocked")
+                    self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
+                    self.interact()
+            else:
+                self.displayText(f"The lock has been unlocked")
+                self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
+                self.interact()
 
 
     #interact with something
@@ -840,52 +890,61 @@ class System:
         
         if self.onGrid(cords):
 
-            if self._currentLevel[cords[0]][cords[1]]['text'] != 'NONE':
-                if type(self._currentLevel[cords[0]][cords[1]]['text']) == list:
-                    self._currentLevel[cords[0]][cords[1]]['text'] = self._currentLevel[cords[0]][cords[1]]['text'][random.randint(0,len(self._currentLevel[cords[0]][cords[1]]['text']) -1)]
-                self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
-                if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE' or self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
-                    self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
+            if 'lock' in self._currentLevel[cords[0]][cords[1]] and self._currentLevel[cords[0]][cords[1]]['lock'] != 'NONE':
+                self.lockedTile(cords)
+            else:
+                if 'transform' in self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['tile']]:
+                    self._currentLevel[cords[0]][cords[1]]['display'] = self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['tile']]['transform']['TransformInto']
+                    print(self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['tile']])
+                    print(self._currentLevel[cords[0]][cords[1]]['tile'])
+                    self._currentLevel[cords[0]][cords[1]]['tile'] = self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['tile']]['transform']['TransformInto']
+                    self.rendering()
+                if self._currentLevel[cords[0]][cords[1]]['text'] != 'NONE':
+                    if type(self._currentLevel[cords[0]][cords[1]]['text']) == list:
+                        self._currentLevel[cords[0]][cords[1]]['text'] = self._currentLevel[cords[0]][cords[1]]['text'][random.randint(0,len(self._currentLevel[cords[0]][cords[1]]['text']) -1)]
+                    self.displayText(f"{self._currentLevel[cords[0]][cords[1]]['display']}: {self._currentLevel[cords[0]][cords[1]]['text']}")
+                    if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE' or self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+                        self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
 
-            if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
-                if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
-                    hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['HP']
-                    self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
-                
-                damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
-                if self.dataDict['balancing']['doStrengthDamage']:
-                    damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
-                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
-                    damage = random.randint(1,damage)
-                if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
-                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
-                        self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
-                        self.damageMessage(cords, damage)
-                    else:
-                        self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
-                elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
-                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
-                        self.sliceEnemy([self._playerX, self._playerY-1],damage)
-                        self.sliceEnemy([self._playerX, self._playerY+1],damage)
-                        self.sliceEnemy([self._playerX-1, self._playerY],damage)
-                        self.sliceEnemy([self._playerX+1, self._playerY],damage)
-                    else:
-                        self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                if self._currentLevel[cords[0]][cords[1]]['entity'] != 'NONE':
+                    if 'HP' not in self._currentLevel[cords[0]][cords[1]]['entity']:
+                        hp = self._currentLevel[cords[0]][cords[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['HP']
+                        self._currentLevel[cords[0]][cords[1]]['entity']['HP'] = {'Max': hp, 'current': hp + random.randint(-1,1)}
+                    
+                    damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
+                    if self.dataDict['balancing']['doStrengthDamage']:
+                        damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
+                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
+                        damage = random.randint(1,damage)
+                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
+                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                            self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
+                            self.damageMessage(cords, damage)
+                        else:
+                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                    elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
+                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                            self.sliceEnemy([self._playerX, self._playerY-1],damage)
+                            self.sliceEnemy([self._playerX, self._playerY+1],damage)
+                            self.sliceEnemy([self._playerX-1, self._playerY],damage)
+                            self.sliceEnemy([self._playerX+1, self._playerY],damage)
+                        else:
+                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
 
-                if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
-                    if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
-                        pickupLoot()
-                        self._currentLevel[cords[0]][cords[1]]['loot']= {'type' : self._currentLevel[cords[0]][cords[1]]['entity']['item']['type'], 'amount': self._currentLevel[cords[0]][cords[1]]['entity']['item']['amount']}
-                        self._currentLevel[cords[0]][cords[1]]['display'] = self._currentLevel[cords[0]][cords[1]]['loot']['type']
-                    else:
-                        self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
-                    self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
-                    self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
-                self.enemyFullTurn()
-                self.rendering()
+                    if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
+                        if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
+                            pickupLoot()
+                            self._currentLevel[cords[0]][cords[1]]['loot']= {'type' : self._currentLevel[cords[0]][cords[1]]['entity']['item']['type'], 'amount': self._currentLevel[cords[0]][cords[1]]['entity']['item']['amount']}
+                            self._currentLevel[cords[0]][cords[1]]['display'] = self._currentLevel[cords[0]][cords[1]]['loot']['type']
+                        else:
+                            self._currentLevel[cords[0]][cords[1]]['display']= 'floor'
+                        self._currentLevel[cords[0]][cords[1]]['entity']= 'NONE'
+                        self._currentLevel[cords[0]][cords[1]]['text'] = 'NONE'
+                    self.enemyFullTurn()
+                    self.rendering()
 
-            elif self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
-                pickupLoot()
+                elif self._currentLevel[cords[0]][cords[1]]['loot'] != 'NONE':
+                    pickupLoot()
             
 
         
@@ -895,7 +954,7 @@ class System:
 
     #checks if move is possible, and then moves
     def movePlayer(self, direction = 'Up'):
-        return
+        #return
         self.logging(f'movePlayer({direction})')
         match direction:
             case 'w':
@@ -1031,23 +1090,40 @@ class System:
         return False
 
     def useItem(self, item):
+        usedItem = False
         self.replayWrite(f'useItem({item})')
         if self.inInventory(item):
-            if self.dataDict['tiles'][item]["loot"]["isConsumable"]:
-                self.inventory[item]['amount'] -= 1
-                if self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHPpercentage"]:
-                    extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHP"] * (self.playerStats["HP"]["max"] // 100)
-                else:
-                    extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["restoreHP"]
-                self.playerStats["HP"]["current"] += extraHP
-                if self.playerStats["HP"]["current"] > self.playerStats["HP"]["max"]:
-                    self.playerStats["HP"]["current"] = self.playerStats["HP"]["max"]
-            elif self.dataDict['tiles'][item]["loot"]["isWeapon"]:
-                self.displayText(f"Item: '{item}' is defined as a weapon\nUse 'equipWeapon({item})' to equip it as weapon, or check the item information with 'itemInfo({item})'")
-            elif 'special' in self.dataDict['tiles'][item]["loot"]:
-                if self.dataDict['tiles'][item]["loot"]['special']['nextFloor']:
+            if item == self.equipped and self.inventory[item]['amount'] == 1:
+                self.displayText(f"You have item: '{item}' equipped as weapon, to use it you need to unequip it first")
+            else:
+                if self.dataDict['tiles'][item]["loot"]["isConsumable"]:
+                    usedItem = True
+                    if self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '%':
+                        extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"] * (self.playerStats["HP"]["max"] // 100)
+                    elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '-':
+                        extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"] * -1
+                    elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '+':
+                        extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"]
+                    elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == 'set':
+                        extraHP = 0
+                        self.playerStats["HP"]["current"] = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"]
+                    self.playerStats["HP"]["current"] += extraHP
+                    if self.playerStats["HP"]["current"] > self.playerStats["HP"]["max"]:
+                        self.playerStats["HP"]["current"] = self.playerStats["HP"]["max"]
+                if 'special' in self.dataDict['tiles'][item]["loot"]:
+                    if self.dataDict['tiles'][item]["loot"]['special']['nextFloor']:
+                        usedItem = True
+                        self.newLevel()
+                if 'text' in self.dataDict['tiles'][item]:
+                    if self.dataDict['tiles'][item]['text']['fromList']:
+                        text = self.dataDict['text'][self.dataDict['tiles'][item]['text']['text']][random.randint(0,len(self.dataDict['text'][self.dataDict['tiles'][item]['text']['text']])-1)]
+                    else:
+                        text = self.dataDict['tiles'][item]['text']['text']
+                    self.displayText(text)
+                if usedItem:
                     self.inventory[item]['amount'] -= 1
-                    self.newLevel()
+                elif self.dataDict['tiles'][item]["loot"]["isWeapon"]:
+                    self.displayText(f"Item: '{item}' is defined as a weapon\nUse 'equipWeapon({item})' to equip it as weapon, or check the item information with 'itemInfo({item})'")
 
         else:
             self.displayText(f"You don\'t have: {item}\nUse 'showInventory()' to see the items you have")
@@ -1067,10 +1143,16 @@ class System:
                 self.displayText(f'It does {self.dataDict["tiles"][item]["loot"]["weapon"]["attack"]} attack damage\nWeapon type is {self.dataDict["tiles"][item]["loot"]["weapon"]["type"]}\nWeapon weight is {self.dataDict["tiles"][item]["loot"]["weapon"]["weaponWeight"]}')
             self.displayText(f'Item Rarity: {self.dataDict["tiles"][item]["loot"]["rarity"]}')
             if self.dataDict["tiles"][item]["loot"]["isConsumable"]:
-                percentOrNot = ""
-                if self.dataDict["tiles"][item]["loot"]["consumable"]["restoreHPpercentage"]:
-                    percentOrNot = '%'
-                self.displayText(f'It restores {self.dataDict["tiles"][item]["loot"]["consumable"]["restoreHP"]}{percentOrNot} HP when consumed')
+                if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != 'set':
+                    if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != '-':
+                        percentOrNot = ""
+                        if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] == '%':
+                            percentOrNot = '%'
+                        self.displayText(f'It restores {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}{percentOrNot} HP when consumed')
+                    else:
+                        self.displayText(f'You took {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]} HP damage when consumed')
+                else:
+                    self.displayText(f'Your HP has been set to {self.playerStats["HP"]["current"]}')
             if "special" in self.dataDict["tiles"][item]["loot"]:
                 if self.dataDict["tiles"][item]["loot"]["special"]["nextFloor"]:
                     self.displayText('It will warp you to the next floor')
