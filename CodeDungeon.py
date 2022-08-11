@@ -77,11 +77,13 @@ class System:
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
-        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2, 'replayMode': False}
+        dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2, 'enemyLoopPerEnemy':2, 'replayMode': False}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
         dataDict['text'] = {'signText': defaultSignText, 'npcText': defaultNPCText}
 
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'doubleAttack': False, 'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}}
+        dataDict['defaultTiles'] = {'floor': ['floor'], 'wall': ['wall'], 'exit': ['exit'], 'sign': ['sign'], 'npc': ['npc']}
+
+        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}}
         dataDict['tiles']['exit'] = {'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
         dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
         dataDict['tiles']['npc'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}
@@ -150,27 +152,24 @@ class System:
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
         bugmessage.append([e,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
 
-    if doLogging or doReplayMode:
-        now = datetime.datetime.now()
-        dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
-        try:
-            os.mkdir('logs/')
-        except:
-            pass
-        try:
-            os.mkdir('logs/logFiles/')
-            os.mkdir('logs/replayFiles/')
-        except:
-            pass
 
-        if doLogging:
-            #logging
-            log = open(f'logs/logFiles/log{dt_string}.txt', "w")
-            log.close()  
-        
-        if doReplayMode:
-            replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
-            replay.close() 
+    now = datetime.datetime.now()
+    dt_string = now.strftime("%d_%m_%Y-%H_%M_%S")
+    try:
+        os.mkdir('logs/')
+    except:
+        pass
+    try:
+        os.mkdir('logs/logFiles/')
+        os.mkdir('logs/replayFiles/')
+    except:
+        pass
+    log = open(f'logs/logFiles/log{dt_string}.txt', "w")
+    log.close()  
+
+    replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
+    replay.close() 
+
 
     def __init__(self, seed : int = 0):
         self.logging('__init__()')
@@ -234,7 +233,7 @@ class System:
         self.logging('jsonError()')
         showerror('error', f'{error}\nerror code 0002')
         self.logging([error,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
-        self.exit()
+        self.exit(False)
 
     #generate a new state
     def newState(self, modifier = 0):
@@ -323,15 +322,20 @@ class System:
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             if random.randint(1,100) <= self.chanceLootAir:
                 loot = self.getLoot(modifier)
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'} 
+
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 1:
-            self._currentLevel[x][y] = {'tile': 'wall', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+            wall = random.choice(self.dataDict['defaultTiles']['wall'])
+            self._currentLevel[x][y] = {'tile': wall, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
         elif tile == 2:
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
             self._playerX = x
             self._playerY = y
         elif tile == 3:
-            self._currentLevel[x][y] = {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+            exitTile = random.choice(self.dataDict['defaultTiles']['exit'])
+            self._currentLevel[x][y] = {'tile': exitTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
         elif tile == 4:
             modifier = 0
             if extra != 'NONE':
@@ -343,7 +347,8 @@ class System:
             if random.randint(1,100) <= self.chanceEnemyAir:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'}  
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
         elif tile == 5:
             modifier = 0
             if extra != 'NONE':
@@ -355,21 +360,25 @@ class System:
             if random.randint(1,100) <= self.chanceEnemySpawn:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'} 
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 6:
             if extra != 'NONE':
                 text = extra[0]
             else:
                 text = self.dataDict['text']['signText'][random.randint(0,len(self.dataDict['text']['signText'])-1)]
-            self._currentLevel[x][y] = {'tile': 'sign', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            sign = random.choice(self.dataDict['defaultTiles']['sign'])
+            self._currentLevel[x][y] = {'tile': sign, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 7:
             if extra != 'NONE':
                 text = extra[0]
             else:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
-            self._currentLevel[x][y] = {'tile': 'npc', 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            npc = random.choice(self.dataDict['defaultTiles']['npc'])
+            self._currentLevel[x][y] = {'tile': npc, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'}
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'}
         elif tile == 9:
             modifier1 = 0
             modifier2 = 10
@@ -388,7 +397,8 @@ class System:
             loot = self.getLoot(modifier1)
             entityLoot = self.getLoot(modifier2)
             entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            self._currentLevel[x][y] = {'tile': 'floor', 'entity': entity, 'loot': loot, 'text': 'NONE'}  
+            floor = random.choice(self.dataDict['defaultTiles']['floor'])
+            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
         elif type(tile) == dict:
             tileTile = 'NONE'
             tileEntity = 'NONE'
@@ -419,7 +429,7 @@ class System:
             
             self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()', f'Map: {levelNumber}', f'X: {x}, Y: {y}')
             showerror('error', 'Error code 0001')
-            self.exit()
+            self.exit(False)
 
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
@@ -517,10 +527,15 @@ class System:
                 if x==self._playerX and y == self._playerY:
                     self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['playerImages'][self._facingDirectionTexture.upper()]}"])
                 else:
-                    if picType == 'darknessFull-':
-                        self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
-                    else:
-                        self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
+                    try:
+                        if picType == 'darknessFull-':
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['ShowOutsideAs']}"])
+                        else:
+                            self._canvas.create_image(x*self.pixelSize+self.pixelOffset,y*self.pixelSize+self.pixelOffset, image=self._images[f"{picType}{self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Image']}"])
+                    except Exception as e:
+                        self.logging(f'error: {e}, error 0004, image json not difined/found')
+                        showerror('error', 'Error code 0004')
+                        self.exit(False)
         #for if stats changed, update those
         self.updateStats()
         #updae the window, so that it shows the new generated canvas
@@ -626,7 +641,7 @@ class System:
                                     except Exception as e:
                                         self.logging(f'error: {e}, error 0003, tries to read: {chosenLevel.split(splitting)}, splitter: {splitting}')
                                         showerror('error', 'Error code 0003')
-                                        self.exit()
+                                        self.exit(False)
                                 else:
                                     level[x].append(0)
                             else:
@@ -675,9 +690,13 @@ class System:
             self.rendering()
         
 
-    def exit(self):
+    def exit(self, remove = True):
         self.logging('exit()')
         accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
+        if not self.doLogging and remove:
+            os.remove(f'logs/logFiles/log{self.dt_string}.txt')
+        if not self.doReplayMode and remove:
+            os.remove(f'logs/replayFiles/replay{self.dt_string}.txt')
         exit()
 
 
@@ -700,7 +719,7 @@ class System:
             if 'lock' in self._currentLevel[cordinates[0]][cordinates[1]] and self._currentLevel[cordinates[0]][cordinates[1]]['lock'] != 'NONE':
                 self.displayText('The tile is locked, Interact with it')
                 return False
-            return self.dataDict['tiles'][self._currentLevel[x][y]['tile']]['Walkable']
+            return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
         else:
             return False
 
@@ -714,80 +733,113 @@ class System:
         distance = math.sqrt((xDis **2) + (yDis **2))
         return distance
 
+    def delaySleep(self):
+        #delay of enemy movement
+        try:
+            if self.dataDict['debug']['sleep']:
+                time.sleep(self.dataDict['preference']['sleepTime'])
+        except Exception as e:
+            self.jsonError(e)
+        self.rendering()
+
+
     #check if enemy's want to move
-    def enemyTurn(self):
+    def enemyTurn(self, reset = False):
+        def attack():
+            if self.doCombat:
+                ATK = self._currentLevel[tile[0]][tile[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['statsPerLevel']['ATK']
+                if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['hitChance'] > random.randint(1,99):
+                    ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['lessATKpointsPercentage'])
+                    self.playerStats["HP"]["current"] -= ATK
+                    self.displayText(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
+                self.delaySleep()
+
+
         self.logging('enemyTurn')
         if self.doEnemyMovement != False:
             self.EnemyMoveRadius = [] 
             for ix in range((self._viewDistance+1) * 2 + 1):
                 for iy in range((self._viewDistance+1) * 2 + 1):
-                    self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
-            for tile in self.EnemyMoveRadius:
-                
-                if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
-                    pass
-                elif tile in self.ignore:
-                    pass
-                else:
-                    if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
-                        moves = ['Up', 'Down', 'Left', 'Right']
-                        bestMoves = {}
-                        nums = []
-                        for move in moves:
-                            match move:
-                                case 'Up':
-                                    cords = [tile[0], tile[1]-1]
-                                case 'Down':
-                                    cords = [tile[0], tile[1]+1]
-                                case 'Left':
-                                    cords = [tile[0]-1, tile[1]]
-                                case 'Right':
-                                    cords = [tile[0]+1, tile[1]]
-                            if not self.isWalkable(cords):
+                    if self.onGrid([ix,iy]):
+                        self.EnemyMoveRadius.append([ix + self._playerX - self._viewDistance,iy + self._playerY - self._viewDistance])
+            if reset:
+                for tile in self.EnemyMoveRadius:
+                    if self.onGrid(tile):
+                        if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                            if 'movement' not in self._currentLevel[tile[0]][tile[1]]['entity']:
+                                max = self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['enemy']['movementRules']
+                                self._currentLevel[tile[0]][tile[1]]['entity']['movement'] = {'done':{'movement':0,'attack':0}, 'max': max}
+                            else:
+                                self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] = 0
+                                self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] = 0
+            for _ in range(self.dataDict['debug']['enemyLoopPerEnemy']):
+                for tile in self.EnemyMoveRadius:
+                    if self.onGrid(tile):
+                        if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
+                            if tile[0] < 0 or tile[1] < 0 or tile[0] > len(self._currentLevel)-1 or tile[1] > len(self._currentLevel[tile[0]])-1:
+                                pass
+                            elif self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['movement'] and self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attack']:
                                 pass
                             else:
-                                if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
-                                    if bool(random.getrandbits(1)):
-                                        moveTheEnemy = True
+                                moves = ['Up', 'Down', 'Left', 'Right']
+                                bestMoves = {}
+                                distances = []
+                                for move in moves:
+                                    match move:
+                                        case 'Up':
+                                            cords = [tile[0], tile[1]-1]
+                                        case 'Down':
+                                            cords = [tile[0], tile[1]+1]
+                                        case 'Left':
+                                            cords = [tile[0]-1, tile[1]]
+                                        case 'Right':
+                                            cords = [tile[0]+1, tile[1]]
+                                    if not self.isWalkable(cords):
+                                        pass
                                     else:
-                                        self.ignore.append([tile[0],tile[1]])
-                                        moveTheEnemy = False
-                                else:
-                                    moveTheEnemy = True
-                                if moveTheEnemy:
-                                    if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
-                                        bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                                        if self.distence(cords, [self._playerX, self._playerY]) > self.distence([tile[0], tile[1]], [self._playerX, self._playerY]):
+                                            if bool(random.getrandbits(1)):
+                                                moveTheEnemy = True
+                                            else:
+                                                moveTheEnemy = False
+                                        else:
+                                            moveTheEnemy = True
+                                        if moveTheEnemy:
+                                            if self.distence(cords, [self._playerX, self._playerY]) in bestMoves:
+                                                bestMoves[self.distence(cords, [self._playerX, self._playerY])].append([move, cords, [tile[0], tile[1]]])
+                                            else:
+                                                bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
+                                                distances.append(self.distence(cords, [self._playerX, self._playerY]))
+
+                                #start picking a move
+                                if len(bestMoves) != 0:
+                                    distances.sort()
+                                    if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
+                                        if not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['movement']:
+                                            self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] += 1
+                                            if self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attackRule'] == 'insteadOf':
+                                                self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] += 1
+                                            if len(bestMoves[distances[0]]) > 1:
+                                                self.moveEnemy(bestMoves[distances[0]][random.randint(0,len(bestMoves[distances[0]])-1)])
+                                            else:
+                                                self.moveEnemy(bestMoves[distances[0]][0])
+
                                     else:
-                                        bestMoves[self.distence(cords, [self._playerX, self._playerY])] = [[move, cords, [tile[0], tile[1]]]]
-                                        nums.append(self.distence(cords, [self._playerX, self._playerY]))
+                                        if not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attack']:
+                                            for attackTimes in range(self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attack']-self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack']):
+                                                
+                                                if self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attackRule'] == 'insteadOf' and not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] >= 1:
+                                                    self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] += 1
+                                                    self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] += 1
+                                                    attack()
+                                                elif self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attackRule'] == 'and':
+                                                    self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] += 1
+                                                    attack()
 
-                        #start picking a move
-                        if len(bestMoves) != 0:
-                            nums.sort()
-                            if self.distence([tile[0], tile[1]], [self._playerX, self._playerY]) > 1.0:
-                                if len(bestMoves[nums[0]]) > 1:
-                                    self.moveEnemy(bestMoves[nums[0]][random.randint(0,len(bestMoves[nums[0]])-1)])
-                                else:
-                                    self.moveEnemy(bestMoves[nums[0]][0])
+                                                
 
-                            else:
-                                ATK = self._currentLevel[tile[0]][tile[1]]['entity']['level'] * self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['statsPerLevel']['ATK']
-                                if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['hitChance'] > random.randint(1,99):
-                                    ATK -= ATK // 100 * random.randint(0, self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['lessATKpointsPercentage'])
-                                    self.playerStats["HP"]["current"] -= ATK
-                                    self.displayText(f"{self._currentLevel[tile[0]][tile[1]]['entity']['type']} hit you, You took {ATK}HP damage")
-                                    if self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]["enemy"]['doubleAttack'] == False:
-                                        self.ignore.append([tile[0],tile[1]])
-
-
-
-                            #delay of enemy movement
-                            try:
-                                if self.dataDict['debug']['sleep']:
-                                    time.sleep(self.dataDict['preference']['sleepTime'])
-                            except Exception as e:
-                                self.jsonError(e)
-                            self.rendering()
+                                   
+                                    
 
 
 
@@ -806,7 +858,7 @@ class System:
             switch.append(self._currentLevel[newX][newY][each])
             self._currentLevel[x][y][each] = switch[1]
             self._currentLevel[newX][newY][each] = switch[0]
-            self.ignore.append([newX,newY])
+        self.delaySleep()
 
     def damageMessage(self, cords, damage):
         if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] > 0:
@@ -1032,27 +1084,25 @@ class System:
         self.rendering()
 
     def logging(self, item,q=0, w=0, e=0,r=0 ,t=0,y=0, u=0, i=0, o=0, p=0):
-        if self.doLogging:
-            self.log = open(f'logs/logFiles/log{self.dt_string}.txt', "a+")
-            self.log.write(f'{item}')
-            extra = [q,w,e,r,t,y,u,i,o,p]
-            for x in extra:
-                if x != 0:
-                    self.log.write(f' {x} ')
-            self.log.write(f'\n')
-            self.log.close()  
+        self.log = open(f'logs/logFiles/log{self.dt_string}.txt', "a+")
+        self.log.write(f'{item}')
+        extra = [q,w,e,r,t,y,u,i,o,p]
+        for x in extra:
+            if x != 0:
+                self.log.write(f' {x} ')
+        self.log.write(f'\n')
+        self.log.close()  
 
     def replayWrite(self, text):
-        if self.doReplayMode: 
-            self.replay = open(f'logs/replayFiles/replay{self.dt_string}.txt', "a+")  
-            self.replay.write(f'{text}\n')
-            self.replay.close() 
+        self.replay = open(f'logs/replayFiles/replay{self.dt_string}.txt', "a+")  
+        self.replay.write(f'{text}\n')
+        self.replay.close() 
 
     def enemyFullTurn(self):
-        self.ignore = []
-        self.enemyTurn()
-        self.enemyTurn()
-        self.ignore = []
+        self.enemyTurn(True)
+        if self.dataDict['debug']['enemyLoop'] >= 2:
+            for _ in range(self.dataDict['debug']['enemyLoop']-1):
+                self.enemyTurn(False)
 
     def wait(self):
         self.replayWrite('wait()')

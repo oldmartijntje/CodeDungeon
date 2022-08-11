@@ -22,6 +22,7 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
     - [debug](#debug)
     - [Gamma](#gamma)
     - [text](#text)
+    - [default Tiles](#defaulttiles)
     - [tiles](#tiles)
   + [Testing tools](#testing-tools)
 - [Trouble?](#help) 
@@ -274,6 +275,7 @@ Gamedata is massive so again, i'll make a quick navigation menu:
  - [debug](#debug)
  - [Gamma](#gamma)
  - [text](#text)
+ - [default Tiles](#defaulttiles)
  - [tiles](#tiles)
 
 ### Preference
@@ -368,12 +370,13 @@ These are the textures the player has:
 ![debug](sprites/readme/data11.png)
 
 These are debug settings.
- - Logging logs some details.
+ - Logging, When set to true it will keep the logs, when false, it will delete the logs when closed (but will still be there if it crashes)
  - Combat enables combat.
  - Enemyai enables enemy AI (which is not an AI but an simple algorithm).
  - Sleep means that it takes time delay between enemy movement.
  - Enemy loop is the amount of times it checks to see if an enemy can move (for if another enemy moved out of the way).
- - replayMode writes down every movement you make and item you use/equip, so that you can get to the same place as you once were on that 1 seed.
+ - replayMode writes down every movement you make and item you use/equip, so that you can get to the same place as you once were on that 1 seed. (works same as logging)
+ - "enemyLoopPerEnemy" (since v1.2.0) will loop the enemy movement an amount of times, so that it can walk multiple tiles if it has those movement rules.
 
 ### Gamma
 
@@ -402,6 +405,14 @@ You can create some funky things with these settings, but you probably don't nee
 ![text](sprites/readme/data13.png)
 
 This is the npc and sign text, the 2 lists it picks random text from if it's not defined in the level code. The default text is quite useless.
+
+### defaultTiles
+
+![defaultTiles](sprites/readme/data22.png)
+
+These are the default walls it will place with the level editor, so if you have multiple wall variations, just add them to the list of 'wall'
+
+They need to be defined in the Tiles to work, otherwise it will crash.
 
 ### tiles
 
@@ -464,11 +475,25 @@ When you put "isEnemy" to true, you need to add this dictionary:
 
 ![enemy](sprites/readme/data18.png)
 
-- "doubleAttack" will be removed in the future, but if it's true it can double attack
+- "doubleAttack" it's true it can double attack (until v1.2)
 - "statsPerLevel" the stats this enemy will have per level
 - "lessATKpointsPercentage" the percentage of damage variaton, the ATK minus 0% to this% 
 - "hitChance" the chance for the enemy to hit
-- "movementRules" does nothing now, but will replace "doubleAttack" in the future
+- "movementRules" does something since v1.2:
+
+>![movementRules](sprites/readme/data20.png)
+>
+>The 'insteadOf' means that it's either 1 or the other:
+>
+>It either moves 1 to 3 tiles or attacks 4 times
+>
+>But if you set it to 'and' it will be:
+>
+>![movementRules](sprites/readme/data21.png)
+>
+>move 1 tile and then attack twice, or attack twice and don't move.
+
+If not set to 'and' or 'insteadOf' it can't attack, but can still move.
 
 ## Testing Tools
 
