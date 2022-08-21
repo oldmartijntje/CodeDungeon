@@ -10,6 +10,7 @@ __pycache__/
 accounts/
 logs/
 gameData/
+CodeDungeonPlayer.py
 example.py
 systemConfig.ini
 .Python

@@ -1,5 +1,5 @@
 
-version = '2.8.0'
+version = '2.9.0'
 #code made by OldMartijntje
 
 #functions u don't need, bacause it's just to make the system work
@@ -22,6 +22,8 @@ class systemFunctions:
         import tkinter.messagebox
         if tkinterOrConsole == 'Tkinter':
             return tkinter.messagebox.askyesno('Accounts_omac_lib', f"Your account is outdated, Do you want us to update your account?\nIf you don\'t update {message} You will keep getting this message if you load newer apps", icon ='warning')
+        elif tkinterOrConsole == 'NONE':
+            return True
         else:
             yesorno = ''
             while yesorno.lower() not in ['y', 'n']:
@@ -245,22 +247,34 @@ def createAccount(accountName = 'testaccount', configSettings = ['accounts/', 'F
     
 
     #creating the json
-    json_string = json.dumps(data)
-    try:
-        with open(f'{path}{accountName.lower()}{fileExtention}.json', 'w') as outfile:
-            json.dump(json_string, outfile)
-            data['loadTime'] = datetime.datetime.now()
-    except:
-        import os
-        if tkinterOrConsole == 'Console':
-            delete = input('The configfile is not readable, either fix it or delete it.\nWe will close this program after you press enter. \nDo you want us to delete systemConfig.ini for you? (Y/N)\n>>')
-            if delete.lower() == 'y':
-                os.remove("systemConfig.ini")
-        elif tkinterOrConsole == 'Tkinter':
-            import tkinter.messagebox
-            if tkinter.messagebox.askyesno('Config Error!', 'There is a problem when we try to open your settings\nWe will close the program after you click this message away\n\nDo you want us to delete the configfile (systemConfig.ini) for you,\notherwise you will have to fix it yourself', icon ='error'):
-                os.remove("systemConfig.ini")
-        exit()
+    loop = True
+    loops = 0
+    while loop:
+        json_string = json.dumps(data)
+        try:
+            with open(f'{path}{accountName.lower()}{fileExtention}.json', 'w') as outfile:
+                json.dump(json_string, outfile)
+                data['loadTime'] = datetime.datetime.now()
+            loop = False
+        except:
+            import os
+            if tkinterOrConsole == 'Console':
+                delete = input('The configfile is not readable, either fix it or delete it.\nWe will close this program after you press enter. \nDo you want us to delete systemConfig.ini for you? (Y/N)\n>>')
+                if delete.lower() == 'y':
+                    os.remove("systemConfig.ini")
+                exit()
+            elif tkinterOrConsole == 'Tkinter':
+                import tkinter.messagebox
+                if tkinter.messagebox.askyesno('Config Error!', 'There is a problem when we try to open your settings\nWe will close the program after you click this message away\n\nDo you want us to delete the configfile (systemConfig.ini) for you,\notherwise you will have to fix it yourself', icon ='error'):
+                    os.remove("systemConfig.ini")
+                exit()
+            elif tkinterOrConsole == 'NONE':
+                configSettings = ['accounts/', 'False', 'testaccount', '_omac']
+                loops += 1
+                if loops > 10:
+                    input('internal error, config corrupted, tried to auto replace, failed, tried 10 times, to avoid infinite while loop, program will close on [Enter] press')
+                    exit()
+            
     return data
 
 def saveAccount(data, configSettings = ['accounts/', 'False', 'testaccount', '_omac']):

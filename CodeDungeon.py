@@ -891,7 +891,7 @@ class System:
         elif self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
             self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
         elif self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
-            self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x {self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}")
+            self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x '{self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}'")
         else:
             if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE':
                 if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] == self.equipped and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] == self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
@@ -1176,7 +1176,7 @@ class System:
                     self.displayText(f"Item: '{item}' is defined as a weapon\nUse 'equipWeapon({item})' to equip it as weapon, or check the item information with 'itemInfo({item})'")
 
         else:
-            self.displayText(f"You don\'t have: {item}\nUse 'showInventory()' to see the items you have")
+            self.displayText(f"You don\'t have: '{item}'\nUse 'showInventory()' to see the items you have")
         self.rendering()
 
 
@@ -1217,7 +1217,7 @@ class System:
             else:
                 self.displayText(f"Item: '{item}' is not defined as a weapon\nUse 'useItem({item})' to use it as item, or check the item information with 'itemInfo({item})'")
         else:
-            self.displayText(f"You don\'t have: {item}\nUse 'showInventory()' to see the items you have")
+            self.displayText(f"You don\'t have: '{item}'\nUse 'showInventory()' to see the items you have")
 
     def newLevel(self):
         self.logging('newLevel()')
