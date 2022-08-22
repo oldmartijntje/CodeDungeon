@@ -20,8 +20,8 @@ class System:
 
     #some default levels
     _defaultlevels = [
-    [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+    [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 1, 0, 4, 5, 1, 4, 1, 2], [4, 0, 0, 4, 0, 0, 0, 0, 1, 0], [5, 4, 1, 0, 5, 4, 1, 0, 1, 0], [4, 0, 1, 0, 4, 0, 1, 0, 1, 0], [1, 0, 1, 5, 0, 4, 1, 3, 1, 0], [0, 5, 4, 1, 1, 1, 1, 1, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 0, 0], [0, 0, 4, 1, 0, 4, 5, 0, 0, 0], [5, 0, 0, 0, 0, 5, 0, 5, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 1, 3]],
     [[4, 0, 4, 0, 1, 2, 1, 4, 5, 4], [4, 5, 0, 4, 1, 0, 1, 0, 4, 0], [0, 4, 0, 0, 0, 0, 1, 4, 5, 4], [0, 0, 4, 0, 1, 0, 1, 0, 4, 0], [4, 0, 5, 4, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 0]],
     [[4, 0, 4, 1, 0, 2, 1, 4, 5, 4], [4, 5, 0, 1, 7, 0, 1, 0, 4, 0], [0, 4, 0, 0, 1, 0, 1, 4, 5, 4], [0, 0, 4, 0, 0, 0, 1, 0, 4, 0], [4, 0, 5, 0, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 7]],
@@ -75,7 +75,7 @@ class System:
         dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1, 'entetyLootDroppingChance': 50}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 50},'rare': {'chance': 15},'epic': {'chance': 8},'legendary': {'chance': 4},'impossible': {'chance': 1}}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
-        dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple']}
+        dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple'], 'unknown': {'color': 'white', 'text': 'Modified'}}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
         dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2, 'enemyLoopPerEnemy':2, 'replayMode': False}
         dataDict['Gamma'] = {'distance': 2, 'darknessFull' : 0.2, 'darknessFade' : 0.5}
@@ -151,6 +151,13 @@ class System:
         print(e)
         print('something is wrong with the gameData/gameData.json, delete it or fix it.')
         bugmessage.append([e,'something is wrong with the gameData/gameData.json, delete it or fix it.'])
+
+    try:
+        _defaultlevels = levelDataDict
+    except Exception as e:
+        print(e)
+        print('something is wrong with the gameData/levelData.json, delete it or fix it.')
+        bugmessage.append([e,'something is wrong with the gameData/levelData.json, delete it or fix it.'])
 
 
     now = datetime.datetime.now()
@@ -410,6 +417,12 @@ class System:
                 tileTile = tile['tile']
                 if 'entity' in tile:
                     tileEntity = tile['entity']
+                    if type(tileEntity['level']) == list:
+                        if tileEntity['level'][0] == '+':
+                            tileEntity['level'].pop(0)
+                            for xxx in range(len(tileEntity['level'])):
+                                tileEntity['level'][xxx] += (self._enemyLevel + self._dungeonLevel)
+                    tileEntity['level'] = random.choice(tileEntity['level'])
                 if 'loot' in tile:
                     tileLoot = tile['loot']
                 if 'text' in tile:
@@ -664,7 +677,10 @@ class System:
             for x in range(len(self._defaultlevels[chosenLevel])):
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
-                    self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
+                    if type(self._defaultlevels[chosenLevel][x][y]) != int:
+                        self._buttonsList[x].append(tkinter.Label(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color']))
+                    else:
+                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
             tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")
             tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self._defaultlevels[chosenLevel])).grid(column=x//2+1,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")

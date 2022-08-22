@@ -227,9 +227,19 @@ If you give an enemy or loot text, it will only show the text the first time you
 
 This is how you create an enemy:
 
-![text](sprites/readme/level13.png)
+![entity](sprites/readme/level13.png)
 
 The item in the entity is what it drops when it dies.
+
+>Like always you can add a list and it will randomly select:
+>
+>![entity](sprites/readme/level18.png)
+>
+>But you might not want the rat to always be level 10, so if you change it to this:
+>
+>![entity](sprites/readme/level19.png)
+>
+>It will add the number it chooses, to the base level. (the level all entitys have in that map) (v1.2+)
 
 If you want a map where it has a chance to have a wall, and chance to have air, that's possible.
 
@@ -349,13 +359,15 @@ If you make it 100 or higher it will always spawn
 ### appSettings
 These are app settings, technical stuff.
 
-![appSettings](sprites/readme/data9.png)
+![appSettings](sprites/readme/data9-2.png)
 
 The offset and size are for the level renderer.
 
 offset is offset in pixels, and size is tilesize.
 
 maxtypes and colors is for the level editor, if you increase mextypes then also add an color, tho adding a maxtype does liturally nothing. Changing colors just changes the colors in the level editor.
+
+The unknown is for when you changed a map using predifined of random choices, obviously you don't want to overwrite those, and you don't want the editor to crash, so these are what it shows for a predefined tile. (v1.2.0+)
 
 ### playerImages
 
