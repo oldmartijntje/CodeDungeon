@@ -29,7 +29,8 @@ class System:
     [[0, 0, 0, 0, 1, 6, 4, 1, 4, 7], [0, 1, 1, 5, 1, 0, 5, 1, 0, 0], [5, 1, 3, 0, 1, 0, 1, 1, 1, 0], [0, 1, 1, 1, 1, 5, 0, 0, 1, 0], [0, 0, 4, 1, 4, 0, 1, 5, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 0, 6], [4, 1, 0, 0, 5, 0, 0, 1, 0, 1], [4, 1, 1, 1, 1, 1, 0, 1, 0, 0], [0, 1, 3, 0, 1, 4, 0, 1, 1, 5], [2, 1, 1, 0, 0, 0, 1, 3, 0, 0]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
-    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 4, 1, 1, 5, 0, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 5, 1, 1, 4, 0, 0, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 4, 1, 1, 5, 0, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 5, 1, 1, 4, 0, 0, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 4, 4, 0, 4, 0, 0, 4], [1, [{"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "silver_key", "amount": 1}}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "golden_key", "amount": 1}}}], 1, 1, 1, 1, 1, 1, 4, 3], [1, 0, 0, 0, 0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0, 1, 7, 3], [0, 0, 0, 0, 1, 1, 1, 1, 0, 8], [0, 0, 1, 0, 0, 0, 0, 1, 0, 1], [0, 1, 1, 1, 1, 0, 0, 1, 0, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [2, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
     ]
     
     bugmessage = []
@@ -107,7 +108,10 @@ class System:
         dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrenght': 40, 'attack': 20, 'type': 'stab', 'weaponWeight' : 6}}}
         dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrenght': 30, 'attack': 5, 'type': 'slice', 'weaponWeight' : 5}}}
         dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': True}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor'}}
-    
+        dataDict['tiles']['silver_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}}
+        dataDict['tiles']['golden_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}}
+
+
         with open(f'gameData/gameData.json', 'w') as outfile:
             json.dump(dataDict, outfile, indent=4)
 
@@ -413,9 +417,9 @@ class System:
             tileText = 'NONE'
             lockText = 'NONE'
 
-            if 'tile' in tile:
+            if 'tile' in tile and tile['tile'] != 'NONE':
                 tileTile = tile['tile']
-                if 'entity' in tile:
+                if 'entity' in tile and tile['entity'] != 'NONE':
                     tileEntity = tile['entity']
                     if type(tileEntity['level']) == list:
                         if tileEntity['level'][0] == '+':
@@ -423,15 +427,15 @@ class System:
                             for xxx in range(len(tileEntity['level'])):
                                 tileEntity['level'][xxx] += (self._enemyLevel + self._dungeonLevel)
                     tileEntity['level'] = random.choice(tileEntity['level'])
-                if 'loot' in tile:
+                if 'loot' in tile and tile['loot'] != 'NONE':
                     tileLoot = tile['loot']
-                if 'text' in tile:
+                if 'text' in tile and tile['text'] != 'NONE':
                     tileText = tile['text']
-                if 'lock' in tile:
+                if 'lock' in tile and tile['lock'] != 'NONE':
                     for item in list(tile['lock'].keys()):
                         if type(tile['lock'][item]) == list:
                             tile['lock'][item] = tile['lock'][item][random.randint(0,len(tile['lock'][item])-1)]
-                    if type(tile['lock']['item']['amount']) == list:
+                    if 'item' in tile['lock'] and type(tile['lock']['item']['amount']) == list:
                         tile['lock']['item']['amount'] = tile['lock']['item']['amount'][random.randint(0,len(tile['lock']['item']['amount'])-1)]
                     lockText = tile['lock']
 
@@ -678,7 +682,7 @@ class System:
                 for y in range(len(self._defaultlevels[chosenLevel][x])):
                     cords = [x,y]
                     if type(self._defaultlevels[chosenLevel][x][y]) != int:
-                        self._buttonsList[x].append(tkinter.Label(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color']))
+                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color'], command=lambda cords=cords:print(self._defaultlevels[chosenLevel][cords[0]][cords[1]])))
                     else:
                         self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
@@ -900,13 +904,13 @@ class System:
             self.logging(e, f'cords: {cords}', f'damage: {damage}', 'Function = sliceEnemy()')
             
     def lockedTile(self, cords):
-        if self.playerStats["HP"]["current"] < self._currentLevel[cords[0]][cords[1]]['lock']['HP']:
+        if 'HP' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["HP"]["current"] < self._currentLevel[cords[0]][cords[1]]['lock']['HP']:
             self.displayText(f"It's locked, Not enough HP, {self._currentLevel[cords[0]][cords[1]]['lock']['HP']} HP needed to unlock this lock")
-        elif self.playerStats["strength"] < self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']:
+        elif 'Strenght' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["strength"] < self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']:
             self.displayText(f"It's locked, Not enough Strenght, {self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']} Strenght needed to unlock this lock")
-        elif self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
+        elif 'level' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
             self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
-        elif self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
+        elif 'item' in self._currentLevel[cords[0]][cords[1]]['lock'] and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
             self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x '{self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}'")
         else:
             if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE':

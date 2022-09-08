@@ -263,11 +263,15 @@ And you can combine it with the dict method too:
 
 #### v1.1.0+
 
->![text](sprites/readme/level16.png)
+>![text](sprites/readme/level16-2.png)
 >
 >You can lock a tile, (doesn't work on moving things, so if there is a lock on an entety only there will be a lock on air) you can lock it by minimum: HP, Strength, Level or needing a specific item
 >
 >This is not used by default, only when you put a tile in with dictionary
+>
+>If you only want to use one of the things, you can leave the others out:
+>
+>![text](sprites/readme/level20.png)
 
 ## GameData Editing
 
