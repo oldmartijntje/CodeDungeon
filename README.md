@@ -3,6 +3,8 @@
 
 This Project is there as learning tool, a tool to teach kids the logic of programming in a fun way, By programming the movement of your character in a game.
 
+You need Python 3.10.1+
+
 ##### Table of Contents  
 - [Installation](#installation)  
 - [How to use](#how-to-use)  
@@ -29,7 +31,7 @@ This Project is there as learning tool, a tool to teach kids the logic of progra
 - [Credits](#credits) 
 ## Installation
 
-First of all you need to <a href='https://www.python.org/downloads/'>install Python</a>, It works with <a href='https://www.python.org/downloads/release/python-3101/'>Python 3.10.1</a>, I don't know about other versions.
+First of all you need to <a href='https://www.python.org/downloads/'>install Python</a>, It works with <a href='https://www.python.org/downloads/release/python-3101/'>Python 3.10.1+ </a>Earlier versions won't work.
 >Make sure that when you are installing python you enable this:
 >
 >![checkButton](sprites/readme/readmePython.png)
@@ -39,6 +41,34 @@ If you have Pip installed you can do it by typing this into your console:
 >pip install Pillow
 
 <small><i><a href='https://pypi.org/project/Pillow/'>PIL on the Python Package Index.</a></i></small>
+
+Then you need to download the code, click this button:
+
+![download](sprites/readme/install.png)
+
+And then you need to click download zip:
+
+![download](sprites/readme/install2.png)
+
+Then in your file explorer, right click the zip folder:
+
+![zip](sprites/readme/install3.png)
+
+and then click extract all:
+
+![extract all](sprites/readme/install4.png)
+
+Then you put in the path where you want to save it and click extract:
+
+![extract](sprites/readme/install5.png)
+
+Then open the folder untill you see something like this:
+
+![files](sprites/readme/install6.png)
+
+>IMPORTANT: You need to run the python files from this folder, otherwise the program won't work.
+>
+>Because if you do it from an upper folder, The imports wont work, and the files would be written to the wrong folder.
 
 And the last step: Run <a href="https://github.com/oldmartijntjeCodeDungeon/blob/main/setup.py">setup.py</a> which should be installed when you downloaded the Release.
 
