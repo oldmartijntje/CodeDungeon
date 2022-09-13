@@ -12,14 +12,12 @@ import math
 import copy
 from tkinter.messagebox import showerror, askyesno, showinfo
 
-
-
 class System:
 
     _sightFurthest = []
 
     #some default levels
-    _defaultlevels = [
+    _defaultlevels = {"default":[
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
     [[0, 0, 1, 0, 4, 5, 1, 4, 1, 2], [4, 0, 0, 4, 0, 0, 0, 0, 1, 0], [5, 4, 1, 0, 5, 4, 1, 0, 1, 0], [4, 0, 1, 0, 4, 0, 1, 0, 1, 0], [1, 0, 1, 5, 0, 4, 1, 3, 1, 0], [0, 5, 4, 1, 1, 1, 1, 1, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 0, 0], [0, 0, 4, 1, 0, 4, 5, 0, 0, 0], [5, 0, 0, 0, 0, 5, 0, 5, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 1, 3]],
@@ -28,10 +26,12 @@ class System:
     [[1, 4, 0, 0, 5, 0, 4, 1, 0, 3], [0, 1, 1, 1, 0, 1, 1, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 5, 0, 0], [2, 0, 1, 5, 0, 1, 0, 0, 1, 0], [0, 0, 4, 1, 0, 5, 1, 1, 4, 1], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 5, 1, 4, 1, 5, 1, 0, 1], [0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 1, 0, 5, 0, 0, 1, 1, 0, 1], [4, 0, 0, 1, 4, 0, 5, 0, 0, 5]],
     [[0, 0, 0, 0, 1, 6, 4, 1, 4, 7], [0, 1, 1, 5, 1, 0, 5, 1, 0, 0], [5, 1, 3, 0, 1, 0, 1, 1, 1, 0], [0, 1, 1, 1, 1, 5, 0, 0, 1, 0], [0, 0, 4, 1, 4, 0, 1, 5, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 0, 6], [4, 1, 0, 0, 5, 0, 0, 1, 0, 1], [4, 1, 1, 1, 1, 1, 0, 1, 0, 0], [0, 1, 3, 0, 1, 4, 0, 1, 1, 5], [2, 1, 1, 0, 0, 0, 1, 3, 0, 0]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
+    [[0, 1, 5, 0, 0, 4, 1, 4, 0, 4], [0, 1, 0, 0, 5, 0, 0, 5, 5, 0], [0, 1, 4, 0, 0, 0, 1, 0, 0, 4], [0, 0, 0, 1, 1, 0, 1, 1, 1, 0], [5, 1, 1, 1, 4, 0, 0, 1, 4, 0], [0, 0, 0, 1, 0, 2, 0, 1, 5, 0], [1, 0, 1, 1, 0, 0, 0, 1, 0, 4], [0, 0, 4, 1, 0, 1, 1, 1, 1, 1], [4, 5, 5, 1, 5, 4, 1, 4, 4, 4], [0, 0, 4, 1, 0, 5, 0, 4, 5, 4]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+    [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 1, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3], [1, 0, 1, 1, 1, 0, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1, 4, 0, 1], [1, 0, 0, 1, 1, 0, 0, 0, 0, 1], [1, 7, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 4, 1, 1, 5, 0, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 5, 1, 1, 4, 0, 0, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 4, 4, 0, 4, 0, 0, 4], [1, [{"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "silver_key", "amount": 1}}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "golden_key", "amount": 1}}}], 1, 1, 1, 1, 1, 1, 4, 3], [1, 0, 0, 0, 0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0, 1, 7, 3], [0, 0, 0, 0, 1, 1, 1, 1, 0, 8], [0, 0, 1, 0, 0, 0, 0, 1, 0, 1], [0, 1, 1, 1, 1, 0, 0, 1, 0, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [2, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-    ]
+    ]}
     
     bugmessage = []
     _buttonsList = []
@@ -68,11 +68,12 @@ class System:
                 dataDict= dataString
     else:
         dataDict = {}
+        dataDict['template'] = {"tile": "NONE", "entity": "NONE", "loot": "NONE", "lock": "NONE"}
         dataDict['preference'] = {'autoEquipBetter': True, 'sleepTime':0.1}
         dataDict['startingLoot'] = {'wooden_sword': {'amount': 1}}
         dataDict['equippedWeapon'] = {'weapon': 'wooden_sword', 'weight': 1}
         dataDict['playerStats'] = {'statsPerLevel':{'HP':10, 'strength':4}, 'beginStats':{'HP':5, 'strength':5}, 'startLevel': 3, 'XPneeded': {'multiplyByLevel':50, 'startingNumber':10}}
-        dataDict['dungeon'] = {'startLevel': 3}
+        dataDict['dungeon'] = {'startLevel': 3, "defaultLevelList": "default"}
         dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1, 'entetyLootDroppingChance': 50}
         dataDict['rarities'] = {'common': {'chance': 100},'uncommon': {'chance': 50},'rare': {'chance': 15},'epic': {'chance': 8},'legendary': {'chance': 4},'impossible': {'chance': 1}}
         dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
@@ -84,18 +85,21 @@ class System:
 
         dataDict['defaultTiles'] = {'floor': ['floor'], 'wall': ['wall'], 'exit': ['exit'], 'sign': ['sign'], 'npc': ['npc']}
 
-        dataDict['tiles'] = {'rat':{'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}}
+        dataDict['tiles'] = {}
+        dataDict['tiles']['missingTile'] = {'ShowOutsideAs': 'missingTile', 'Walkable': True,'Image': 'textureMissing', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+
         dataDict['tiles']['exit'] = {'ShowOutsideAs': 'floor', 'Walkable': True,'Image': 'exit', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
-        dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
         dataDict['tiles']['npc'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'npc', 'isEnemy': False, 'isInteractable': True, 'isLoot': False, 'text': 'npcText'}
         dataDict['tiles']['wall'] = {'ShowOutsideAs': 'wall','Walkable': False, 'Image': 'wall', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
         dataDict['tiles']['sign'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'sign', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'text': 'signText'}
         dataDict['tiles']['floor'] = {'ShowOutsideAs': 'floor','Walkable': True, 'Image': 'floor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
-        dataDict['tiles']['lockedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'lockedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
-        dataDict['tiles']['closedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'closedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
         dataDict['tiles']['openDoor'] = {'ShowOutsideAs': 'openDoor','Walkable': True, 'Image': 'openDoor', 'isEnemy': False, 'isInteractable': False,'isLoot': False}
+        dataDict['tiles']['closedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'closedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
+        dataDict['tiles']['lockedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'lockedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
         
+        dataDict['tiles']['rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}
         
+        dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrenght': 22, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 5, 'type': '+'}}}
         dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 10, 'type': '+'}}}
@@ -205,7 +209,7 @@ class System:
         self.gameWindow.attributes('-topmost', True)
         self.inventory = self.dataDict['startingLoot']
         self.gameWindow.protocol("WM_DELETE_WINDOW", self.exit)
-        
+        self.loadedLevel = []
         
 
         self.rarityList = []
@@ -235,9 +239,20 @@ class System:
                 if self.dataDict['tiles'][data]['loot']['rarity'] != 'NONE':
                     self._itemRarety[self.dataDict['tiles'][data]['loot']['rarity']].append(data)
                     self._items.append(data)
-            self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFull))
-            self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFade))
-            self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png"))
+            try:
+              self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFull))
+              self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png").convert('RGB')).enhance(self.darknessFade))
+              self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(Image.open(f"sprites/{self.dataDict['tiles'][data]['Image']}.png"))
+            except Exception as e:
+              self.logging(e, 'probably texture isn\'t named correctly or doesn\'t exist')
+              try:
+                self._images[f'darknessFull-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/textureMissing.png").convert('RGB')).enhance(self.darknessFull))
+                self._images[f'darknessFade-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(ImageEnhance.Brightness(Image.open(f"sprites/textureMissing.png").convert('RGB')).enhance(self.darknessFade))
+                self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(Image.open(f"sprites/textureMissing.png"))
+              except Exception as e:
+                self.logging(e, 'since we already had an texture error we tried to load, but now we have again, high chance that u deleted the "sprites/textureMissing.png", whyyyy, \nThe other possebility why you are getting this is an error with PILLOW or PIL, \nbut the first option is more likely if you changed the gameData.json or downloaded a version of the game that isn\'t made by the creator: oldmartijntje')
+            
+            
     
     #for when something is missign from the json
     def jsonError(self,error):
@@ -274,13 +289,13 @@ class System:
         self.checkStates()
 
     #change tile type in the creator app
-    def changeEditorButton(self,location, chosenLevel):
+    def changeEditorButton(self,location, chosenLevel = 'non'):
         self.logging('changeEditorButton()')
         x, y = location
-        self._defaultlevels[chosenLevel][x][y]+= 1
-        if self._defaultlevels[chosenLevel][x][y] > self.maxTypes:
-            self._defaultlevels[chosenLevel][x][y] = 0
-        self._buttonsList[x][y].configure(text=self._defaultlevels[chosenLevel][x][y], bg = self.colors[self._defaultlevels[chosenLevel][x][y]])
+        self.loadedLevel[x][y]+= 1
+        if self.loadedLevel[x][y] > self.maxTypes:
+            self.loadedLevel[x][y] = 0
+        self._buttonsList[x][y].configure(text=self.loadedLevel[x][y], bg = self.colors[self.loadedLevel[x][y]])
 
     #get a random rarity
     def itemRarity(self, modifier : int = 0):
@@ -322,6 +337,7 @@ class System:
         #7 npc
         #8 nothing able to spawn
         #9 bossfight
+        findTile = 'missingTile'
         if tile == 0:
             modifier = 0
             if extra != 'NONE':
@@ -334,19 +350,31 @@ class System:
             if random.randint(1,100) <= self.chanceLootAir:
                 loot = self.getLoot(modifier)
 
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
+            if 'floor' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 1:
-            wall = random.choice(self.dataDict['defaultTiles']['wall'])
-            self._currentLevel[x][y] = {'tile': wall, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+            if 'wall' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['wall'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
         elif tile == 2:
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
-            self._playerX = x
-            self._playerY = y
+          if 'floor' in self.dataDict['defaultTiles']:
+            findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+          else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+          self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+          self._playerX = x
+          self._playerY = y
         elif tile == 3:
-            exitTile = random.choice(self.dataDict['defaultTiles']['exit'])
-            self._currentLevel[x][y] = {'tile': exitTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'} 
+          if 'exit' in self.dataDict['defaultTiles']:
+            findTile = random.choice(self.dataDict['defaultTiles']['exit'])
+          else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+          self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE', 'exit': {'exit': True, 'nextLevelList': self.dataDict['dungeon']['defaultLevelList']}} 
         elif tile == 4:
             modifier = 0
             if extra != 'NONE':
@@ -358,8 +386,11 @@ class System:
             if random.randint(1,100) <= self.chanceEnemyAir:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
+            if 'floor' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
         elif tile == 5:
             modifier = 0
             if extra != 'NONE':
@@ -371,25 +402,37 @@ class System:
             if random.randint(1,100) <= self.chanceEnemySpawn:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
+            if 'floor' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': entity, 'loot': loot, 'text': 'NONE'} 
         elif tile == 6:
             if extra != 'NONE':
                 text = extra[0]
             else:
                 text = self.dataDict['text']['signText'][random.randint(0,len(self.dataDict['text']['signText'])-1)]
-            sign = random.choice(self.dataDict['defaultTiles']['sign'])
-            self._currentLevel[x][y] = {'tile': sign, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            if 'sign' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['sign'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 7:
             if extra != 'NONE':
                 text = extra[0]
             else:
                 text = self.dataDict['text']['npcText'][random.randint(0,len(self.dataDict['text']['npcText'])-1)]
-            npc = random.choice(self.dataDict['defaultTiles']['npc'])
-            self._currentLevel[x][y] = {'tile': npc, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
+            if 'npc' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['npc'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': text} 
         elif tile == 8:
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'}
+            if 'floor' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': 'NONE', 'loot': 'NONE', 'text': 'NONE'}
         elif tile == 9:
             modifier1 = 0
             modifier2 = 10
@@ -408,8 +451,11 @@ class System:
             loot = self.getLoot(modifier1)
             entityLoot = self.getLoot(modifier2)
             entity = {'type': random.choice(list(self._enemies)), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
-            floor = random.choice(self.dataDict['defaultTiles']['floor'])
-            self._currentLevel[x][y] = {'tile': floor, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
+            if 'floor' in self.dataDict['defaultTiles']:
+              findTile = random.choice(self.dataDict['defaultTiles']['floor'])
+            else:
+              self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
+            self._currentLevel[x][y] = {'tile': findTile, 'entity': entity, 'loot': loot, 'text': 'NONE'}  
         elif type(tile) == dict:
             tileTile = 'NONE'
             tileEntity = 'NONE'
@@ -447,6 +493,11 @@ class System:
             self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()', f'Map: {levelNumber}', f'X: {x}, Y: {y}')
             showerror('error', 'Error code 0001')
             self.exit(False)
+        if  self._currentLevel[x][y]['tile'][0] == "|":
+          self._currentLevel[x][y]['tile'] = random.choice(self.dataDict['defaultTiles'][self._currentLevel[x][y]['tile'][1:]])
+        else:
+            self._currentLevel[x][y]['tile'] = 'missingTile'
+            self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
 
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
@@ -606,6 +657,40 @@ class System:
         self._levelVar.set(f'Level: {self.playerStats["level"]}')
         self._strengthVar.set(f'Strength: {self.playerStats["strength"]}')
 
+    def rotate2Derray(self, erray, buttonList, turns = 1):
+      self.rotate2DerrayButton.grid_remove()
+      self.exportMapButton.grid_remove()
+      self.printButton.grid_remove()
+
+      for x in range(len(self.loadedLevel)):
+        for y in range(len(self.loadedLevel[x])):
+            self._buttonsList[x][y].destroy()
+      for x in range(len(self.loadedLevel)):
+        for y in range(len(self.loadedLevel[x])):
+          self._buttonsList[x].pop(0)
+            
+      for turn in range(turns):
+        newErray = []
+        for x in range(len(erray[0])):
+          newErray.append([])
+        for x in range(len(erray)):
+          for y in range(len(erray[len(erray) - (x + 1)])):
+            newErray[y].append(erray[len(erray) - (x + 1)][y])
+        self.loadedLevel = list(newErray)
+
+      for x in range(len(self.loadedLevel)):
+        for y in range(len(self.loadedLevel[x])):
+            cords = [x,y]
+            if type(self.loadedLevel[x][y]) != int:
+                self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color'], command=lambda cords=cords:print(self.loadedLevel[cords[0]][cords[1]])))
+            else:
+                self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.loadedLevel[x][y],bg = self.colors[self.loadedLevel[x][y]], command=lambda cords=cords:self.changeEditorButton(cords)))
+            self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
+      
+      self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+      self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
+      self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
         self.logging(f'startGame({mode}, {chosenLevel})')
@@ -619,11 +704,12 @@ class System:
                         else:
                             levelDataDict = levelDataString
 
-                    levelDataDict.append(map)
+                    levelDataDict[self.dataDict['dungeon']['defaultLevelList']].append(map)
             
                     with open(f'gameData/levelData.json', 'w') as outfile:
                         json.dump(levelDataDict, outfile)
                     showinfo('export', 'exported succesfully!')
+        
         custom = False
         #look what mode
         if str(mode).lower() not in ['play', 'create']:
@@ -631,7 +717,7 @@ class System:
             mode = 'Play'
         #look for given level
         if type(chosenLevel) == list:
-            self._defaultlevels[0] = list(chosenLevel)
+            self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][0] = list(chosenLevel)
             chosenLevel = 0
             custom = True
         #look for 10x10 format to generate that size level
@@ -640,54 +726,61 @@ class System:
                 splitting = '//'
             elif 'x' in str(chosenLevel):
                 splitting = 'x'
-            if splitting in str(chosenLevel):
-                #split it at the x, so it can read the margins
-                if chosenLevel.split(splitting)[0].isdigit() and chosenLevel.split(splitting)[1].isdigit():
-                    level = []
-                    #generate the 2D erray of the level
-                    for x in range(int(chosenLevel.split(splitting)[0])):
-                        level.append([])
-                        for y in range(int(chosenLevel.split(splitting)[1])):
-                            if len(chosenLevel.split(splitting)) > 2:
-                                if chosenLevel.split(splitting)[2].isdigit():
-                                    level[x].append(int(chosenLevel.split(splitting)[2]))
-                                elif chosenLevel.split(splitting)[2][0] == '[' or chosenLevel.split(splitting)[2][0] == '{':
-                                    print(chosenLevel.split(splitting)[2])
-                                    try:
-                                        level[x].append(json.loads(chosenLevel.split(splitting)[2]))
-                                    except Exception as e:
-                                        self.logging(f'error: {e}, error 0003, tries to read: {chosenLevel.split(splitting)}, splitter: {splitting}')
-                                        showerror('error', 'Error code 0003')
-                                        self.exit(False)
-                                else:
-                                    level[x].append(0)
+            
+            #split it at the x, so it can read the margins
+            if chosenLevel.split(splitting)[0].isdigit() and chosenLevel.split(splitting)[1].isdigit():
+                level = []
+                #generate the 2D erray of the level
+                for x in range(int(chosenLevel.split(splitting)[0])):
+                    level.append([])
+                    for y in range(int(chosenLevel.split(splitting)[1])):
+                        if len(chosenLevel.split(splitting)) > 2:
+                            if chosenLevel.split(splitting)[2].isdigit():
+                                level[x].append(int(chosenLevel.split(splitting)[2]))
+                            elif chosenLevel.split(splitting)[2][0] == '[' or chosenLevel.split(splitting)[2][0] == '{':
+                                print(chosenLevel.split(splitting)[2])
+                                try:
+                                    level[x].append(json.loads(chosenLevel.split(splitting)[2]))
+                                except Exception as e:
+                                    self.logging(f'error: {e}, error 0003, tries to read: {chosenLevel.split(splitting)}, splitter: {splitting}')
+                                    showerror('error', 'Error code 0003')
+                                    self.exit(False)
                             else:
                                 level[x].append(0)
-                    #make level 0 the given level
-                    self._defaultlevels[0] = level
-                    #force it to play level 0
-                    chosenLevel = 0
-                    custom = True
+                        else:
+                            level[x].append(0)
+                #make level 0 the given level
+                self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][0] = level
+                #force it to play level 0
+                chosenLevel = 0
+                custom = True
         #if not given a number, it will force to play 0
         if not str(chosenLevel).isdigit():
             chosenLevel = 0
+        self.loadedLevel = list(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][chosenLevel])
         if mode.lower() == 'create':
             #if using level editor  
             self._buttonsList = []
             #make 2D erray
-            for x in range(len(self._defaultlevels[chosenLevel])):
+            for x in range(len(self.loadedLevel)):
                 self._buttonsList.append([])
             #create a lot of buttons
-            for x in range(len(self._defaultlevels[chosenLevel])):
-                for y in range(len(self._defaultlevels[chosenLevel][x])):
+            for x in range(len(self.loadedLevel)):
+                for y in range(len(self.loadedLevel[x])):
                     cords = [x,y]
-                    if type(self._defaultlevels[chosenLevel][x][y]) != int:
-                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color'], command=lambda cords=cords:print(self._defaultlevels[chosenLevel][cords[0]][cords[1]])))
+                    if type(self.loadedLevel[x][y]) != int:
+                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.dataDict['appSettings']['unknown']['text'],bg = self.dataDict['appSettings']['unknown']['color'], command=lambda cords=cords:print(self.loadedLevel[cords[0]][cords[1]])))
                     else:
-                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self._defaultlevels[chosenLevel][x][y],bg = self.colors[self._defaultlevels[chosenLevel][x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
+                        self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.loadedLevel[x][y],bg = self.colors[self.loadedLevel[x][y]], command=lambda cords=cords:self.changeEditorButton(cords, chosenLevel)))
                     self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
-            tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self._defaultlevels[chosenLevel])).grid(column=0,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")
-            tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self._defaultlevels[chosenLevel])).grid(column=x//2+1,row=y+1,columnspan=x//2+1, ipadx=10, ipady=5, sticky="EW")
+            self.printButton = tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self.loadedLevel))
+            self.exportMapButton = tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self.loadedLevel))
+            self.rotate2DerrayButton = tkinter.Button(self.gameWindow, text='rotate 90 degrees',command=lambda: self.rotate2Derray(self.loadedLevel, self._buttonsList, 1))
+            self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+            self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
+            self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+        
+        
         #if play mode
         if mode.lower() == 'play':
             #generate player
@@ -700,11 +793,11 @@ class System:
             #generate starting level
             self.checkStates()
             if custom == False:
-                levelNumber = random.randint(0,len(self._defaultlevels)-1)
+                levelNumber = random.randint(0,len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']])-1)
             else:
                 levelNumber = chosenLevel
             print(levelNumber)
-            self.createLevel(self._defaultlevels[levelNumber], levelNumber)
+            self.createLevel(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][levelNumber], levelNumber)
             self.createStats()
             self.createCanvas()
             self.rendering()
@@ -1097,8 +1190,11 @@ class System:
     def checkMovement(self, cords):            
         if self.isWalkable(cords, True):
             self._playerX, self._playerY = cords
-            if self._currentLevel[self._playerX][self._playerY]['tile'] == 'exit':
-                self.newLevel()
+            if 'exit' in self._currentLevel[self._playerX][self._playerY] and self._currentLevel[self._playerX][self._playerY]['exit']['exit']:
+              if 'nextLevelList' in self._currentLevel[self._playerX][self._playerY]['exit'] and self._currentLevel[self._playerX][self._playerY]['exit']['nextLevelList'] in self._defaultlevels:
+                self.newLevel(self._currentLevel[self._playerX][self._playerY]['exit']['nextLevelList'])
+              else:
+                self.newLevel(self.dataDict['dungeon']['defaultLevelList'])
             else:
                 self.enemyFullTurn()
         self.rendering()
@@ -1170,6 +1266,8 @@ class System:
                     usedItem = True
                     if self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '%':
                         extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"] * (self.playerStats["HP"]["max"] // 100)
+                    elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '-%':
+                        extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"] * (self.playerStats["HP"]["max"] // 100) * -1
                     elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '-':
                         extraHP = self.dataDict['tiles'][item]["loot"]["consumable"]["HPAmount"] * -1
                     elif self.dataDict['tiles'][item]["loot"]["consumable"]["type"] == '+':
@@ -1181,9 +1279,9 @@ class System:
                     if self.playerStats["HP"]["current"] > self.playerStats["HP"]["max"]:
                         self.playerStats["HP"]["current"] = self.playerStats["HP"]["max"]
                 if 'special' in self.dataDict['tiles'][item]["loot"]:
-                    if self.dataDict['tiles'][item]["loot"]['special']['nextFloor']:
+                    if 'nextFloor' in self.dataDict['tiles'][item]["loot"]['special']:
                         usedItem = True
-                        self.newLevel()
+                        self.newLevel(self.dataDict['tiles'][item]["loot"]['special']['nextFloor'])
                 if 'text' in self.dataDict['tiles'][item]:
                     if self.dataDict['tiles'][item]['text']['fromList']:
                         text = self.dataDict['text'][self.dataDict['tiles'][item]['text']['text']][random.randint(0,len(self.dataDict['text'][self.dataDict['tiles'][item]['text']['text']])-1)]
@@ -1214,13 +1312,16 @@ class System:
             self.displayText(f'Item Rarity: {self.dataDict["tiles"][item]["loot"]["rarity"]}')
             if self.dataDict["tiles"][item]["loot"]["isConsumable"]:
                 if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != 'set':
-                    if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != '-':
+                    if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != '-' and self.dataDict["tiles"][item]["loot"]["consumable"]["type"] != '-%':
                         percentOrNot = ""
                         if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] == '%':
                             percentOrNot = '%'
                         self.displayText(f'It restores {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}{percentOrNot} HP when consumed')
                     else:
-                        self.displayText(f'You took {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]} HP damage when consumed')
+                      percentOrNot = ""
+                      if self.dataDict["tiles"][item]["loot"]["consumable"]["type"] == '-%':
+                          percentOrNot = '%'
+                      self.displayText(f'You will take {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}{percentOrNot} HP damage when consumed')
                 else:
                     self.displayText(f'Your HP has been set to {self.playerStats["HP"]["current"]}')
             if "special" in self.dataDict["tiles"][item]["loot"]:
@@ -1239,14 +1340,14 @@ class System:
         else:
             self.displayText(f"You don\'t have: '{item}'\nUse 'showInventory()' to see the items you have")
 
-    def newLevel(self):
+    def newLevel(self, levelType):
         self.logging('newLevel()')
         self._dungeonLevel += 1
         self.loadState()
-        levelNumber = random.randint(0,len(self._defaultlevels)-1)
+        levelNumber = random.randint(0,len(self._defaultlevels[levelType])-1)
         print(levelNumber)
         self._canvas.destroy()
-        self.createLevel(self._defaultlevels[levelNumber], levelNumber)
+        self.createLevel(self._defaultlevels[levelType][levelNumber], levelNumber)
         self.createCanvas()
         self.rendering()
 

@@ -7,10 +7,12 @@ You need Python 3.10.1+
 
 ##### Table of Contents  
 - [Installation](#installation)  
+- [How 2 Update to this version](#update)  
 - [How to use](#how-to-use)  
 - [How to change content](#how-to-create)  
   + [Map Editor](#map-editor)
   + [GameData Editing](#gamedata-editing)
+    - [Template](#template)
     - [Preference](#preference)
     - [StartingLoot](#startingLoot)
     - [equippedWeapon](#equippedweapon)
@@ -101,6 +103,20 @@ You need to click 'Ok'
 >![game](sprites/readme/game.png)
 
 This is the game, you can close it, and the installation process is done.
+
+## update
+
+So you used an older version and want to update to this newer version.
+
+We reccomend to only download releases.
+
+First off: re-download everything (to another folder, not the folder of the old version)
+
+Second: copy example.py from the old folder to the new folder.
+
+That's all you need to do UNLESS if you changed the files.
+
+If you added custom maps or changed the gameData.json copy those over to the new folder, make sure to check what changed in this version to see how to update those 2 files.
 
 ## How To Use
 
@@ -303,9 +319,26 @@ And you can combine it with the dict method too:
 >
 >![text](sprites/readme/level20.png)
 
+#### v1.2.0+
+
+You can have multiple lists of maps since it's saved in a dictionary now. The default levels are defined in the gameData.json. When you click the export button it will export to the default. The default is the one the generator chooses from when starting the game or when it's undefined on the exit.
+
+Exits work differently from this point on, intead of looking for if it's a exit tile, it looks for if it has a 'exit' in the tile, and if it does, it checks if ['exit']['exit'] is set to True
+
+![text](sprites/readme/level21.png)
+
+'nextLevelList' is what level it picks from when it generates a new level.
+
+If you don't want all of your tiles to look the same even though they behave the same (or not, your choice) and you don't want to manually define everything, use DefaultTiles (context needed for this is in the gameData edeting part of readme). 
+
+![text](sprites/readme/level22.png)
+
+By putting the "|" in front it will know what to do, and pick a random one of the objects. This is always on for the tiles you can create using the built in lefel editor.
+
 ## GameData Editing
 
 Gamedata is massive so again, i'll make a quick navigation menu:
+ - [Template](#template)
  - [Preference](#preference)
  - [StartingLoot](#startingLoot)
  - [equippedWeapon](#equippedweapon)
@@ -321,6 +354,12 @@ Gamedata is massive so again, i'll make a quick navigation menu:
  - [text](#text)
  - [default Tiles](#defaulttiles)
  - [tiles](#tiles)
+
+### Template
+
+This is a template of a pre-defined tile, with everything set to NONE
+
+This get's never used, this is just so you can easily start using pre-defined tiles
 
 ### Preference
 Preference is quite small, it hass 2 things:
@@ -360,9 +399,11 @@ These are self explanetory:
 
 ### dungeon
 
-![dungeon](sprites/readme/data5.png)
+![dungeon](sprites/readme/data5.2.png)
 
-The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number
+startlevel = The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number
+
+defaultLefelList = The default list in the levelData.json that it loads levels from.
 
 ### balancing
 
@@ -458,9 +499,15 @@ This is the npc and sign text, the 2 lists it picks random text from if it's not
 
 These are the default walls it will place with the level editor, so if you have multiple wall variations, just add them to the list of 'wall'
 
-They need to be defined in the Tiles to work, otherwise it will crash.
+They still need to be defined in the Tiles to work, otherwise it will crash.
+
+When using pre-defined tiles in level editing, You can also use this feature by putting | in front of the tile, like: "|wall", and you can add your own custom lists of this and it will still work. 
+
+If there is an error because of something loading an default tile, it will display missing texture, and output it into logfile (updated in v1.2.0)
 
 ### tiles
+
+>Before i explain how this works, There is a tile: "missingTile" which it uses to load errors, if you delete it (you can modify "isWalkable" and "Image" and "ShowOutsideAs" without errors, the other things might break it even more) and it encounters an error, the game might crash without explanation and maybe no indication in the logfile. So please don't touch that 1 tile.
 
 Tiles, this is where everything is defined, items, walls, enemies, exits, floors and signs, just everything.
 
@@ -507,13 +554,13 @@ If you set isConsumable to true, you need to add the "consumable" dict:
 ![food](sprites/readme/data16.png)
 - "restoreHP" (only till v1.0.1) is how much it restores.
 - "restoreHPpercentage" (only till v1.0.1) if set to true it will give you ___ % of your max HP back, and if it's false it will give you __ HP back.
-- "type" + or - or % or set HP
+- "type" : Set it to "+" or "-" or "%" or "set" or "-%" HP (this changed in v1.2.0)
 - "HPAmount" the amount of HP
 
->![special](sprites/readme/data17.png)
+>![special](sprites/readme/data17.2.png)
 >
 >You can also add this dictionary
-> - "nextFloor" will instantly warp you to the next floor.
+> - "nextFloor" will instantly warp you to the next floor. Before v1.2.0 you had to set it to True, after v1.2.0 you need to put the levelList you want it to pick from
 
 #### enemy:
 

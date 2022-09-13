@@ -11,6 +11,7 @@ accounts/
 logs/
 gameData/
 CodeDungeonPlayer.py
+.github/
 example.py
 systemConfig.ini
 .Python
@@ -25,6 +26,7 @@ lib64/
 parts/
 sdist/
 var/
+example coy.py
 wheels/
 pip-wheel-metadata/
 share/python-wheels/
@@ -32,6 +34,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
