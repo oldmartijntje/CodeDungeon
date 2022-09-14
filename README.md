@@ -12,6 +12,7 @@ You need Python 3.10.1+
 - [How to change content](#how-to-create)  
   + [Map Editor](#map-editor)
   + [GameData Editing](#gamedata-editing)
+    - [Version](#version)
     - [Template](#template)
     - [Preference](#preference)
     - [StartingLoot](#startingLoot)
@@ -309,25 +310,29 @@ And you can combine it with the dict method too:
 
 #### v1.1.0+
 
->![text](sprites/readme/level16-2.png)
+>![text](sprites/readme/level16-3.png)
 >
->You can lock a tile, (doesn't work on moving things, so if there is a lock on an entety only there will be a lock on air) you can lock it by minimum: HP, Strength, Level or needing a specific item
+>You can lock a tile, (doesn't work on moving things, so if there is a lock on an entity only there will be a lock on air) you can lock it by minimum: HP, Strength, Level or needing a specific item
 >
 >This is not used by default, only when you put a tile in with dictionary
 >
 >If you only want to use one of the things, you can leave the others out:
 >
->![text](sprites/readme/level20.png)
+>![text](sprites/readme/level20-2.png)
 
 #### v1.2.0+
 
-You can have multiple lists of maps since it's saved in a dictionary now. The default levels are defined in the gameData.json. When you click the export button it will export to the default. The default is the one the generator chooses from when starting the game or when it's undefined on the exit.
+You can have multiple lists of maps since it's saved in a dictionary now. The default levels are defined in the gameData.json:
 
-Exits work differently from this point on, intead of looking for if it's a exit tile, it looks for if it has a 'exit' in the tile, and if it does, it checks if ['exit']['exit'] is set to True
+![text](sprites/readme/level23.png)
+
+When you click the export button it will export to the default. The default is the one the generator chooses from when starting the game or when it's undefined on the exit.
+
+Exits work differently from this point on, intead of looking for if it's a exit tile, it looks for if it has a 'exit' in the tile, and if it does, it checks if ['exit']['exit'] is set to True. 
 
 ![text](sprites/readme/level21.png)
 
-'nextLevelList' is what level it picks from when it generates a new level.
+'nextLevelList' is what level it picks from when it generates a new level. If ['exit'] has been set to false, you don't need to include this in the dictionary.
 
 If you don't want all of your tiles to look the same even though they behave the same (or not, your choice) and you don't want to manually define everything, use DefaultTiles (context needed for this is in the gameData edeting part of readme). 
 
@@ -335,9 +340,22 @@ If you don't want all of your tiles to look the same even though they behave the
 
 By putting the "|" in front it will know what to do, and pick a random one of the objects. This is always on for the tiles you can create using the built in lefel editor.
 
+If you want to get an enemy or loot in a pre-defined tile but you want to use the default generator for loot or an enemy, you can now do that by replacing "NONE" with "True" (upper or lower case deosn't matter). It will have a 100% chance rate of spawning. 
+
+![dict](sprites/readme/level24.png)
+
+You can also define the enemy and put "true" in the entity item:
+
+![dict](sprites/readme/level25.png)
+
+This also works in the lock:
+
+![dict](sprites/readme/level26.png)
+
 ## GameData Editing
 
 Gamedata is massive so again, i'll make a quick navigation menu:
+ - [Version](#version)
  - [Template](#template)
  - [Preference](#preference)
  - [StartingLoot](#startingLoot)
@@ -354,6 +372,14 @@ Gamedata is massive so again, i'll make a quick navigation menu:
  - [text](#text)
  - [default Tiles](#defaulttiles)
  - [tiles](#tiles)
+
+### version
+
+This contains 2 items: name and number, this shows in which version the game was last updated or created. Don't touch this, unless you want the (future) updater app to get confused and maybe corrupt it.
+
+name changes every update, number changes every time there changes something.
+
+If this doesn't exist in the gamedata, it fill automatically add it. But that will make it be at the bottom of your json instead of the top like normally.
 
 ### Template
 
@@ -543,8 +569,8 @@ To show how to do loot i'll show 2 examples, weapon and food.
 
 If you set isWeapon to true, you need to add the "weapon" dict:
 
-![weapon](sprites/readme/data15.png)
-- "minStrenght" the amount of strenght you need to use the weapon (you can use it earlier but u'll miss 50% and do less damage)
+![weapon](sprites/readme/data15-2.png)
+- "minStrength" the amount of strength you need to use the weapon (you can use it earlier but u'll miss 50% and do less damage)
 - "attack" the attack damage
 - "type" there are 2 types: stab and slice, stab stabs 1 enemy, slice attacks all enemies next to u
 - "weaponWeight" the order of defined weapons (for auto equip to know which is better)

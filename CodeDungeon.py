@@ -2,6 +2,7 @@ import datetime
 import json
 from logging import exception
 import os
+import string
 import time
 from tkinter import ttk
 import accounts_omac
@@ -12,25 +13,44 @@ import math
 import copy
 from tkinter.messagebox import showerror, askyesno, showinfo
 
+
 class System:
+
+    version = {"name":"release candidate 1.2.0.6", "number":1}
 
     _sightFurthest = []
 
     #some default levels
     _defaultlevels = {"default":[
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 0, 0, 1, 0, 0, 1, 0, 0], [0, 1, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 5, 5, 1, 0, 0, 0, 0, 0], [0, 1, 5, 5, 1, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0]],
     [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
     [[1,1,1,1,1,1,1,1,1,1], [1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]],
+    [[5, 1, 5, 0, 0, 0, 4, 0, 1, 0], [0, 1, 0, 0, 1, 0, 0, 5, 1, 0], [0, 1, 1, 0, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0, 1, 1, 1, 0], [0, 0, 0, 4, 1, 0, 1, 4, 5, 0], [0, 0, 0, 0, 1, 0, 1, 5, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [4, 0, 1, 0, 1, 1, 1, 4, 0, 0], [4, 5, 0, 0, 0, 0, 0, 0, 0, 0]],
+    [[0, 0, 0, 0, 0, 0, 0, 0, 5, 4], [0, 0, 4, 0, 0, 1, 0, 1, 0, 4], [1, 1, 1, 1, 0, 1, 0, 1, 1, 1], [1, 0, 5, 1, 0, 1, 0, 0, 0, 0], [0, 5, 4, 1, 0, 1, 4, 0, 0, 0], [0, 1, 1, 1, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 1, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 5, 1, 5]],
     [[0, 0, 1, 0, 4, 5, 1, 4, 1, 2], [4, 0, 0, 4, 0, 0, 0, 0, 1, 0], [5, 4, 1, 0, 5, 4, 1, 0, 1, 0], [4, 0, 1, 0, 4, 0, 1, 0, 1, 0], [1, 0, 1, 5, 0, 4, 1, 3, 1, 0], [0, 5, 4, 1, 1, 1, 1, 1, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 0, 0], [0, 0, 4, 1, 0, 4, 5, 0, 0, 0], [5, 0, 0, 0, 0, 5, 0, 5, 1, 0], [4, 0, 0, 1, 4, 0, 0, 4, 1, 3]],
     [[4, 0, 4, 0, 1, 2, 1, 4, 5, 4], [4, 5, 0, 4, 1, 0, 1, 0, 4, 0], [0, 4, 0, 0, 0, 0, 1, 4, 5, 4], [0, 0, 4, 0, 1, 0, 1, 0, 4, 0], [4, 0, 5, 4, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 0]],
+    [[3, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 0, 0], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 3, 1, 1, 1, 0, 0], [3, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 3]],
     [[4, 0, 4, 1, 0, 2, 1, 4, 5, 4], [4, 5, 0, 1, 7, 0, 1, 0, 4, 0], [0, 4, 0, 0, 1, 0, 1, 4, 5, 4], [0, 0, 4, 0, 0, 0, 1, 0, 4, 0], [4, 0, 5, 0, 1, 0, 0, 4, 5, 4], [1, 0, 1, 1, 1, 0, 1, 1, 1, 0], [0, 4, 0, 4, 1, 0, 1, 4, 0, 4], [4, 5, 4, 0, 1, 0, 1, 0, 5, 0], [0, 4, 0, 4, 0, 0, 1, 0, 4, 4], [4, 5, 4, 0, 1, 3, 1, 5, 0, 7]],
+    [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 8, 4, 0, 4, 8, 1, 5, 5, 4], [1, 0, 1, 1, 1, 6, 1, 4, 0, 0], [4, 0, 1, 0, 0, 1, 1, 1, 0, 1], [0, 5, 0, 0, 0, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 1, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 8, 1, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 0], [0, 1, 5, 1, 0, 1, 1, 1, 1, 4], [0, 1, 0, 0, 5, 0, 1, 5, 5, 0], [0, 1, 1, 1, 0, 0, 1, 0, 0, 4], [0, 0, 0, 1, 1, 0, 1, 1, 1, 0], [5, 1, 1, 1, 4, 0, 0, 1, 4, 0], [0, 0, 0, 1, 0, 0, 0, 1, 5, 0], [1, 0, 1, 1, 0, 0, 0, 1, 0, 4], [0, 0, 4, 1, 0, 1, 1, 1, 1, 0], [4, 5, 5, 1, 5, 4, 1, 4, 4, 4], [0, 0, 4, 1, 0, 5, 0, 4, 5, 4]],
     [[1, 4, 0, 0, 5, 0, 4, 1, 0, 3], [0, 1, 1, 1, 0, 1, 1, 0, 0, 1], [0, 0, 0, 0, 0, 0, 0, 5, 0, 0], [2, 0, 1, 5, 0, 1, 0, 0, 1, 0], [0, 0, 4, 1, 0, 5, 1, 1, 4, 1], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 5, 1, 4, 1, 5, 1, 0, 1], [0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 1, 0, 5, 0, 0, 1, 1, 0, 1], [4, 0, 0, 1, 4, 0, 5, 0, 0, 5]],
+    [[4, 0, 7, 0, 1, 4, 0, 0, 8, 4], [8, 5, 5, 4, 0, 0, 0, 4, 5, 0], [8, 0, 8, 0, 1, 8, 8, 0, 0, 8], [0, 8, 0, 4, 1, 4, 0, 0, 4, 0], [1, 0, 1, 1, 1, 1, 1, 0, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0, 1, 1, 1, 1], [5, 0, 0, 4, 1, 4, 0, 4, 0, 4], [0, 0, 5, 0, 1, 5, 8, 0, 8, 5], [0, 0, 0, 4, 0, 4, 0, 4, 0, 6]],
+    [[0, 4, 0, 1, 0, 5, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 4, 1, 4, 4], [0, 5, 0, 0, 0, 1, 0, 1, 1, 1, 0, 5, 0, 1, 4, 5, 0, 0, 8, 5], [4, 5, 4, 1, 0, 1, 6, 1, 0, 5, 4, 8, 0, 1, 1, 0, 1, 1, 4, 4], [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0], [0, 5, 0, 0, 0, 4, 1, 0, 5, 0, 4, 0, 0, 1, 0, 0, 0, 1, 4, 5], [5, 4, 1, 0, 0, 0, 0, 0, 0, 1, 0, 5, 0, 1, 4, 0, 1, 7, 8, 0], [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1], [4, 4, 1, 1, 1, 1, 1, 0, 5, 1, 5, 0, 4, 6, 1, 0, 1, 4, 5, 4], [5, 4, 1, 0, 5, 4, 1, 0, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 5, 0], [4, 4, 0, 4, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 5, 0, 1, 0, 4, 0]],
+    [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
     [[0, 0, 0, 0, 1, 6, 4, 1, 4, 7], [0, 1, 1, 5, 1, 0, 5, 1, 0, 0], [5, 1, 3, 0, 1, 0, 1, 1, 1, 0], [0, 1, 1, 1, 1, 5, 0, 0, 1, 0], [0, 0, 4, 1, 4, 0, 1, 5, 0, 0], [0, 1, 0, 1, 0, 1, 1, 1, 0, 6], [4, 1, 0, 0, 5, 0, 0, 1, 0, 1], [4, 1, 1, 1, 1, 1, 0, 1, 0, 0], [0, 1, 3, 0, 1, 4, 0, 1, 1, 5], [2, 1, 1, 0, 0, 0, 1, 3, 0, 0]],
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 3, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 0, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3]],
     [[0, 1, 5, 0, 0, 4, 1, 4, 0, 4], [0, 1, 0, 0, 5, 0, 0, 5, 5, 0], [0, 1, 4, 0, 0, 0, 1, 0, 0, 4], [0, 0, 0, 1, 1, 0, 1, 1, 1, 0], [5, 1, 1, 1, 4, 0, 0, 1, 4, 0], [0, 0, 0, 1, 0, 2, 0, 1, 5, 0], [1, 0, 1, 1, 0, 0, 0, 1, 0, 4], [0, 0, 4, 1, 0, 1, 1, 1, 1, 1], [4, 5, 5, 1, 5, 4, 1, 4, 4, 4], [0, 0, 4, 1, 0, 5, 0, 4, 5, 4]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 2, 0, 0, 0, 0, 1, 4, 0, 1], [1, 1, 0, 1, 1, 0, 0, 0, 0, 1], [1, 6, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
     [[4, 5, 4, 0, 5, 0, 1, 4, 0, 0], [4, 4, 4, 1, 4, 5, 1, 5, 5, 4], [1, 1, 1, 1, 1, 0, 1, 4, 0, 0], [4, 0, 1, 0, 0, 0, 1, 1, 0, 1], [0, 5, 1, 0, 2, 0, 0, 0, 0, 0], [0, 4, 1, 0, 0, 4, 1, 1, 1, 5], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [4, 0, 0, 1, 0, 0, 0, 4, 1, 0], [0, 5, 5, 1, 0, 5, 0, 0, 1, 0], [4, 0, 4, 1, 4, 0, 0, 5, 1, 3], [1, 0, 1, 1, 1, 0, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1, 4, 0, 1], [1, 0, 0, 1, 1, 0, 0, 0, 0, 1], [1, 7, 0, 4, 1, 0, 1, 5, 4, 1], [1, 4, 0, 0, 1, 5, 1, 0, 0, 1], [1, 1, 1, 0, 1, 0, 1, 1, 1, 1], [1, 4, 0, 5, 1, 0, 0, 0, 4, 1], [1, 4, 0, 0, 1, 0, 1, 5, 0, 1], [1, 0, 0, 4, 1, 3, 1, 0, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 0, 0, 4, 1, 1, 5, 0, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 0, 5, 1, 1, 4, 0, 0, 1], [1, 0, 1, 0, 1, 1, 0, 1, 0, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
-    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 4, 4, 0, 4, 0, 0, 4], [1, [{"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "silver_key", "amount": 1}}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strenght": 50, "item": {"type": "golden_key", "amount": 1}}}], 1, 1, 1, 1, 1, 1, 4, 3], [1, 0, 0, 0, 0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0, 1, 7, 3], [0, 0, 0, 0, 1, 1, 1, 1, 0, 8], [0, 0, 1, 0, 0, 0, 0, 1, 0, 1], [0, 1, 1, 1, 1, 0, 0, 1, 0, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [2, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+    [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 4, 4, 0, 4, 0, 0, 4], [1, [{"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strength": 50, "item": {"type": "silver_key", "amount": 1}}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bandaid", "amount": 1}, "lock": {"Strength": 50, "item": {"type": "golden_key", "amount": 1}}}], 1, 1, 1, 1, 1, 1, 4, 3], [1, 0, 0, 0, 0, 0, 0, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0, 1, 7, 3], [0, 0, 0, 0, 1, 1, 1, 1, 0, 8], [0, 0, 1, 0, 0, 0, 0, 1, 0, 1], [0, 1, 1, 1, 1, 0, 0, 1, 0, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [2, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+    [[1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 3], [0, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 8, 1, 4, 0, 0, 0, 0, 0, 0], [0, 1, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 1, 1, 1, 0, 4, 0, 0, 0], [0, 1, 8, 8, 0, 1, 5, 0, 0, 0, 0], [0, 1, 8, 8, 8, 1, 4, 1, 1, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 1], [0, 1, [{"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, ["?", {"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 1, 5, 1, 8, 8, 1], [0, 1, 1, 1, 1, 1, 4, 1, 8, 8, 1], [0, 0, 0, [7, ["This levelfile is big boi", "This text was added without the creator knowing if it would work", "Are you spiderman?", "I think i saw iron man fly by 10 minutes ago, if you are fast you might catch him", "These rooms all have a high lock cost, some rooms have loot, others lead you to special bunkers, look from outside and see which one u want before unlocking"]], 0, 0, 0, 1, ["?", {"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, 1], [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 0, 0, 0, 4, 6], [0, 1, ["?", {"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, 
+    {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, 8, 1, 0, 0, 0, 5, 0], [0, 1, 8, 8, 8, 1, 0, 0, 0, 0, 4], [0, 1, 6, 8, 0, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 0, 0, 4, 0, 0], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 4, 0, 0, 0, 0, 1, 1, 1, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}]], [0, 1, 1, 1, 1, 1, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 1, 8, 8, 8], [0, 1, ["?", {"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, 8, 1, 0, 1, 8, 8, 8], [0, 1, 8, 8, 8, 1, 0, 1, 8, 8, 8], [0, 1, 8, 8, 8, 1, 0, 1, 8, 8, 8], [2, 1, [{"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, 8, ["?", {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"HP": 200}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Strength": 50}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"Level": 20}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "golden_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_key", "amount": 1}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "gold_coin", "amount": 10}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "silver_coin", "amount": 50}}}, {"tile": "closedDoor", "entity": "NONE", "loot": "NONE", "lock": {"item": {"type": "bronze_coin", "amount": 250}}}, {"tile": "closedDoor", "entity": "true", "loot": "true", "lock": {"item": {"type": "stone_sword", "amount": 7}}}], 0, 1, ["?", {"tile": "floor", "entity": "true", "loot": {"type": "golden_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 25}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bread", "amount": 30}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bread", "amount": 35}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_key", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "floor_dice", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "butterfly_knife", "amount": 1}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "gold_coin", "amount": 11}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "gold_coin", "amount": 11}, "lock": {"item": "true"}}, {"tile": "floor", "entity": "NONE", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "silver_coin", "amount": 55}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "true", "loot": {"type": "bronze_coin", "amount": 274}, "lock": "NONE"}, {"tile": "floor", "entity": "NONE", "loot": {"type": "battle_axe", "amount": 1}, "lock": "NONE"}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": "NONE", "exit": {"exit": True, "nextLevelList": "bonusRoom"}}, {"tile": "exit", "entity": "NONE", "loot": "NONE", "lock": {"item": "true"}, "exit": {"exit": True, "nextLevelList": "bonusRoom"}}], 8, 8]]
+    ],"bonusRoom": [
+      [[4, 4, 4, 3, 1, 3, 4, 4, 4, 1], [4, 0, 0, 4, 1, 4, 0, 0, 4, 1], [4, ['?', 4, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': 'NONE'}], 0, 4, 1, 4, 0, ['?', 4, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'golden_key', 'amount': 1}, 'lock': 'NONE'}], 4, 1], [4, 4, 4, 4, 1, 4, 4, 4, 4, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [4, 4, 4, 4, 1, 4, 4, 4, 4, 1], [4, ['?', 4, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'floor_dice', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}], 0, 4, 1, 4, 0, ['?', 4, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'golden_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bread', 'amount': 25}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bread', 'amount': 30}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'bread', 'amount': 35}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'silver_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'silver_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'floor_dice', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': {'item': 'true'}}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'silver_coin', 'amount': 55}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'silver_coin', 'amount': 55}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bronze_coin', 'amount': 274}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'bronze_coin', 'amount': 274}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'battle_axe', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'lock': 'NONE', 'exit': {'exit': True, 'nextLevelList': 'bonusRoom'}}, {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'lock': {'item': 'true'}, 'exit': {'exit': True, 'nextLevelList': 'bonusRoom'}}], 4, 1], [4, 0, 0, 4, 1, 4, 0, 0, 4, 1], [4, 4, 4, 3, 1, 3, 4, 4, 4, 1]],
+      [[1, 5, 5, 5, 0, 0, 5, 5, 5, 1], [4, 1, ['?', {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'floor_dice', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}], 5, 0, 0, 5, ['?', {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': 'NONE'}], 1, 4], [4, 4, 1, 5, 0, 0, 5, 1, 4, 4], [4, 4, 4, 1, 3, 3, 1, 4, 4, 4], [4, 0, 4, 3, 1, 1, 3, 4, 0, 4], [4, 4, 4, 1, 3, 3, 1, 4, 4, 4], [4, 4, 1, 5, 0, 0, 5, 1, 4, 4], [4, 1, ['?', {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'golden_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bread', 'amount': 25}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bread', 'amount': 30}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'bread', 'amount': 35}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'silver_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'silver_key', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'floor_dice', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'butterfly_knife', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'gold_coin', 'amount': 11}, 'lock': {'item': 'true'}}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'silver_coin', 'amount': 55}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'silver_coin', 'amount': 55}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'bronze_coin', 'amount': 274}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'bronze_coin', 'amount': 274}, 'lock': 'NONE'}, {'tile': 'floor', 'entity': 'NONE', 'loot': {'type': 'battle_axe', 'amount': 1}, 'lock': 'NONE'}, {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'lock': 'NONE', 'exit': {'exit': True, 'nextLevelList': 'bonusRoom'}}, {'tile': 'exit', 'entity': 'NONE', 'loot': 'NONE', 'lock': {'item': 'true'}, 'exit': {'exit': True, 'nextLevelList': 'bonusRoom'}}], 5, 0, 0, 5, ['?', {'tile': 'floor', 'entity': 'true', 'loot': {'type': 'golden_key', 'amount': 1}, 'lock': 'NONE'}], 1, 4], [1, 5, 5, 5, 0, 0, 5, 5, 5, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+      [[2], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [4], [3]],
+
     ]}
     
     bugmessage = []
@@ -66,9 +86,14 @@ class System:
                 dataDict = json.loads(dataString)
             else:
                 dataDict= dataString
+        if 'version' not in dataDict:
+          dataDict['version'] = version
+        with open(f'gameData/gameData.json', 'w') as outfile:
+          json.dump(dataDict, outfile, indent=2)
     else:
         dataDict = {}
-        dataDict['template'] = {"tile": "NONE", "entity": "NONE", "loot": "NONE", "lock": "NONE"}
+        dataDict['template'] = {"tile": "NONE", "entity": "NONE", "loot": "NONE", "lock": "NONE", 'exit': {'exit': False}}
+        dataDict['version'] = version
         dataDict['preference'] = {'autoEquipBetter': True, 'sleepTime':0.1}
         dataDict['startingLoot'] = {'wooden_sword': {'amount': 1}}
         dataDict['equippedWeapon'] = {'weapon': 'wooden_sword', 'weight': 1}
@@ -99,25 +124,33 @@ class System:
         
         dataDict['tiles']['rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}
         
-        dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrenght': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
-        dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrenght': 22, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
+        dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
+        dataDict['tiles']['sharp_rock'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'common', 'weapon': {'minStrength': 21, 'attack': 7, 'type': 'slice', 'weaponWeight' : 3}}}
         dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 5, 'type': '+'}}}
+        dataDict['tiles']['silver_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
+        dataDict['tiles']['bronze_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':10},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
         dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 10, 'type': '+'}}}
         dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 20, 'type': '+'}}}
+        dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrength': 22, 'attack': 10, 'type': 'stab', 'weaponWeight' : 3}}}
         dataDict['tiles']['bandaid'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 10, 'type': '%'}}}
-        dataDict['tiles']['bronze_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':10},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
-        dataDict['tiles']['silver_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'common'}}
         dataDict['tiles']['gold_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'uncommon'}}
-        dataDict['tiles']['iron_dagger'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'rare', 'weapon': {'minStrenght': 20, 'attack': 10, 'type': 'stab', 'weaponWeight' : 4}}}
-        dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrenght': 40, 'attack': 20, 'type': 'stab', 'weaponWeight' : 6}}}
-        dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrenght': 30, 'attack': 5, 'type': 'slice', 'weaponWeight' : 5}}}
-        dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': True}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor'}}
+        dataDict['tiles']['paracetamol'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 35, 'type': '%'}}}
+        dataDict['tiles']['hema_tompoes'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':6},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 50, 'type': '+'}}}
+        dataDict['tiles']['iron_dagger'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'rare', 'weapon': {'minStrength': 20, 'attack': 10, 'type': 'stab', 'weaponWeight' : 4}}}
+        dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrength': 40, 'attack': 20, 'type': 'stab', 'weaponWeight' : 6}}}
+        dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 30, 'attack': 5, 'type': 'slice', 'weaponWeight' : 7}}}
+        dataDict['tiles']['sword_of_deception'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 69, 'attack': 44, 'type': 'stab', 'weaponWeight' : 8}}}
+        dataDict['tiles']['healing_pod'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'legendary', 'consumable': {'HPAmount': 100, 'type': '%'}}}
+        dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': "default"}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor'}}
+        dataDict['tiles']['vault_floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": True,'rarity': 'legendary', 'special': {'nextFloor': "bonusRoom"}, 'consumable': {'HPAmount': 1, 'type': 'set'}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor with an immense headache'}}
         dataDict['tiles']['silver_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}}
         dataDict['tiles']['golden_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}}
+        dataDict['tiles']['diamond_battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'impossible', 'weapon': {'minStrength': 100, 'attack': 69, 'type': 'stab', 'weaponWeight' : 9}}}
+        dataDict['tiles']['mjolnir'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'impossible', 'weapon': {'minStrength': 111, 'attack': 69, 'type': 'slice', 'weaponWeight' : 10}}}
 
 
         with open(f'gameData/gameData.json', 'w') as outfile:
-            json.dump(dataDict, outfile, indent=4)
+            json.dump(dataDict, outfile, indent=2)
 
     #map data
     if os.path.exists(f'gameData/levelData.json'):
@@ -130,6 +163,7 @@ class System:
     else:
         with open(f'gameData/levelData.json', 'w') as outfile:
             json.dump(_defaultlevels, outfile)
+        levelDataDict = _defaultlevels
 
 
 
@@ -251,7 +285,8 @@ class System:
                 self._images[f'normal-{self.dataDict["tiles"][data]["Image"]}'] = ImageTk.PhotoImage(Image.open(f"sprites/textureMissing.png"))
               except Exception as e:
                 self.logging(e, 'since we already had an texture error we tried to load, but now we have again, high chance that u deleted the "sprites/textureMissing.png", whyyyy, \nThe other possebility why you are getting this is an error with PILLOW or PIL, \nbut the first option is more likely if you changed the gameData.json or downloaded a version of the game that isn\'t made by the creator: oldmartijntje')
-            
+                showerror('error',f'{e}, look in the logfile')
+                exit()
             
     
     #for when something is missign from the json
@@ -461,18 +496,18 @@ class System:
             tileEntity = 'NONE'
             tileLoot = 'NONE'
             tileText = 'NONE'
-            lockText = 'NONE'
+            tileLock = 'NONE'
 
             if 'tile' in tile and tile['tile'] != 'NONE':
                 tileTile = tile['tile']
                 if 'entity' in tile and tile['entity'] != 'NONE':
                     tileEntity = tile['entity']
-                    if type(tileEntity['level']) == list:
+                    if type(tileEntity) == dict and type(tileEntity['level']) == list:
                         if tileEntity['level'][0] == '+':
                             tileEntity['level'].pop(0)
                             for xxx in range(len(tileEntity['level'])):
                                 tileEntity['level'][xxx] += (self._enemyLevel + self._dungeonLevel)
-                    tileEntity['level'] = random.choice(tileEntity['level'])
+                        tileEntity['level'] = random.choice(tileEntity['level'])
                 if 'loot' in tile and tile['loot'] != 'NONE':
                     tileLoot = tile['loot']
                 if 'text' in tile and tile['text'] != 'NONE':
@@ -481,27 +516,38 @@ class System:
                     for item in list(tile['lock'].keys()):
                         if type(tile['lock'][item]) == list:
                             tile['lock'][item] = tile['lock'][item][random.randint(0,len(tile['lock'][item])-1)]
-                    if 'item' in tile['lock'] and type(tile['lock']['item']['amount']) == list:
+                    if 'item' in tile['lock'] and type(tile['lock']['item']) == dict and type(tile['lock']['item']['amount']) == list:
                         tile['lock']['item']['amount'] = tile['lock']['item']['amount'][random.randint(0,len(tile['lock']['item']['amount'])-1)]
-                    lockText = tile['lock']
+                    tileLock = tile['lock']
 
-
-                self._currentLevel[x][y] = {'tile': tileTile, 'entity': tileEntity, 'loot': tileLoot, 'text': tileText, 'lock': lockText}
+                if type(tileLock) == dict and 'item' in tileLock and type(tileLock['item']) == str and tileLock['item'].lower() == "True".lower():
+                  tileLock['item'] = self.getLoot()
+                if type(tileEntity) == dict and type(tileEntity['item']) == str and tileEntity['item'].lower() == "True".lower():
+                  tileEntity['item'] = self.getLoot()
+                if type(tileLoot) == str and tileLoot.lower() == "True".lower():
+                  tileLoot = self.getLoot()
+                if type(tileEntity) == str and tileEntity.lower() == "True".lower():
+                  entityLoot = self.getLoot(0)
+                  tileEntity = {'type': random.choice(list(self._enemies)), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+                self._currentLevel[x][y] = {'tile': tileTile, 'entity': tileEntity, 'loot': tileLoot, 'text': tileText, 'lock': tileLock}
         
         else:
             
             self.logging(f'Message: it didn\'t go through one of the elif\'s,', f'Tile: {tile}', 'Function = readTile()', f'Map: {levelNumber}', f'X: {x}, Y: {y}')
             showerror('error', 'Error code 0001')
             self.exit(False)
-        if  self._currentLevel[x][y]['tile'][0] == "|":
-          self._currentLevel[x][y]['tile'] = random.choice(self.dataDict['defaultTiles'][self._currentLevel[x][y]['tile'][1:]])
-        else:
+        if self._currentLevel[x][y]['tile'][0] == "|":
+          if self._currentLevel[x][y]['tile'][1:] in self.dataDict['defaultTiles']:
+            self._currentLevel[x][y]['tile'] = random.choice(self.dataDict['defaultTiles'][self._currentLevel[x][y]['tile'][1:]])
+          else:
             self._currentLevel[x][y]['tile'] = 'missingTile'
             self.logging(f'error at tile {x}:{y}: tried to grab from defaultTiles but it doesn\'t exist')
 
         if self._currentLevel[x][y]['entity']!= 'NONE':
             #if there is an enemy, it should display enemy instead
+
             display = self._currentLevel[x][y]['entity']['type']
+            
         elif self._currentLevel[x][y]['loot']!= 'NONE':
             #if there is loot, it should display loot instead
             display = self._currentLevel[x][y]['loot']['type']
@@ -687,9 +733,14 @@ class System:
                 self._buttonsList[x].append(tkinter.Button(self.gameWindow, text=self.loadedLevel[x][y],bg = self.colors[self.loadedLevel[x][y]], command=lambda cords=cords:self.changeEditorButton(cords)))
             self._buttonsList[x][y].grid(column=x, row=y, ipadx=10, ipady=5, sticky="EW")
       
-      self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
-      self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
-      self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+      if x//3 > 0:
+        self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+        self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
+        self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+      else:
+        self.rotate2DerrayButton.grid(column=2,row=y+1,columnspan=1, ipady=5, sticky="EW")
+        self.exportMapButton.grid(column=1,row=y+1,columnspan=1, ipady=5, sticky="EW")
+        self.printButton.grid(column=0,row=y+1,columnspan=1, ipady=5, sticky="EW")
 
     #startup the program
     def startGame(self, mode = 'Play', chosenLevel = 0):
@@ -717,9 +768,15 @@ class System:
             mode = 'Play'
         #look for given level
         if type(chosenLevel) == list:
+          if self.dataDict['dungeon']['defaultLevelList'] in self._defaultlevels and len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']]) > 0:
             self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][0] = list(chosenLevel)
             chosenLevel = 0
             custom = True
+          else:
+            self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+            showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+            exit()
+            
         #look for 10x10 format to generate that size level
         if type(chosenLevel) == str:
             if '//' in str(chosenLevel):
@@ -756,8 +813,14 @@ class System:
                 custom = True
         #if not given a number, it will force to play 0
         if not str(chosenLevel).isdigit():
-            chosenLevel = 0
-        self.loadedLevel = list(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][chosenLevel])
+          chosenLevel = 0
+        if self.dataDict['dungeon']['defaultLevelList'] in self._defaultlevels and len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']]) > 0:
+          self.loadedLevel = list(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][chosenLevel])
+        else:
+          self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+          showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+          exit()
+        
         if mode.lower() == 'create':
             #if using level editor  
             self._buttonsList = []
@@ -776,9 +839,15 @@ class System:
             self.printButton = tkinter.Button(self.gameWindow, text='export to console',command=lambda: print(self.loadedLevel))
             self.exportMapButton = tkinter.Button(self.gameWindow, text='export to json',command=lambda: exportMap(self.loadedLevel))
             self.rotate2DerrayButton = tkinter.Button(self.gameWindow, text='rotate 90 degrees',command=lambda: self.rotate2Derray(self.loadedLevel, self._buttonsList, 1))
-            self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
-            self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
-            self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+            if x//3 > 0:
+              self.rotate2DerrayButton.grid(column=x//3*2+1,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+              self.exportMapButton.grid(column=x//3+1,row=y+1,columnspan=x//3, ipadx=10, ipady=5, sticky="EW")
+              self.printButton.grid(column=0,row=y+1,columnspan=x//3+1, ipadx=10, ipady=5, sticky="EW")
+            else:
+              self.rotate2DerrayButton.grid(column=2,row=y+1,columnspan=1, ipady=5, sticky="EW")
+              self.exportMapButton.grid(column=1,row=y+1,columnspan=1, ipady=5, sticky="EW")
+              self.printButton.grid(column=0,row=y+1,columnspan=1, ipady=5, sticky="EW")
+
         
         
         #if play mode
@@ -793,9 +862,14 @@ class System:
             #generate starting level
             self.checkStates()
             if custom == False:
+              if self.dataDict['dungeon']['defaultLevelList'] in self._defaultlevels and len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']]) > 0:
                 levelNumber = random.randint(0,len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']])-1)
+              else:
+                self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+                showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
+                exit()
             else:
-                levelNumber = chosenLevel
+              levelNumber = chosenLevel
             print(levelNumber)
             self.createLevel(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][levelNumber], levelNumber)
             self.createStats()
@@ -827,9 +901,9 @@ class System:
             if x == self._playerX and y == self._playerY:
                 return False
             if not human:
-                if self._currentLevel[x][y]['display'] == 'exit':
+                if 'exit' in self._currentLevel[x][y] and self._currentLevel[x][y]['exit']['exit']:
                     return False
-            if 'lock' in self._currentLevel[cordinates[0]][cordinates[1]] and self._currentLevel[cordinates[0]][cordinates[1]]['lock'] != 'NONE':
+            if human and 'lock' in self._currentLevel[cordinates[0]][cordinates[1]] and self._currentLevel[cordinates[0]][cordinates[1]]['lock'] != 'NONE':
                 self.displayText('The tile is locked, Interact with it')
                 return False
             return self.dataDict['tiles'][self._currentLevel[x][y]['display']]['Walkable']
@@ -949,16 +1023,7 @@ class System:
                                                     self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] += 1
                                                     attack()
 
-                                                
-
-                                   
-                                    
-
-
-
-
-
-
+             
     def moveEnemy(self, moveData):
         move, NewXY, XY = moveData
         newX,newY = NewXY
@@ -972,6 +1037,9 @@ class System:
             self._currentLevel[x][y][each] = switch[1]
             self._currentLevel[newX][newY][each] = switch[0]
         self.delaySleep()
+        if self._currentLevel[x][y]['loot'] != 'NONE':
+          self._currentLevel[x][y]['display'] = self._currentLevel[x][y]['loot']['type']
+
 
     def damageMessage(self, cords, damage):
         if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] > 0:
@@ -981,7 +1049,6 @@ class System:
             self.displayText(f"You dealt {damage}HP damage to {self._currentLevel[cords[0]][cords[1]]['entity']['type']}, he is ded")
             self.playerStats['XP'] += damage * self.dataDict['balancing']['killMultiplierXP'] // self.dataDict['balancing']['XPperDamageDevidedBy']
             self.playerStats['XP'] += self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['entity']['type']]["enemy"]['statsPerLevel']['deathXP'] * self._currentLevel[cords[0]][cords[1]]['entity']['level']
-
 
     def sliceEnemy(self, cords, damage):
         try:
@@ -997,27 +1064,36 @@ class System:
             self.logging(e, f'cords: {cords}', f'damage: {damage}', 'Function = sliceEnemy()')
             
     def lockedTile(self, cords):
-        if 'HP' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["HP"]["current"] < self._currentLevel[cords[0]][cords[1]]['lock']['HP']:
-            self.displayText(f"It's locked, Not enough HP, {self._currentLevel[cords[0]][cords[1]]['lock']['HP']} HP needed to unlock this lock")
-        elif 'Strenght' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["strength"] < self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']:
-            self.displayText(f"It's locked, Not enough Strenght, {self._currentLevel[cords[0]][cords[1]]['lock']['Strenght']} Strenght needed to unlock this lock")
-        elif 'level' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
-            self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
-        elif 'item' in self._currentLevel[cords[0]][cords[1]]['lock'] and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
-            self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x '{self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}'")
-        else:
-            if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE':
-                if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] == self.equipped and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] == self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
-                    self.displayText(f"You have item: '{self.equipped}' equipped as weapon, to use it you need to unequip it first")
-                else:
-                    self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] -= self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']
-                    self.displayText(f"The lock has been unlocked")
-                    self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
-                    self.interact()
-            else:
-                self.displayText(f"The lock has been unlocked")
-                self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
-                self.interact()
+        self.logging(self._currentLevel[cords[0]][cords[1]], cords)
+        try:
+          if 'HP' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["HP"]["current"] < self._currentLevel[cords[0]][cords[1]]['lock']['HP']:
+              self.displayText(f"It's locked, Not enough HP, {self._currentLevel[cords[0]][cords[1]]['lock']['HP']} HP needed to unlock this lock")
+          elif 'Strength' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["strength"] < self._currentLevel[cords[0]][cords[1]]['lock']['Strength']:
+              self.displayText(f"It's locked, Not enough Strength, {self._currentLevel[cords[0]][cords[1]]['lock']['Strength']} Strength needed to unlock this lock")
+          elif 'level' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['level']:
+              self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
+          elif 'Level' in self._currentLevel[cords[0]][cords[1]]['lock'] and self.playerStats["level"] < self._currentLevel[cords[0]][cords[1]]['lock']['Level']:
+              self.displayText(f"It's locked, Not high enough Level, Level {self._currentLevel[cords[0]][cords[1]]['lock']['Level']} needed to unlock this lock")
+          elif 'item' in self._currentLevel[cords[0]][cords[1]]['lock'] and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE' and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] in self.inventory and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] < self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
+              self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x '{self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}'")
+          elif 'item' in self._currentLevel[cords[0]][cords[1]]['lock'] and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] not in self.inventory:
+              self.displayText(f"It's locked, You don't have {self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']} x '{self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']}'")
+          else:
+              if 'item' in self._currentLevel[cords[0]][cords[1]]['lock'] and self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] != 'NONE':
+                  if self._currentLevel[cords[0]][cords[1]]['lock']['item']['type'] == self.equipped and self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] == self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']:
+                      self.displayText(f"You have item: '{self.equipped}' equipped as weapon, to use it you need to unequip it first")
+                  else:
+                      self.inventory[self._currentLevel[cords[0]][cords[1]]['lock']['item']['type']]['amount'] -= self._currentLevel[cords[0]][cords[1]]['lock']['item']['amount']
+                      self.displayText(f"The lock has been unlocked")
+                      self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
+                      self.interact()
+              elif 'level' in self._currentLevel[cords[0]][cords[1]]['lock'] or 'Level' in self._currentLevel[cords[0]][cords[1]]['lock'] or 'Strength' in self._currentLevel[cords[0]][cords[1]]['lock'] or 'HP' in self._currentLevel[cords[0]][cords[1]]['lock']:
+                  self.displayText(f"The lock has been unlocked")
+                  self._currentLevel[cords[0]][cords[1]]['lock'] = 'NONE'
+                  self.interact()
+        except Exception as e:
+          self.logging(e)
+          exit()
 
 
     #interact with something
@@ -1034,7 +1110,7 @@ class System:
                     self.inventory[self._currentLevel[cords[0]][cords[1]]['loot']['type']] = {'amount':self._currentLevel[cords[0]][cords[1]]['loot']['amount']}
                     
                 if self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['isWeapon'] == True:
-                    if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight'] and self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength']:
+                    if self.autoEquip == True and self.hasWeaponWeight < self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['weaponWeight'] and self.dataDict['tiles'][self._currentLevel[cords[0]][cords[1]]['loot']['type']]["loot"]['weapon']['minStrength'] <= self.playerStats['strength']:
                         self.equipped = self._currentLevel[cords[0]][cords[1]]['loot']['type']
                         self.hasWeaponWeight = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['weaponWeight']
                         self.displayText(f"You equipped {self._currentLevel[cords[0]][cords[1]]['loot']['type']}")
@@ -1079,22 +1155,22 @@ class System:
                     damage = self.dataDict['tiles'][self.equipped]["loot"]['weapon']['attack']
                     if self.dataDict['balancing']['doStrengthDamage']:
                         damage += self.playerStats['strength'] // self.dataDict['balancing']['strengthDevidedBy']
-                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] > self.playerStats['strength']:
+                    if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrength'] > self.playerStats['strength']:
                         damage = random.randint(1,damage)
                     if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'stab':
-                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrength'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
                             self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] -= damage
                             self.damageMessage(cords, damage)
                         else:
-                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrength']}")
                     elif self.dataDict['tiles'][self.equipped]["loot"]['weapon']['type'] == 'slice':
-                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrenght'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
+                        if self.dataDict['tiles'][self.equipped]["loot"]['weapon']['minStrength'] <= self.playerStats['strength'] or bool(random.getrandbits(1)):
                             self.sliceEnemy([self._playerX, self._playerY-1],damage)
                             self.sliceEnemy([self._playerX, self._playerY+1],damage)
                             self.sliceEnemy([self._playerX-1, self._playerY],damage)
                             self.sliceEnemy([self._playerX+1, self._playerY],damage)
                         else:
-                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrenght']}")
+                            self.displayText(f"You missed, The strength you need to use this weapon is {self.dataDict['tiles'][self.equipped]['loot']['weapon']['minStrength']}")
 
                     if self._currentLevel[cords[0]][cords[1]]['entity']['HP']['current'] <= 0:
                         if self._currentLevel[cords[0]][cords[1]]['entity']['item'] != 'NONE':
@@ -1140,6 +1216,8 @@ class System:
                 self.showInventory()
             case 'weapon':
                 self.equipWeapon(input('weapon>>'))
+            case 'info':
+                self.itemInfo(input('item>>'))
 
     def lookUp(self):
         self._facing = 'U'
@@ -1307,7 +1385,7 @@ class System:
             self.displayText(f'-=={item}==-')
             self.displayText(f'Minimum per tile: {self.dataDict["tiles"][item]["loot"]["amount"]["min"]}\nMaximum per tile: {self.dataDict["tiles"][item]["loot"]["amount"]["max"]}')
             if self.dataDict["tiles"][item]["loot"]["isWeapon"]:
-                self.displayText(f'Strenght needed to weild this weapon: {self.dataDict["tiles"][item]["loot"]["weapon"]["minStrenght"]}')
+                self.displayText(f'Strength needed to weild this weapon: {self.dataDict["tiles"][item]["loot"]["weapon"]["minStrength"]}')
                 self.displayText(f'It does {self.dataDict["tiles"][item]["loot"]["weapon"]["attack"]} attack damage\nWeapon type is {self.dataDict["tiles"][item]["loot"]["weapon"]["type"]}\nWeapon weight is {self.dataDict["tiles"][item]["loot"]["weapon"]["weaponWeight"]}')
             self.displayText(f'Item Rarity: {self.dataDict["tiles"][item]["loot"]["rarity"]}')
             if self.dataDict["tiles"][item]["loot"]["isConsumable"]:
