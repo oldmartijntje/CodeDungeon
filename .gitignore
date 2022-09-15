@@ -15,7 +15,9 @@ CodeDungeonPlayer.py
 example.py
 systemConfig.ini
 .Python
+future/
 build/
+dev.py
 develop-eggs/
 dist/
 downloads/

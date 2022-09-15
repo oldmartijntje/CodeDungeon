@@ -41,3 +41,7 @@ Added "defaultTiles"
 You need to pick "levelList" under "tiles-loot-special"
 
 complete overhaul of "movementRules" under "tiles-entity"
+
+# development tools
+
+Have been added

@@ -640,6 +640,10 @@ If not set to 'and' or 'insteadOf' it can't attack, but can still move.
 >
 >![lot of rats](sprites/readme/tool6.png)
 
+There is a folder called Development Tools, it has a tool called "testingRarities.py" where it loads your json, and tells you how many you get of each type when it picks 1000 items. "testingItemGeneration.py" works the same but with the items themselves and not just the rarities.
+
+To use it, drag it into the main folder and run it.
+
 ## help
 
 Go to the <a href = https://github.com/oldmartijntje/CodeDungeon/blob/main/troubleshooting.md>TroubleShooting.md</a> for error codes and how to solve them.
