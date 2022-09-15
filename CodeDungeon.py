@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"release candidate 1.2.0.6", "number":1}
+    version = {"name":"release candidate 1.2.1", "number":1}
 
     _sightFurthest = []
 
