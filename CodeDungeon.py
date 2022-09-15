@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"release candidate 1.2.1", "number":1}
+    version = {"name":"Version 1.2.2", "number":1}
 
     _sightFurthest = []
 
@@ -86,10 +86,7 @@ class System:
                 dataDict = json.loads(dataString)
             else:
                 dataDict= dataString
-        if 'version' not in dataDict:
-          dataDict['version'] = version
-        with open(f'gameData/gameData.json', 'w') as outfile:
-          json.dump(dataDict, outfile, indent=2)
+
     else:
         dataDict = {}
         dataDict['template'] = {"tile": "NONE", "entity": "NONE", "loot": "NONE", "lock": "NONE", 'exit': {'exit': False}}
@@ -254,7 +251,7 @@ class System:
 
         #if no account has been logged into
         if self.accountDataDict == False:
-            exit()
+            self.exit(False)
 
         if len(self.bugmessage) > 0:
             for x in range(len(self.bugmessage)):
@@ -288,7 +285,7 @@ class System:
               except Exception as e:
                 self.logging(e, 'since we already had an texture error we tried to load, but now we have again, high chance that u deleted the "sprites/textureMissing.png", whyyyy, \nThe other possebility why you are getting this is an error with PILLOW or PIL, \nbut the first option is more likely if you changed the gameData.json or downloaded a version of the game that isn\'t made by the creator: oldmartijntje')
                 showerror('error',f'{e}, look in the logfile')
-                exit()
+                self.exit(False)
             
     
     #for when something is missign from the json
@@ -343,6 +340,15 @@ class System:
         for rarety in self.rarityList:
             chanceList.append(self._rarityChance[rarety] + modifier)
         return random.choices(self.rarityList, weights = chanceList, k = 1)[0]
+
+    def updateGameDataDict(self):
+      with open(f'gameData/gameData.json', 'w') as outfile:
+          json.dump(self.dataDict, outfile, indent=2)
+
+    def updateLevelDataDict(self):
+      with open(f'gameData/levelData.json', 'w') as outfile:
+            json.dump(self._defaultlevels, outfile)
+
 
     #generate loot
     def getLoot(self, modifier: int = 0, chanceOfNothing: int = 100):
@@ -777,7 +783,7 @@ class System:
           else:
             self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
             showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
-            exit()
+            self.exit(False)
             
         #look for 10x10 format to generate that size level
         if type(chosenLevel) == str:
@@ -821,7 +827,7 @@ class System:
         else:
           self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
           showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
-          exit()
+          self.exit(False)
         
         if mode.lower() == 'create':
             #if using level editor  
@@ -869,7 +875,7 @@ class System:
               else:
                 self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
                 showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
-                exit()
+                self.exit(False)
             else:
               levelNumber = chosenLevel
             print(levelNumber)
@@ -879,14 +885,15 @@ class System:
             self.rendering()
         
 
-    def exit(self, remove = True):
-        self.logging('exit()')
+    def exit(self, remove = True, dontExit = False):
+        self.logging('exit( )')
         accounts_omac.saveAccount(self.accountDataDict, self.accountConfigSettings)
         if not self.doLogging and remove:
             os.remove(f'logs/logFiles/log{self.dt_string}.txt')
         if not self.doReplayMode and remove:
             os.remove(f'logs/replayFiles/replay{self.dt_string}.txt')
-        exit()
+        if not dontExit:
+          exit()
 
 
     def onGrid(self, cords):
@@ -1095,7 +1102,7 @@ class System:
                   self.interact()
         except Exception as e:
           self.logging(e)
-          exit()
+          self.exit(False)
 
 
     #interact with something

@@ -464,6 +464,8 @@ These are app settings, technical stuff.
 
 The offset and size are for the level renderer.
 
+Size is 32 because the appTextures are 32 pixels by 32 pixels, if you want to change the size of those, change this. And if you change Size, high chance the textures aren't perfectly positioned, that's where you use offset for.
+
 offset is offset in pixels, and size is tilesize.
 
 maxtypes and colors is for the level editor, if you increase mextypes then also add an color, tho adding a maxtype does liturally nothing. Changing colors just changes the colors in the level editor.
