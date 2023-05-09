@@ -11,6 +11,7 @@ You need Python 3.10.1+
 - [How to use](#how-to-use)  
 - [How to change content](#how-to-create)  
   + [Map Editor](#map-editor)
+    - [Advanced Loading](#advanced-loading)
   + [GameData Editing](#gamedata-editing)
     - [Version](#version)
     - [Template](#template)
@@ -77,7 +78,18 @@ And the last step: Run <a href="https://github.com/oldmartijntjeCodeDungeon/blob
 
 There should be code that looks like this in example.py.
 
-![Code](sprites/readme/examplepy.png)
+```python
+import random
+import CodeDungeon
+player = CodeDungeon.System(127)
+player.startGame()
+# Your Python instructions go here:
+
+#launch program
+player.gameWindow.mainloop()
+# exit the program
+player.exit()
+```
 
 You should run it first like this before you change it.
 
@@ -123,27 +135,61 @@ If you added custom maps or changed the gameData.json copy those over to the new
 
 Open example.py, and your code should go between line 4 and 7:
 
-![Code](sprites/readme/examplepy.png)
+```python
+import random
+import CodeDungeon
+player = CodeDungeon.System()
+player.startGame()
+# Your Python instructions go here:
 
-for different dungeons, put a number here.
+#launch program
+player.gameWindow.mainloop()
+# exit the program
+player.exit()
+```
+
+for different dungeons, put a number here, this is the random.seed().
 
 ![Code](sprites/readme/use7.png)
 
 >How to move the player:
 >
 >![Code](sprites/readme/use1.png)
+>
+>A codebox for copy/paste:
+>```python
+>player.moveDown()
+>player.moveUp()
+>player.moveLeft()
+>player.moveRight()
+>```
 
 When you use these, the character automatically looks in the direction you last moved (even tho it might not look like it because the player only has 2 sprites)
 
 >But if you want to look in a direction without moving, you need to use these instead:
 >
 >![Code](sprites/readme/use2.png)
+>
+>A codebox for copy/paste:
+>```python
+>player.lookDown()
+>player.lookUp()
+>player.lookLeft()
+>player.lookRight()
+>```
 
 Moving costs a turn where as looking doesn't, so you can spam looking commands without an enemy ever coming closer. 
 
 >There are also these other easy commands:
->
->![Code](sprites/readme/use3.png)
+>```python
+>player.wait()
+>player.interact()
+>player.showInventory()
+>player.equipWeapon('weaponName')
+>player.useItem('itemName')
+>player.itemInfo('itemName')
+>player.merge('itemName')
+>```
 >
 >>player.wait() skips your turn
 >
@@ -153,13 +199,13 @@ Moving costs a turn where as looking doesn't, so you can spam looking commands w
 >>
 >>![inventory](sprites/readme/inventory.png)
 >
->>player.equipWeapon('weaponName') equips a weapon, for example:
+>>`player.equipWeapon('weaponName')` equips a weapon, for example:
 >>
->>player.equipWeapon('wooden_sword') to equip the wooden_sword, and the console will give feedback, for example when it can't equip it
+>>`player.equipWeapon('wooden_sword')` to equip the wooden_sword, and the console will give feedback, for example when it can't equip it
 >
->>player.useItem('itemNme') you use to use an item, for example:
+>>`player.useItem('itemNme')` you use to use an item, for example:
 >>
->>player.useItem('moldy_bread') to consume the moldy_bread
+>>`player.useItem('moldy_bread')` to consume the moldy_bread
 >
 >>player.itemInfo('itemName') to get information about the item or weapon, for example:
 >>
@@ -168,18 +214,33 @@ Moving costs a turn where as looking doesn't, so you can spam looking commands w
 >>would get this in the console:
 >>
 >>![code](sprites/readme/info.png)
+>
+>>`player.merge('itemName')` is new since 1.3.0
+>>
+>>You can use this to merge multiple of the same item into something else, like a stronger version of the item.
 
 >This is autoEquip, The first shows which it is, the second and third sets it to True or false.
 >
 >What this does is so that when you pickup a better weapon, if it automatically equips it, The default is set to True.
 >
 >![Code](sprites/readme/use5.png)
+>
+>A codebox for copy/paste:
+>```python
+>player.autoSelect()
+>```
 
 You can go as advanced as you want to go, by using anything python can do.
 
->And with these:
+>And most commands have a return value:
 >
->![Code](sprites/readme/use6.png)
+>A codebox for copy/paste:
+>```python
+>print(player.showInventory())
+>if player.inInventory('itemName'):
+>    pass
+>print(player.itemInfo('bread'))
+>```
 
 ## How to create
 
@@ -193,6 +254,15 @@ This program is highly configurable so i am splitting it into multiple parts
 >The level editor is enabled by putting 'Create' (or lowercase) in between the brackets as seen on this picture:
 >
 >![Code](sprites/readme/level1.png)
+>
+>A codebox for copy/paste:
+>```python
+>import random
+>import CodeDungeon
+>player = CodeDungeon.System()
+>player.startGame('Create')
+># Your Python instructions go here:
+>```
 
 When enabled you will see something like this:
 
@@ -351,6 +421,48 @@ You can also define the enemy and put "true" in the entity item:
 This also works in the lock:
 
 ![dict](sprites/readme/level26.png)
+
+## Advanced Loading
+
+You can also load a specific level, so you don't need to be lucky to test a map.
+
+By putting the level inside the `player.startGame()` as the second paramater, be sure to tell the app what mode you want to open, `'Play'` or `'Create'`
+
+```python
+import random
+import CodeDungeon
+player = CodeDungeon.System()
+player.startGame('Create', [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+# Your Python instructions go here:
+```
+This is the default editor level.
+
+You can also play that level by changing `'Create'` to `'Play'` in the above example, like this:
+```python
+player.startGame('Play', [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]])
+```
+
+You can also load a specific level from the levelData.json like this:
+```python
+player.startGame('Create', 4)
+```
+This will load the 5th level.
+
+There is also a way to load a level of a specific size without putting the rows manually:
+
+```python
+player.startGame('Create', '10x15')
+```
+This will load a level of the sixe 15 by 10, and this works with the rotating of a level in the level editor.
+
+And if you would want to turn everything into a wall by default:
+```python
+player.startGame('Create', '10x15x1')
+```
+Where tha last number is the same as in the editor
+
+This is not new but has been undocumented for some reason.
+
 
 ## GameData Editing
 
@@ -585,10 +697,52 @@ If you set isConsumable to true, you need to add the "consumable" dict:
 - "type" : Set it to "+" or "-" or "%" or "set" or "-%" HP (this changed in v1.2.0)
 - "HPAmount" the amount of HP
 
+Since 1.3.0 there is a new variable you can add:
+```json
+"consumable": {
+    "HPAmount": 0,
+    "type": "+",
+    "strengthLevels": 1
+}
+```
+Where `"strengthLevels"` is the amount of strenth levels you will gain by consuming it, if you have this you will still need the `"HPAmount"`, but just set it to 0 if you don't want that.
+`"type"` only effects `"HPAmount"` and not `"strengthLevels"`
+
+
 >![special](sprites/readme/data17.2.png)
 >
 >You can also add this dictionary
 > - "nextFloor" will instantly warp you to the next floor. Before v1.2.0 you had to set it to True, after v1.2.0 you need to put the levelList you want it to pick from
+
+Since 1.3.0 you also have the `"mergable"` variable:
+```json
+"item": {
+      "ShowOutsideAs": "floor",
+      "Walkable": false,
+      "Image": "loot",
+      "isEnemy": false,
+      "isInteractable": false,
+      "isLoot": true,
+      "loot": {
+        "amount": {
+          "min": 1,
+          "max": 1
+        },
+        "isWeapon": false,
+        "isConsumable": false,
+        "rarity": "uncommon"
+      },
+      "mergable": {
+        "mergeAmount": 3,
+        "mergeIntoAndAmount": {
+          "other_item": 2,
+          "yet_other_item": 1
+        }
+      }
+    },
+```
+Mergables work the following:
+You need `"mergeAmount"` times the item to merge them into `"mergeIntoAndAmount"`. in this example merging 3 'item' items turns into 1 'yet_other_item' item + 2 'other_item' items.
 
 #### enemy:
 

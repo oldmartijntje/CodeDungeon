@@ -1,47 +1,34 @@
-# Version 1.2.0
+# Version 1.3.0
 
-What has changed between version 1.1.0 and 1.2.0:
+What has changed between version 1.2.0 and 1.3.0:
 
-here is the full log: https://github.com/oldmartijntje/CodeDungeon/compare/40d74571732ab822ae121d2cb455c2c64dbcfb26...main
+## consumable changes
 
-## Map editor:
+You can now add a strength level modifier to a consumable, you can't remove the hp from a consumable, you'll have to set the HPAmount to 0
 
-When predefining an entity, you can change the level of an enemy by using a list, and you can add a + to add the number to the base level.
+## mergables
 
-You can make a lock only lock strength or only lock an item (the thing you need to open the lock)
+You can run the 
 
-Maps stored in a dict, so you can have different types of maps
+```
+player.merge()
+``` 
+to merge for example: 5 moldy_bread into 3 old_bread
 
-Exits changed (look in the readme under 1.2.0+)
+## logger and replayFiles
 
-DefaultTiles you can use on predefined tiles
+they didn't listen to the json settings before, now thwy do 
 
-replace "NONE" with "True" for it to use default loot or entity generator
+atleast kinda, they still make empty files ¯\\_(ツ)_/¯
 
-## GameData json:
+replay files now save a more readable\usable format
 
-added version
+## returns
 
-There is an template
+most functions show what value they will return and now return things
 
-defaultLevelList added under "dungeon"
+## small things
 
-"unknown" under "appSettings"
+readme has codeboxes
 
-Replaymode and Logging changed (under "debug")
-
-enemyLoopPerEnemy under "debug"
-
-Added "defaultTiles"
-
-"missingTile" in "tiles"
-
-"type" has extra options under "tiles-loot-consumable"
-
-You need to pick "levelList" under "tiles-loot-special"
-
-complete overhaul of "movementRules" under "tiles-entity"
-
-# development tools
-
-Have been added
+self.equipped turned into self.equippedWeapon
