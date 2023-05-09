@@ -81,7 +81,7 @@ There should be code that looks like this in example.py.
 ```python
 import random
 import CodeDungeon
-player = CodeDungeon.System(127)
+player = CodeDungeon.System()
 player.startGame()
 # Your Python instructions go here:
 

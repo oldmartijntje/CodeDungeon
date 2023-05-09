@@ -1,6 +1,6 @@
 # Version 1.3.0
 
-What has changed between version 1.2.0 and 1.3.0:
+What has changed between version 1.2 and 1.3.0:
 
 ## consumable changes
 
