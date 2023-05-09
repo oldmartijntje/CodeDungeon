@@ -1410,7 +1410,7 @@ class System:
                           percentOrNot = '%'
                       self.displayText(f'You will take {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}{percentOrNot} HP damage when consumed')
                 else:
-                    self.displayText(f'Will set your HP to {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}')
+                    self.displayText(f'Will set your HP to {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]} when consumed')
             if "special" in self.dataDict["tiles"][item]["loot"]:
                 if self.dataDict["tiles"][item]["loot"]["special"]["nextFloor"]:
                     self.displayText('It will warp you to the next floor')
