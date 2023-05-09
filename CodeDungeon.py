@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"Version 1.2.2", "number":1}
+    version = {"name":"Version 1.2.3", "number":1}
 
     _sightFurthest = []
 
@@ -1410,7 +1410,7 @@ class System:
                           percentOrNot = '%'
                       self.displayText(f'You will take {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}{percentOrNot} HP damage when consumed')
                 else:
-                    self.displayText(f'Your HP has been set to {self.playerStats["HP"]["current"]}')
+                    self.displayText(f'Will set your HP to {self.dataDict["tiles"][item]["loot"]["consumable"]["HPAmount"]}')
             if "special" in self.dataDict["tiles"][item]["loot"]:
                 if self.dataDict["tiles"][item]["loot"]["special"]["nextFloor"]:
                     self.displayText('It will warp you to the next floor')
