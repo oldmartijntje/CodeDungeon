@@ -1,7 +1,9 @@
 import CodeDungeon
 import random
 player = CodeDungeon.System(random.randint(0,1000))
-
+hp = (player.defaultPlayerStats["statsPerLevel"]["HP"] * player.defaultPlayerStats["startLevel"]) + player.defaultPlayerStats["beginStats"]["HP"]
+strength = (player.defaultPlayerStats["statsPerLevel"]["strength"] * player.defaultPlayerStats["startLevel"]) + player.defaultPlayerStats["beginStats"]["strength"]
+player.playerStats = {'HP': {'max': hp, 'current': hp}, 'level' : player.defaultPlayerStats["startLevel"], 'XP': 0, 'strength': strength}
 def addItem(dictionaaary, item, amount):
   if item in dictionaaary:
     dictionaaary[item] += amount

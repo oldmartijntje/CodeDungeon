@@ -770,6 +770,42 @@ When you put "isEnemy" to true, you need to add this dictionary:
 
 If not set to 'and' or 'insteadOf' it can't attack, but can still move.
 
+#### spawning
+
+You can also set the spawning limits of loot and enemies (since v1.3.1):
+
+we take for example the golden_key:
+```JSON
+    "golden_key": {
+      "ShowOutsideAs": "floor",
+      "Walkable": false,
+      "Image": "loot",
+      "isEnemy": false,
+      "isInteractable": false,
+      "isLoot": true,
+      "loot": {
+        "amount": {
+          "min": 1,
+          "max": 1
+        },
+        "isWeapon": false,
+        "isConsumable": false,
+        "rarity": "legendary"
+      },
+      "spawning": {
+        "fromFloor": 7
+      }
+    }
+```
+
+`"spawning"` in tiles, only spawning from a specific moment with these attributes:
+- `"toLevel"`
+- `"fromLevel"`
+- `"toFloor"`
+- `"fromFloor"`
+
+this only works with enemies and loot
+
 ## Testing Tools
 
 >Want to quickly load a specific level:

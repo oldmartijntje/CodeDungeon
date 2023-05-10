@@ -1,6 +1,6 @@
 # Version 1.3.0
 
-What has changed between version 1.2 and 1.3.0:
+What has changed between version 1.2 and 1.3.1:
 
 ## consumable changes
 
@@ -27,8 +27,22 @@ replay files now save a more readable\usable format
 
 most functions show what value they will return and now return things
 
+## spawning 
+
+`"spawning"` in tiles, only spawning from a specific moment with these attributes:
+- `"toLevel"`
+- `"fromLevel"`
+- `"toFloor"`
+- `"fromFloor"`
+
 ## small things
 
 readme has codeboxes
 
 self.equipped turned into self.equippedWeapon
+
+## content:
+
+- more weapons
+- mimics! - an enemy
+- strength potion
