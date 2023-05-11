@@ -242,7 +242,10 @@ class System:
             self._dungeonLevel = self.dataDict['dungeon']['startingFloor'] - 1
         except:
             self._dungeonLevel = 0
+
+        self._startingFloor = self._dungeonLevel
         random.seed(seed)
+        self.seed = seed
         self.logging(seed,'seed')
         self.replayWrite(f'seed: {seed}')
         self.accountConfigSettings = accounts_omac.configFileTkinter()
@@ -761,7 +764,7 @@ class System:
 
     def updateStats(self):
         if self.playerStats["HP"]["current"] <= 0:
-            showerror(title='Error',message=f'You died at floor {self._dungeonLevel + 1}!')
+            showerror(title='Error',message=f'You died at floor {self._dungeonLevel + 1}!\nYou travelled {self._dungeonLevel - self._startingFloor} floors!')
             self.logging(f'U died, playerstats: {self.playerStats}, invetory: {self.inventory}, floor: {self._dungeonLevel + 1}')
             self.exit()
         while True:
@@ -891,8 +894,10 @@ class System:
         #if not given a number, it will force to play 0
         if not str(chosenLevel).isdigit():
           chosenLevel = 0
+          custom = True
         if self.dataDict['dungeon']['defaultLevelList'] in self._defaultlevels and len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']]) > 0:
           self.loadedLevel = list(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][chosenLevel])
+          custom = True
         else:
           self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
           showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
@@ -979,7 +984,7 @@ class System:
             if x == self._playerX and y == self._playerY:
                 return False
             if not human:
-                if 'exit' in self._currentLevel[x][y] and self._currentLevel[x][y]['exit']['exit']:
+                if 'exit' in self._currentLevel[x][y] and self._currentLevel[x][y]['exit']['exit'] or self._currentLevel[x][y]['tile'] == 'exit':
                     return False
             if human and 'lock' in self._currentLevel[cordinates[0]][cordinates[1]] and self._currentLevel[cordinates[0]][cordinates[1]]['lock'] != 'NONE':
                 self.displayText('The tile is locked, Interact with it')
