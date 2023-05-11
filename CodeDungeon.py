@@ -232,11 +232,12 @@ class System:
         os.mkdir('logs/replayFiles/')
     except:
         pass
-    log = open(f'logs/logFiles/log{dt_string}.txt', "w")
-    log.close()  
-
-    replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
-    replay.close() 
+    if doLogging:
+        log = open(f'logs/logFiles/log{dt_string}.txt', "w")
+        log.close()  
+    if doReplayMode:
+        replay = open(f'logs/replayFiles/replay{dt_string}.txt', "w")
+        replay.close() 
 
 
     def __init__(self, seed : int = 0):
