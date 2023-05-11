@@ -70,3 +70,5 @@ will be discontinued from older versions, it will only update from 1.3.0 upwards
 - mimics! - Ohno, the scary chest
 - white rat - the faster (superiour) rat
 - crabs - he do be raving tho
+- skeleton - don't get too cocky
+- thief - He do be sneaky

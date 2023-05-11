@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"Version 1.3.4", "number":2}
+    version = {"name":"Version 1.3.5", "number":2}
 
     _sightFurthest = []
 
@@ -98,7 +98,7 @@ class System:
         dataDict['dungeon'] = {'startLevel': 3, "defaultLevelList": "default", "startingFloor" : 1}
         dataDict['balancing'] = {'doStrengthDamage': True, 'strengthDevidedBy': 3, 'killMultiplierXP': 2, 'XPperDamageDevidedBy' : 1, 'entetyLootDroppingChance': 50}
         dataDict['rarities'] = {'common': {'chance': 88},'uncommon': {'chance': 69},'rare': {'chance': 40},'epic': {'chance': 25},'legendary': {'chance': 11},'impossible': {'chance': 1}}
-        dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40}
+        dataDict['chance'] = {'enemyAir' : 5, 'enemySpawn': 40, 'lootAir' : 3, 'lootSpawn' : 40, 'defaultEntitySpawningWeight': 8}
         dataDict['appSettings'] = {'offset': 18,'size': 32, 'maxTypes': 9, 'colors': ['white','black','green', 'blue', 'pink', 'red', 'brown', 'orange', 'white', 'purple'], 'unknown': {'color': 'white', 'text': 'Modified'}}
         dataDict['playerImages'] = {'L': 'player left', 'R': 'player right'}
         dataDict['debug']= {'logging' : False, 'combat' : True, 'enemyAI' : True, 'sleep': True, 'enemyLoop': 2, 'enemyLoopPerEnemy':2, 'replayMode': False}
@@ -119,25 +119,33 @@ class System:
         dataDict['tiles']['closedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'closedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
         dataDict['tiles']['lockedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'lockedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
         
-        dataDict['tiles']['rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}
-        dataDict['tiles']['white rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'white_rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':4,'ATK':3, 'deathXP' : 9},'lessATKpointsPercentage': 30, 'hitChance': 70, "movementRules": {"attackRule" : "insteadOf", "movement": 2, "attack": 0.9}}, 'spawning': {'fromFloor': 10}}
-        dataDict['tiles']['crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':6,'ATK':2, 'deathXP' : 10},'lessATKpointsPercentage': 30, 'hitChance': 75, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}}, 'spawning': {'fromFloor': 12}}
-        dataDict['tiles']['raveing crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':7,'ATK':3, 'deathXP' : 30},'lessATKpointsPercentage': 40, 'hitChance': 85, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}}, 'spawning': {'fromFloor': 16}}
-        dataDict['tiles']['mimic'] = {'ShowOutsideAs': 'mimic', 'Walkable': False, 'Image': 'mimic', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':3,'ATK':4, 'deathXP' : 12},'lessATKpointsPercentage': 20, 'hitChance': 70, "movementRules": {"attackRule" : "and", "movement": 0, "attack": 1}}, 'spawning': {'fromFloor': 15}}
+        dataDict['tiles']['rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}, "spawnWeight": 10}, 'spawning': {'toFloor': 15}}
+        dataDict['tiles']['lost rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}, "spawnWeight": 1}, 'spawning': {'fromFloor': 19, 'toFloor': 30}}
+        dataDict['tiles']['white rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'white_rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':4,'ATK':2, 'deathXP' : 4},'lessATKpointsPercentage': 20, 'hitChance': 70, "movementRules": {"attackRule" : "insteadOf", "movement": 2, "attack": 0.9}, "spawnWeight": 5}, 'spawning': {'fromFloor': 10, 'toFloor': 20}}
+        dataDict['tiles']['crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':6,'ATK':2, 'deathXP' : 10},'lessATKpointsPercentage': 30, 'hitChance': 75, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}, "spawnWeight": 8}, 'spawning': {'fromFloor': 12, 'toFloor': 30}}
+        dataDict['tiles']['raveing crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':7,'ATK':3, 'deathXP' : 50},'lessATKpointsPercentage': 40, 'hitChance': 85, "movementRules": {"attackRule" : "and", "movement": 1.4, "attack": 1}, "spawnWeight": 1}, 'spawning': {'fromFloor': 16, 'toFloor': 32}}
+        dataDict['tiles']['mimic'] = {'ShowOutsideAs': 'mimic', 'Walkable': False, 'Image': 'mimic', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':3,'ATK':4, 'deathXP' : 12},'lessATKpointsPercentage': 20, 'hitChance': 70, "movementRules": {"attackRule" : "and", "movement": 0, "attack": 1}, "spawnWeight": 5}, 'spawning': {'fromFloor': 15}}
+        dataDict['tiles']['skeleton'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'skeleton', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':2,'ATK':6, 'deathXP' : 25},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}, "spawnWeight": 10}, 'spawning': {'fromFloor': 20}}
+        dataDict['tiles']['thief'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'thief', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':3, 'deathXP' : 30},'lessATKpointsPercentage': 10, 'hitChance': 90, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}, "spawnWeight": 10}, 'spawning': {'fromFloor': 23}}
+        dataDict['tiles']['sneaky thief'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'thief2', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':3, 'deathXP' : 44},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 2}, "spawnWeight": 10}, 'spawning': {'fromFloor': 25}}
         
         dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
-        dataDict['tiles']['sharp_rock'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'common', 'weapon': {'minStrength': 21, 'attack': 5, 'type': 'slice', 'weaponWeight' : 3}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"sharp_rock":1}}}, 'spawning': {'toLevel': 6}}
+        dataDict['tiles']['sharp_rock'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'common', 'weapon': {'minStrength': 21, 'attack': 5, 'type': 'slice', 'weaponWeight' : 3}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"sharpened_sharp_rock":1}}}, 'spawning': {'toLevel': 6, 'spawning': {'toFloor': 7}}}
         dataDict['tiles']['sharpened_sharp_rock'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 31, 'attack': 10, 'type': 'slice', 'weaponWeight' : 5}}}
         dataDict['tiles']['moldy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':6},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 5, 'type': '+'}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"old_bread":3}}}, 'spawning': {'toFloor': 8}}
         dataDict['tiles']['silver_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':16},"isWeapon": False,"isConsumable": False,'rarity': 'common', "mergable": {"mergeAmount": 10, "mergeIntoAndAmount": {"golden_coin":1}}}}
-        dataDict['tiles']['bronze_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':45},"isWeapon": False,"isConsumable": False,'rarity': 'common', "mergable": {"mergeAmount": 10, "mergeIntoAndAmount": {"silver_coin":1}}}}
-        dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 10, 'type': '+'}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"bread":3}}}}
-        dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 20, 'type': '+'}}}
+        dataDict['tiles']['bronze_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':45},"isWeapon": False,"isConsumable": False,'rarity': 'common', "mergable": {"mergeAmount": 10, "mergeIntoAndAmount": {"silver_coin":1}}}, 'spawning': {'toFloor': 14}}
+        dataDict['tiles']['old_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 10, 'type': '+'}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"bread":3}}}, 'spawning': {'toFloor': 16}}
+        dataDict['tiles']['dusty_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'common', 'consumable': {'HPAmount': 20, 'type': '+'}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"fresh_bread":2}}}, 'spawning': {'fromFloor': 16, 'toFloor': 32}}
+        dataDict['tiles']['bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 20, 'type': '+'}, "mergable": {"mergeAmount": 10, "mergeIntoAndAmount": {"fresh_bread":6}}}, 'spawning': {'toFloor': 22}}
+        dataDict['tiles']['fresh_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 60, 'type': '+'}}, 'spawning': {'fromFloor': 22}}
+        dataDict['tiles']['soggy_bread'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 20, 'type': '+'}}, 'spawning': {'fromFloor': 16, 'toFloor': 32}}
         dataDict['tiles']['stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'uncommon', 'weapon': {'minStrength': 25, 'attack': 15, 'type': 'stab', 'weaponWeight' : 3}, "mergable": {"mergeAmount": 3, "mergeIntoAndAmount": {"sharpened_stone_sword":1}}}}
         dataDict['tiles']['sharpened_stone_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 35, 'attack': 22, 'type': 'stab', 'weaponWeight' : 5}}}
         dataDict['tiles']['bandaid'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'uncommon', 'consumable': {'HPAmount': 10, 'type': '%'}}}
         dataDict['tiles']['gold_coin'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": False,'rarity': 'uncommon'}}
-        dataDict['tiles']['strength_potion'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':3},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 0, 'type': '+', 'strengthLevels': 1}}}
+        dataDict['tiles']['strength_potion'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 0, 'type': '+', 'strengthLevels': 1}, "mergable": {"mergeAmount": 3, "mergeIntoAndAmount": {"big_strength_potion":1}}}, 'spawning': {'fromFloor': 15}}
+        dataDict['tiles']['big_strength_potion'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 10, 'type': '+', 'strengthLevels': 4}}}
         dataDict['tiles']['iron_dagger'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'rare', 'weapon': {'minStrength': 20, 'attack': 15, 'type': 'stab', 'weaponWeight' : 4}}}
         dataDict['tiles']['hema_tompoes'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':2},"isWeapon": False,"isConsumable": True,'rarity': 'rare', 'consumable': {'HPAmount': 50, 'type': '+'}}}
         dataDict['tiles']['hoe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'rare', 'weapon': {'minStrength': 25, 'attack': 10, 'type': 'slice', 'weaponWeight' : 6}}}
@@ -147,16 +155,17 @@ class System:
         dataDict['tiles']['nameless_drugs'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": True,'rarity': 'NONE', 'consumable': {'HPAmount': 700, 'type': 'set'}}}
         dataDict['tiles']['paracetamol'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": True,'rarity': 'epic', 'consumable': {'HPAmount': 35, 'type': '%'}, "mergable": {"mergeAmount": 3, "mergeIntoAndAmount": {"suppository":3}}}}
         dataDict['tiles']['zetpil'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": True,'rarity': 'NONE', 'consumable': {'HPAmount': 100, 'type': '%'}}}
-        dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrength': 45, 'attack': 25, 'type': 'stab', 'weaponWeight' : 6}}}
+        dataDict['tiles']['battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'epic', 'weapon': {'minStrength': 45, 'attack': 25, 'type': 'stab', 'weaponWeight' : 6}, "mergable": {"mergeAmount": 3, "mergeIntoAndAmount": {"sharpened_battle_axe":1, 'bronze_coin': 25}}}}
+        dataDict['tiles']['sharpened_battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 45, 'attack': 30, 'type': 'slice', 'weaponWeight' : 8}}}
         dataDict['tiles']['butterfly_knife'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 50, 'attack': 15, 'type': 'slice', 'weaponWeight' : 7}}}
-        dataDict['tiles']['sword_of_deception'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 80, 'attack': 44, 'type': 'stab', 'weaponWeight' : 8}}}
+        dataDict['tiles']['sword_of_deception'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 80, 'attack': 44, 'type': 'stab', 'weaponWeight' : 9}}}
         dataDict['tiles']['healing_pod'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':4},"isWeapon": False,"isConsumable": True,'rarity': 'legendary', 'consumable': {'HPAmount': 100, 'type': '%'}}}
         dataDict['tiles']['floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary', 'special': {'nextFloor': "default"}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor'}}
         dataDict['tiles']['vault_floor_dice'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": True,'rarity': 'legendary', 'special': {'nextFloor': "bonusRoom"}, 'consumable': {'HPAmount': 1, 'type': 'set'}}, 'text': {'fromList': False, 'text': 'You suddenly wake up on another floor with an immense headache'}}
         dataDict['tiles']['silver_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}}
         dataDict['tiles']['golden_key'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": False,"isConsumable": False,'rarity': 'legendary'}, 'spawning': {'fromFloor': 7}}
-        dataDict['tiles']['mjolnir'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 111, 'attack': 69, 'type': 'slice', 'weaponWeight' : 10}}, 'spawning': {'fromLevel': 15}}
-        dataDict['tiles']['diamond_battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'impossible', 'weapon': {'minStrength': 100, 'attack': 69, 'type': 'stab', 'weaponWeight' : 9}}}
+        dataDict['tiles']['mjolnir'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'legendary', 'weapon': {'minStrength': 111, 'attack': 69, 'type': 'slice', 'weaponWeight' : 11}}, 'spawning': {'fromLevel': 15}}
+        dataDict['tiles']['diamond_battle_axe'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'impossible', 'weapon': {'minStrength': 100, 'attack': 69, 'type': 'stab', 'weaponWeight' : 10}}}
 
 
         with open(f'gameData/gameData.json', 'w') as outfile:
@@ -373,6 +382,16 @@ class System:
         for rarety in self.rarityList:
             chanceList.append(self._rarityChance[rarety] + modifier)
         return random.choices(self.rarityList, weights = chanceList, k = 1)[0]
+    
+    def randomEntity(self, listOfEntities):
+        self.logging(f'randomEntity({listOfEntities})')
+        chanceList = []
+        for entity in listOfEntities:
+            if 'spawnWeight' in self.dataDict['tiles'][entity]['enemy']:
+                chanceList.append(self.dataDict['tiles'][entity]['enemy']['spawnWeight'])
+            else:
+                chanceList.append(self.dataDict['chance']['defaultEntitySpawningWeight'])
+        return random.choices(listOfEntities, weights = chanceList)[0]
 
     def updateGameDataDict(self):
       with open(f'gameData/gameData.json', 'w') as outfile:
@@ -451,7 +470,7 @@ class System:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 enemyList = self.filterSpawning(list(self._enemies))
                 if len(enemyList) != 0:
-                    entity = {'type': random.choice(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+                    entity = {'type': self.randomEntity(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
                 else:
                     entity = 'NONE'
             if random.randint(1,100) <= self.chanceLootAir:
@@ -494,7 +513,7 @@ class System:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 enemyList = self.filterSpawning(list(self._enemies))
                 if len(enemyList) != 0:
-                    entity = {'type': random.choice(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+                    entity = {'type': self.randomEntity(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
                 else:
                     entity = 'NONE'
             if 'floor' in self.dataDict['defaultTiles']:
@@ -514,7 +533,7 @@ class System:
                 entityLoot = self.getLoot(modifier, self.dataDict['balancing']['entetyLootDroppingChance'])
                 enemyList = self.filterSpawning(list(self._enemies))
                 if len(enemyList) != 0:
-                    entity = {'type': random.choice(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+                    entity = {'type': self.randomEntity(enemyList), 'level': random.randint(-1,1)+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
                 else:
                     entity = 'NONE'
             if 'floor' in self.dataDict['defaultTiles']:
@@ -567,7 +586,7 @@ class System:
             entityLoot = self.getLoot(modifier2)
             enemyList = self.filterSpawning(list(self._enemies))
             if len(enemyList) != 0:
-                entity = {'type': random.choice(enemyList), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
+                entity = {'type': self.randomEntity(enemyList), 'level': random.randint(modifier3[0],modifier3[1])+ self._enemyLevel + self._dungeonLevel, 'item': entityLoot}
             else:
                 entity = 'NONE'
             if 'floor' in self.dataDict['defaultTiles']:
@@ -1337,6 +1356,8 @@ class System:
                 self.moveRight()
             case 'wait':
                 self.wait()
+            case ' ':
+                self.wait()
             case 'e':
                 self.interact()
             case 'item':
@@ -1349,6 +1370,17 @@ class System:
                 self.itemInfo(input('item>>'))
             case 'merge':
                 self.merge(input('item>>'))
+            case 'repeat':
+                try:
+                    amount = int(input('amount>>'))
+                    move = input('command to repeat>>')
+                    for i in range(amount):
+                        self.movePlayer(move)
+                except:
+                    self.displayText('Invalid amount')
+            case 'nf':
+                self.newLevel(self.dataDict['dungeon']['defaultLevelList'])
+
 
     def lookUp(self):
         self._facing = 'U'

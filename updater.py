@@ -86,6 +86,8 @@ if player.dataDict['version']['number'] == 1:
             del player.dataDict['tiles'][tile]['mergable']
     if 'startingFloor' not in player.dataDict['dungeon']:
         player.dataDict['dungeon']['startingFloor'] = 1
+    if 'defaultEntitySpawningWeight' not in player.dataDict['chance']:
+        player.dataDict['chance']['defaultEntitySpawningWeight'] = 8
     player.dataDict['version']['number'] = 2
     player.dataDict['version']['name'] = 'Version 1.3.2'
     print('updated changes to version 2 AKA V1.3.2')
