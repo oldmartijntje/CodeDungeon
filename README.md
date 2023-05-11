@@ -31,6 +31,7 @@ You need Python 3.10.1+
     - [default Tiles](#defaulttiles)
     - [tiles](#tiles)
   + [Testing tools](#testing-tools)
+- [Updating](#Updater) 
 - [Trouble?](#help) 
 - [Credits](#credits) 
 ## Installation
@@ -328,7 +329,9 @@ If you don't put the extra argument there, the sign will pick a random text out 
 
 If you want to make maps a bit more advanced, you can do that. What the game does when it encounters a map number, it creates a dictionary at the cordinate. the dictionary looks like this when empty:
 
-![Dictionary](sprites/readme/level10.png)
+```Python
+{"tile": "NONE","entity": "NONE","loot": "NONE","lock": "NONE"}
+```
 
 And if you want to create loot, replace the 'NONE' with this: 
 
@@ -398,19 +401,19 @@ You can have multiple lists of maps since it's saved in a dictionary now. The de
 
 When you click the export button it will export to the default. The default is the one the generator chooses from when starting the game or when it's undefined on the exit.
 
-Exits work differently from this point on, intead of looking for if it's a exit tile, it looks for if it has a 'exit' in the tile, and if it does, it checks if ['exit']['exit'] is set to True. 
+Exits work differently from this point on, intead of looking for if it's a exit tile, it looks for if it has a 'exit' in the tile, and if it does, it checks if `['exit']['exit']` is set to True. 
 
 ![text](sprites/readme/level21.png)
 
-'nextLevelList' is what level it picks from when it generates a new level. If ['exit'] has been set to false, you don't need to include this in the dictionary.
+`'nextLevelList'` is what level it picks from when it generates a new level. If `['exit']` has been set to false, you don't need to include this in the dictionary.
 
-If you don't want all of your tiles to look the same even though they behave the same (or not, your choice) and you don't want to manually define everything, use DefaultTiles (context needed for this is in the gameData edeting part of readme). 
+If you don't want all of your tiles to look the same even though they behave the same (or not, your choice) and you don't want to manually define everything, use `DefaultTiles` (context needed for this is in the gameData edeting part of readme). 
 
 ![text](sprites/readme/level22.png)
 
-By putting the "|" in front it will know what to do, and pick a random one of the objects. This is always on for the tiles you can create using the built in lefel editor.
+By putting the "|" in front it will know what to do, and pick a random one of the objects. This is always on for the tiles you can create using the built in level editor.
 
-If you want to get an enemy or loot in a pre-defined tile but you want to use the default generator for loot or an enemy, you can now do that by replacing "NONE" with "True" (upper or lower case deosn't matter). It will have a 100% chance rate of spawning. 
+If you want to get an enemy or loot in a pre-defined tile but you want to use the default generator for loot or an enemy, you can now do that by replacing `"NONE"` with `"True"` (upper or lower case deosn't matter). It will have a 100% chance rate of spawning. 
 
 ![dict](sprites/readme/level24.png)
 
@@ -487,34 +490,47 @@ Gamedata is massive so again, i'll make a quick navigation menu:
 
 ### version
 
-This contains 2 items: name and number, this shows in which version the game was last updated or created. Don't touch this, unless you want the (future) updater app to get confused and maybe corrupt it.
+This contains 2 items: `"name"` and `"number"`, this shows in which version the game was last updated or created. Don't touch this, unless you want the (future) updater app to get confused and maybe corrupt it.
 
-name changes every update, number changes every time there changes something.
+`"name"` changes every update, number changes every time there changes something.
+
+`"number"` is for the JSON versions, this number changes every time there is a change to the JSON structure
 
 If this doesn't exist in the gamedata, it fill automatically add it. But that will make it be at the bottom of your json instead of the top like normally.
 
 ### Template
 
-This is a template of a pre-defined tile, with everything set to NONE
+This is a template of a pre-defined tile, with everything set to `NONE`
 
-This get's never used, this is just so you can easily start using pre-defined tiles
+This get's never used, this is just so you can easily start using pre-defined tiles for level editing
+```JSON
+"template": {
+    "tile": "NONE",
+    "entity": "NONE",
+    "loot": "NONE",
+    "lock": "NONE",
+    "exit": {
+      "exit": false
+    }
+  },
+  ```
 
 ### Preference
-Preference is quite small, it hass 2 things:
+`"preference"` is quite small, it has 2 things:
 
 ![Preference](sprites/readme/data1.png)
 
-autoEquipBetter is something you can toggle in game: 
+`"autoEquipBetter"` is something you can toggle in game: 
 
 ![AutoEquip](sprites/readme/use5.png)
 
-autoEquipBetter means that if you pickup a better weapon than ur currently holdinng, that it will equip the new one. and sleeptime is the time it takes for an enemy to move, if set to 0 everything will happen instantly, and if set to 1, you'll be there for a while.
+`"autoEquipBetter"` means that if you pickup a better weapon than ur currently holdinng, that it will equip the new one. and sleeptime is the time it takes for an enemy to move, if set to 0 everything will happen instantly, and if set to 1, you'll be there for a while.
 
 ### StartingLoot
 
 ![StartingLoot](sprites/readme/data2.png)
 
-startingLoot can have as many items as you want, make sure that the items also exist in the tiles tho, otherwise it will give errors.
+`"startingLoot"` can have as many items as you want, make sure that the items also exist in the tiles tho, otherwise it will give errors.
 
 ### equippedWeapon
 
@@ -522,7 +538,7 @@ This contans which weapon you are using, make sure it's defined in Tiles too, ot
 
 ![equippedWeapon](sprites/readme/data3.png)
 
-The weight is for the automatic equip better, so that it knows which is better, put it at 0 if you want anything to replace it.
+The `"weight"` is for the automatic equip better, so that it knows which is better, put it at 0 if you want anything to replace it.
 
 ### playerStats
 
@@ -530,28 +546,36 @@ The weight is for the automatic equip better, so that it knows which is better, 
 
 These are self explanetory:
 
- - "statsPerLevel" is the amount of everything you'll gain for every level
- - "beginStats" is the stats you have at level 0
- - "startLevel" is the level your character has at the beginning
- - "XPneeded" is the amount of xp you need per level
+ - `"statsPerLevel"` is the amount of everything you'll gain for every level
+ - `"beginStats"` is the stats you have at level 0
+ - `"startLevel"` is the level your character has at the beginning
+ - `"XPneeded"` is the amount of xp you need per level
 
 ### dungeon
 
-![dungeon](sprites/readme/data5.2.png)
+```JSON
+"dungeon": {
+    "startLevel": 3,
+    "defaultLevelList": "default",
+    "startingFloor": 1
+  },
+```
 
-startlevel = The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number
+`"startlevel"` = The starting difficulty of the dungeon, which enemys are based off, every floor you go down adds 1 to this number.
 
-defaultLefelList = The default list in the levelData.json that it loads levels from.
+`"defaultLefelList"` = The default list in the levelData.json that it loads levels from.
+
+`"startingFloor"` = the floor you want to start at.
 
 ### balancing
 
 ![balancing](sprites/readme/data6.png)
 
 These are settings to balance out the game.
- - "doStrengthDamage"
+ - `"doStrengthDamage"`
 
 This means that your strength adds to the attack damage, without it the damage is defined by the wepon you are using and will never get better.
- - "strengthDevidedBy"
+ - `"strengthDevidedBy"`
 
 This only is usefull when the doStrengthDamage is set to true, this is the amount of damage it does, if its set to 3 and you have 9 strength, it will do 3 attack damage.
 
@@ -574,13 +598,13 @@ These are app settings, technical stuff.
 
 ![appSettings](sprites/readme/data9-2.png)
 
-The offset and size are for the level renderer.
+The `"offset"` and size are for the level renderer.
 
-Size is 32 because the appTextures are 32 pixels by 32 pixels, if you want to change the size of those, change this. And if you change Size, high chance the textures aren't perfectly positioned, that's where you use offset for.
+`"size"` is 32 because the appTextures are 32 pixels by 32 pixels, if you want to change the size of those, change this. And if you change Size, high chance the textures aren't perfectly positioned, that's where you use offset for.
 
-offset is offset in pixels, and size is tilesize.
+`"offset"` is offset in pixels, and size is tilesize.
 
-maxtypes and colors is for the level editor, if you increase mextypes then also add an color, tho adding a maxtype does liturally nothing. Changing colors just changes the colors in the level editor.
+`"maxTypes"` and colors is for the level editor, if you increase mextypes then also add an color, tho adding a maxtype does liturally nothing. Changing colors just changes the colors in the level editor.
 
 The unknown is for when you changed a map using predifined of random choices, obviously you don't want to overwrite those, and you don't want the editor to crash, so these are what it shows for a predefined tile. (v1.2.0+)
 
@@ -597,13 +621,13 @@ These are the textures the player has:
 ![debug](sprites/readme/data11.png)
 
 These are debug settings.
- - Logging, When set to true it will keep the logs, when false, it will delete the logs when closed (but will still be there if it crashes)
- - Combat enables combat.
- - Enemyai enables enemy AI (which is not an AI but an simple algorithm).
- - Sleep means that it takes time delay between enemy movement.
- - Enemy loop is the amount of times it checks to see if an enemy can move (for if another enemy moved out of the way).
- - replayMode writes down every movement you make and item you use/equip, so that you can get to the same place as you once were on that 1 seed. (works same as logging)
- - "enemyLoopPerEnemy" (since v1.2.0) will loop the enemy movement an amount of times, so that it can walk multiple tiles if it has those movement rules.
+ - `"logging"`, When set to true it will keep the logs, when false, it will delete the logs when closed (but will still be there if it crashes)
+ - `"combat"` enables combat.
+ - `"enemyai"` enables enemy AI (which is not an AI but an simple algorithm).
+ - `"sleep"` means that it takes time delay between enemy movement.
+ - `"EnemyLoop"` is the amount of times it checks to see if an enemy can move (for if another enemy moved out of the way).
+ - `"replayMode"` writes down every movement you make and item you use/equip, so that you can get to the same place as you once were on that 1 seed. (works same as logging)
+ - `"enemyLoopPerEnemy"` (since v1.2.0) will loop the enemy movement an amount of times, so that it can walk multiple tiles if it has those movement rules.
 
 ### Gamma
 
@@ -637,17 +661,17 @@ This is the npc and sign text, the 2 lists it picks random text from if it's not
 
 ![defaultTiles](sprites/readme/data22.png)
 
-These are the default walls it will place with the level editor, so if you have multiple wall variations, just add them to the list of 'wall'
+These are the default walls it will place with the level editor, so if you have multiple wall variations, just add them to the list of `'wall'`
 
 They still need to be defined in the Tiles to work, otherwise it will crash.
 
-When using pre-defined tiles in level editing, You can also use this feature by putting | in front of the tile, like: "|wall", and you can add your own custom lists of this and it will still work. 
+When using pre-defined tiles in level editing, You can also use this feature by putting | in front of the tile, like: `"|wall"`, and you can add your own custom lists of this and it will still work. 
 
 If there is an error because of something loading an default tile, it will display missing texture, and output it into logfile (updated in v1.2.0)
 
 ### tiles
 
->Before i explain how this works, There is a tile: "missingTile" which it uses to load errors, if you delete it (you can modify "isWalkable" and "Image" and "ShowOutsideAs" without errors, the other things might break it even more) and it encounters an error, the game might crash without explanation and maybe no indication in the logfile. So please don't touch that 1 tile.
+>Before i explain how this works, There is a tile: `"missingTile"` which it uses to load errors, if you delete it (you can modify `"isWalkable"` and `"Image"` and `"ShowOutsideAs"` without errors, the other things might break it even more) and it encounters an error, the game might crash without explanation and maybe no indication in the logfile. So please don't touch that 1 tile.
 
 Tiles, this is where everything is defined, items, walls, enemies, exits, floors and signs, just everything.
 
@@ -655,12 +679,12 @@ Everything in here has these items:
 
 ![tiles](sprites/readme/tiles1.png)
 
-- "ShowOutsideAs" means which texture it shoud show outside of the viewing area
-- "Walkable" can you walk on it? floor yes, wall no
-- "Image" The texture it has in the sprites/ folder
-- "isEnemy" is it an enemy? (this enables more settings)
-- "isInteractable" can you interact with it? like a sign? But it does nothing, you can remove it form the sign but u can still interact with it.
-- "isLoot" is it loot? can you pick it up? (this enables more settings)
+- `"ShowOutsideAs"` means which texture it shoud show outside of the viewing area
+- `"Walkable"` can you walk on it? floor yes, wall no
+- `"Image"` The texture it has in the sprites/ folder
+- `"isEnemy"` is it an enemy? (this enables more settings)
+- `"isInteractable"` can you interact with it? like a sign? But it does nothing, you can remove it form the sign but u can still interact with it.
+- `"isLoot"` is it loot? can you pick it up? (this enables more settings)
 
 You can also add a transform dict to tiles:
 
@@ -676,26 +700,30 @@ To show how to do loot i'll show 2 examples, weapon and food.
 >
 >When you enable isLoot to True, you need to add this dictionary.
 
-- "amount" is self explanetory: the amount you'll find per tile.
-- "isWeapon" is it a weapon?
-- "isConsumable" is it consumable?
-- "rarity" How rare is it? (pick one from the rarities you defined or 'NONE' for not generatable loot)
+- `"amount"` is self explanetory: the amount you'll find per tile.
+- `"isWeapon"` is it a weapon?
+- `"isConsumable"` is it consumable?
+- `"rarity"` How rare is it? (pick one from the rarities you defined or `'NONE'` for not generatable loot)
 
 If you set isWeapon to true, you need to add the "weapon" dict:
 
 ![weapon](sprites/readme/data15-2.png)
-- "minStrength" the amount of strength you need to use the weapon (you can use it earlier but u'll miss 50% and do less damage)
-- "attack" the attack damage
-- "type" there are 2 types: stab and slice, stab stabs 1 enemy, slice attacks all enemies next to u
-- "weaponWeight" the order of defined weapons (for auto equip to know which is better)
+- `"minStrength"` the amount of strength you need to use the weapon (you can use it earlier but u'll miss 50% and do less damage)
+- `"attack"` the attack damage
+- `"type"` there are 2 types: stab and slice, stab stabs 1 enemy, slice attacks all enemies next to u
+- `"weaponWeight"` the order of defined weapons (for auto equip to know which is better)
 
-If you set isConsumable to true, you need to add the "consumable" dict:
+If you set `"isConsumable"` to true, you need to add the `"consumable"` dict:
 
-![food](sprites/readme/data16.png)
-- "restoreHP" (only till v1.0.1) is how much it restores.
-- "restoreHPpercentage" (only till v1.0.1) if set to true it will give you ___ % of your max HP back, and if it's false it will give you __ HP back.
-- "type" : Set it to "+" or "-" or "%" or "set" or "-%" HP (this changed in v1.2.0)
-- "HPAmount" the amount of HP
+```json
+"consumable": {
+    "HPAmount": 0,
+    "type": "+",
+    "strengthLevels": 1
+}
+```
+- "type" : Set it to `"+"` or `"-"` or `"%"` or `"set"` or `"-%"` HP (this changed in v1.2.0)
+- `"HPAmount"` the amount of HP
 
 Since 1.3.0 there is a new variable you can add:
 ```json
@@ -712,9 +740,9 @@ Where `"strengthLevels"` is the amount of strenth levels you will gain by consum
 >![special](sprites/readme/data17.2.png)
 >
 >You can also add this dictionary
-> - "nextFloor" will instantly warp you to the next floor. Before v1.2.0 you had to set it to True, after v1.2.0 you need to put the levelList you want it to pick from
+> - `"nextFloor"` will instantly warp you to the next floor. Before v1.2.0 you had to set it to True, after v1.2.0 you need to put the levelList you want it to pick from
 
-Since 1.3.0 you also have the `"mergable"` variable:
+Since 1.3.2 you also have the `"mergable"` variable in the `'loot'` dict:
 ```json
 "item": {
       "ShowOutsideAs": "floor",
@@ -730,45 +758,46 @@ Since 1.3.0 you also have the `"mergable"` variable:
         },
         "isWeapon": false,
         "isConsumable": false,
-        "rarity": "uncommon"
-      },
-      "mergable": {
-        "mergeAmount": 3,
-        "mergeIntoAndAmount": {
-          "other_item": 2,
-          "yet_other_item": 1
+        "rarity": "uncommon",
+        "mergable": {
+            "mergeAmount": 3,
+            "mergeIntoAndAmount": {
+            "other_item": 2,
+            "yet_other_item": 1
+            }
         }
       }
     },
 ```
 Mergables work the following:
-You need `"mergeAmount"` times the item to merge them into `"mergeIntoAndAmount"`. in this example merging 3 'item' items turns into 1 'yet_other_item' item + 2 'other_item' items.
+You need `"mergeAmount"` times the item to merge them into `"mergeIntoAndAmount"`. in this example merging 3 `'item'` items turns into 1 `'yet_other_item'` item + 2 `'other_item'` items.
+ - note that in v1.3.0 and v1.3.1 mergables were in a different place.
 
 #### enemy:
 
-When you put "isEnemy" to true, you need to add this dictionary:
+When you put `"isEnemy"` to true, you need to add this dictionary:
 
 ![enemy](sprites/readme/data18.png)
 
-- "doubleAttack" it's true it can double attack (until v1.2)
-- "statsPerLevel" the stats this enemy will have per level
-- "lessATKpointsPercentage" the percentage of damage variaton, the ATK minus 0% to this% 
-- "hitChance" the chance for the enemy to hit
-- "movementRules" does something since v1.2:
+- `"doubleAttack"` it's true it can double attack (until v1.2)
+- `"statsPerLevel"` the stats this enemy will have per level
+- `"lessATKpointsPercentage"` the percentage of damage variaton, the ATK minus 0% to this% 
+- `"hitChance"` the chance for the enemy to hit
+- `"movementRules"` does something since v1.2:
 
 >![movementRules](sprites/readme/data20.png)
 >
->The 'insteadOf' means that it's either 1 or the other:
+>The `'insteadOf'` means that it's either 1 or the other:
 >
 >It either moves 1 to 3 tiles or attacks 4 times
 >
->But if you set it to 'and' it will be:
+>But if you set it to `'and'` it will be:
 >
 >![movementRules](sprites/readme/data21.png)
 >
 >move 1 tile and then attack twice, or attack twice and don't move.
 
-If not set to 'and' or 'insteadOf' it can't attack, but can still move.
+If not set to `'and'` or `'insteadOf'` it can't attack, but can still move.
 
 #### spawning
 
@@ -832,9 +861,24 @@ this only works with enemies and loot
 >
 >![lot of rats](sprites/readme/tool6.png)
 
-There is a folder called Development Tools, it has a tool called "testingRarities.py" where it loads your json, and tells you how many you get of each type when it picks 1000 items. "testingItemGeneration.py" works the same but with the items themselves and not just the rarities.
+There is a folder called Development Tools, it has a tool called `"testingRarities.py"` where it loads your json, and tells you how many you get of each type when it picks 1000 items. `"testingItemGeneration.py"` works the same but with the items themselves and not just the rarities.
 
 To use it, drag it into the main folder and run it.
+
+## Updater
+
+You have an <a href = https://github.com/oldmartijntje/CodeDungeon/blob/main/updater.py>updater.py</a>. This can be used for updating your JSON files to a newer version.
+
+The updater only works since V1.3.2 and can updae from V1.3.0+ 
+
+How to use:
+ - Run updater.py
+ - the program will do everything without input
+
+note: 
+- it needs the `"version"` dict in the json to not be tempered with.
+- if there is something wrong with the version number, there is troubleshooting in place to help you.
+
 
 ## help
 

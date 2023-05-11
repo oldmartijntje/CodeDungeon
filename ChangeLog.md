@@ -41,6 +41,14 @@ readme has codeboxes
 
 self.equipped turned into self.equippedWeapon
 
+## customizable settings
+
+`"startingFloor"` in the gameData.json
+
+## updater
+
+will be discontinued from older versions, it will only update from 1.3.1 upwards
+
 ## content:
 
 - more weapons
