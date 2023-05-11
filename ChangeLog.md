@@ -45,6 +45,16 @@ self.equipped turned into self.equippedWeapon
 
 `"startingFloor"` in the gameData.json
 
+`movementRules` has a new feature.
+You can now add floats to the movement and attack of an enemy, upon first movement it will do a random float between 0 and 1, if it's smaller than the float defined in the stats, it will get 1 extra every time.
+```json
+"movementRules": {
+    "attackRule": "insteadOf",
+    "movement": 1.9,
+    "attack": 1.5
+}
+```
+
 ## updater
 
 will be discontinued from older versions, it will only update from 1.3.1 upwards

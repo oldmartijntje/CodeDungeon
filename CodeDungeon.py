@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"Version 1.3.2", "number":2}
+    version = {"name":"Version 1.3.3", "number":2}
 
     _sightFurthest = []
 
@@ -823,7 +823,7 @@ class System:
         self.printButton.grid(column=0,row=y+1,columnspan=1, ipady=5, sticky="EW")
 
     #startup the program
-    def startGame(self, mode = 'Play', chosenLevel = 0):
+    def startGame(self, mode = 'Play', chosenLevel = None):
         self.logging(f'startGame({mode}, {chosenLevel})')
         def exportMap(map):
             if askyesno('export', 'are you sure you want to export? \nIf you don\'t know how to edit it might be hard to remove'):
@@ -894,10 +894,10 @@ class System:
         #if not given a number, it will force to play 0
         if not str(chosenLevel).isdigit():
           chosenLevel = 0
-          custom = True
+        else:
+            custom = True
         if self.dataDict['dungeon']['defaultLevelList'] in self._defaultlevels and len(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']]) > 0:
           self.loadedLevel = list(self._defaultlevels[self.dataDict['dungeon']['defaultLevelList']][chosenLevel])
-          custom = True
         else:
           self.logging('the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
           showerror('error',f'the "defaultLevelList" set in the gameData.json doesn\'t exist in the levelData.json')
@@ -1038,6 +1038,16 @@ class System:
                         if self._currentLevel[tile[0]][tile[1]]['entity'] != 'NONE':
                             if 'movement' not in self._currentLevel[tile[0]][tile[1]]['entity']:
                                 max = self.dataDict['tiles'][self._currentLevel[tile[0]][tile[1]]['entity']['type']]['enemy']['movementRules']
+                                if isinstance(max["movement"], float):
+                                    if random.random() < max["movement"] % 1:
+                                        max["movement"] = math.floor(max["movement"]+1)
+                                    else:
+                                        max["movement"] = math.floor(max["movement"])
+                                if isinstance(max["attack"], float):
+                                    if random.random() < max["attack"] % 1:
+                                        max["attack"] = math.floor(max["attack"]+1)
+                                    else:
+                                        max["attack"] = math.floor(max["attack"])
                                 self._currentLevel[tile[0]][tile[1]]['entity']['movement'] = {'done':{'movement':0,'attack':0}, 'max': max}
                             else:
                                 self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] = 0
