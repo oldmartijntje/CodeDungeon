@@ -1,6 +1,6 @@
-# Version 1.3.0
+# Version 1.3.4
 
-What has changed between version 1.2 and 1.3.1:
+What has changed between version 1.2 and 1.3.4:
 
 ## consumable changes
 
@@ -37,9 +37,10 @@ most functions show what value they will return and now return things
 
 ## small things
 
-readme has codeboxes
-
-self.equipped turned into self.equippedWeapon
+- readme has codeboxes
+- self.equipped turned into self.equippedWeapon
+- floor displaying in screen
+- tile of the window set to version and name
 
 ## customizable settings
 
@@ -57,10 +58,15 @@ You can now add floats to the movement and attack of an enemy, upon first moveme
 
 ## updater
 
-will be discontinued from older versions, it will only update from 1.3.1 upwards
+will be discontinued from older versions, it will only update from 1.3.0 upwards
 
 ## content:
 
 - more weapons
-- mimics! - an enemy
 - strength potion
+
+### enemies
+
+- mimics! - Ohno, the scary chest
+- white rat - the faster (superiour) rat
+- crabs - he do be raving tho

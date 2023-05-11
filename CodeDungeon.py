@@ -16,7 +16,7 @@ from tkinter.messagebox import showerror, askyesno, showinfo
 
 class System:
 
-    version = {"name":"Version 1.3.3", "number":2}
+    version = {"name":"Version 1.3.4", "number":2}
 
     _sightFurthest = []
 
@@ -120,7 +120,10 @@ class System:
         dataDict['tiles']['lockedDoor'] = {'ShowOutsideAs': 'closedDoor','Walkable': False, 'Image': 'lockedDoor', 'isEnemy': False, 'isInteractable': True,'isLoot': False, 'transform': {'TransformInto': 'openDoor'}}
         
         dataDict['tiles']['rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':5,'ATK':2, 'deathXP' : 5},'lessATKpointsPercentage': 20, 'hitChance': 80, "movementRules": {"attackRule" : "insteadOf", "movement": 1, "attack": 1}}}
-        dataDict['tiles']['mimic'] = {'ShowOutsideAs': 'mimic', 'Walkable': False, 'Image': 'mimic', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':3,'ATK':4, 'deathXP' : 10},'lessATKpointsPercentage': 20, 'hitChance': 70, "movementRules": {"attackRule" : "insteadOf", "movement": 0, "attack": 1}}, 'spawning': {'fromLevel': 10}}
+        dataDict['tiles']['white rat'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'white_rat', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':4,'ATK':3, 'deathXP' : 9},'lessATKpointsPercentage': 30, 'hitChance': 70, "movementRules": {"attackRule" : "insteadOf", "movement": 2, "attack": 0.9}}, 'spawning': {'fromFloor': 10}}
+        dataDict['tiles']['crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':6,'ATK':2, 'deathXP' : 10},'lessATKpointsPercentage': 30, 'hitChance': 75, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}}, 'spawning': {'fromFloor': 12}}
+        dataDict['tiles']['raveing crab'] = {'ShowOutsideAs': 'floor', 'Walkable': False, 'Image': 'crab', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':7,'ATK':3, 'deathXP' : 30},'lessATKpointsPercentage': 40, 'hitChance': 85, "movementRules": {"attackRule" : "and", "movement": 1, "attack": 1}}, 'spawning': {'fromFloor': 16}}
+        dataDict['tiles']['mimic'] = {'ShowOutsideAs': 'mimic', 'Walkable': False, 'Image': 'mimic', 'isEnemy': True, 'isInteractable': False,'isLoot': False, 'enemy':{'statsPerLevel': {'HP':3,'ATK':4, 'deathXP' : 12},'lessATKpointsPercentage': 20, 'hitChance': 70, "movementRules": {"attackRule" : "and", "movement": 0, "attack": 1}}, 'spawning': {'fromFloor': 15}}
         
         dataDict['tiles']['wooden_sword'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1}, "isWeapon": True,"isConsumable": False,'rarity': 'NONE', 'weapon': {'minStrength': 17, 'attack': 8, 'type': 'stab', 'weaponWeight' : 1}}}
         dataDict['tiles']['sharp_rock'] = {'ShowOutsideAs': 'floor','Walkable': False, 'Image': 'loot', 'isEnemy': False, 'isInteractable': False,'isLoot': True, 'loot': {'amount' : {'min':1, 'max':1},"isWeapon": True,"isConsumable": False,'rarity': 'common', 'weapon': {'minStrength': 21, 'attack': 5, 'type': 'slice', 'weaponWeight' : 3}, "mergable": {"mergeAmount": 5, "mergeIntoAndAmount": {"sharp_rock":1}}}, 'spawning': {'toLevel': 6}}
@@ -750,9 +753,11 @@ class System:
         self._xpVar = tkinter.StringVar()
         self._xpVar.set(f'XP:')
         self._strengthVar = tkinter.StringVar()
-        self._strengthVar.set(f'Strength:')
+        self._strengthVar.set(f'Floor:')
         self._levelVar = tkinter.StringVar()
         self._levelVar.set(f'Level:')
+        self._floorVar = tkinter.StringVar()
+        self._floorVar.set(f'Strength:')
         self._hpLabel = ttk.Label(self.gameWindow, textvariable=self._hpTextvar)
         self._hpLabel.grid(row=1,column=0, sticky="EW")
         self._strengthLabel = ttk.Label(self.gameWindow, textvariable=self._strengthVar)
@@ -761,6 +766,8 @@ class System:
         self._xpLabel.grid(row=3,column=0, sticky="EW")
         self._levelLabel = ttk.Label(self.gameWindow, textvariable=self._levelVar)
         self._levelLabel.grid(row=4,column=0, sticky="EW")
+        self._floorLabel = ttk.Label(self.gameWindow, textvariable=self._floorVar)
+        self._floorLabel.grid(row=5,column=0, sticky="EW")
 
     def updateStats(self):
         if self.playerStats["HP"]["current"] <= 0:
@@ -782,6 +789,7 @@ class System:
         self._hpTextvar.set(f'HP: {self.playerStats["HP"]["current"]} / {self.playerStats["HP"]["max"]}')
         self._levelVar.set(f'Level: {self.playerStats["level"]}')
         self._strengthVar.set(f'Strength: {self.playerStats["strength"]}')
+        self._floorVar.set(f'Floor: {self._dungeonLevel + 1}')
 
     def rotate2Derray(self, erray, buttonList, turns = 1):
       self.rotate2DerrayButton.grid_remove()
@@ -1108,7 +1116,7 @@ class System:
                                         if not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attack']:
                                             for attackTimes in range(self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attack']-self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack']):
                                                 
-                                                if self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attackRule'] == 'insteadOf' and not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] >= 1:
+                                                if self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['attackRule'] == 'insteadOf' and not self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] >= self._currentLevel[tile[0]][tile[1]]['entity']['movement']['max']['movement']:
                                                     self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['attack'] += 1
                                                     self._currentLevel[tile[0]][tile[1]]['entity']['movement']['done']['movement'] += 1
                                                     attack()
